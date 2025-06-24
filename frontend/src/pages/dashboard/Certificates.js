@@ -1,0 +1,165 @@
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Award, Clock, Loader2 } from 'lucide-react';
+
+const Certificates = () => {
+    const [certificates, setCertificates] = useState([]);
+    const [completedTasks, setCompletedTasks] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [genLoading, setGenLoading] = useState({});
+    const [genError, setGenError] = useState({});
+    const [allTasks, setAllTasks] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            
+            try {
+                const [certsRes, tasksRes] = await Promise.all([
+                    axios.get('/api/certificates/my-certificates', config),
+                    axios.get('/api/assigned-tasks/my-tasks', config)
+                ]);
+                
+                setCertificates(certsRes.data.data);
+                const completed = tasksRes.data.data.filter(task => task.status === 'completed');
+                setCompletedTasks(completed);
+
+            } catch (err) {
+                setError('Could not fetch your data. Please try again later.');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        const fetchAllTasks = async () => {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            try {
+                const res = await axios.get('/api/assigned-tasks/my-tasks', config);
+                setAllTasks(res.data.data);
+            } catch (err) {
+                // ignore
+            }
+        };
+        fetchAllTasks();
+    }, []);
+
+    // Filter out completed tasks that already have a certificate
+    const pendingCertificates = completedTasks.filter(task => 
+        !certificates.some(cert => cert.internshipTitle === task.internship.title)
+    );
+
+    // Group tasks by internship
+    const internshipTaskStatus = {};
+    allTasks.forEach(task => {
+        const id = task.internship._id;
+        if (!internshipTaskStatus[id]) internshipTaskStatus[id] = [];
+        internshipTaskStatus[id].push(task.status);
+    });
+
+    const handleGenerate = async (internshipId) => {
+        setGenLoading(prev => ({ ...prev, [internshipId]: true }));
+        setGenError(prev => ({ ...prev, [internshipId]: '' }));
+        const token = localStorage.getItem('token');
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+        try {
+            await axios.post('/api/certificates/generate-self', { internshipId }, config);
+            // Refresh certificates
+            const certsRes = await axios.get('/api/certificates/my-certificates', config);
+            setCertificates(certsRes.data.data);
+        } catch (err) {
+            setGenError(prev => ({ ...prev, [internshipId]: err.response?.data?.message || 'Failed to generate certificate.' }));
+        }
+        setGenLoading(prev => ({ ...prev, [internshipId]: false }));
+    };
+
+    if (loading) {
+        return <div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin text-indigo-600" /></div>;
+    }
+
+    if (error) {
+        return <div className="text-center text-red-500 bg-red-100 p-4 rounded-md">{error}</div>;
+    }
+
+    return (
+        <div className="p-6 bg-gray-50 min-h-screen">
+            <h1 className="text-3xl font-bold mb-6 text-gray-800">My Certificates</h1>
+            
+            {(certificates.length === 0 && pendingCertificates.length === 0) ? (
+                 <div className="text-center text-gray-500 bg-white p-8 rounded-lg shadow-md">
+                    You have not been issued any certificates yet.
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {/* Render issued certificates */}
+                    {certificates.map(cert => (
+                        <div key={cert._id} className="bg-white border rounded-lg p-4 flex flex-col justify-between shadow-sm transition-shadow hover:shadow-lg">
+                             <div>
+                                <Award className="h-10 w-10 text-yellow-500 mb-2" />
+                                <h3 className="text-lg font-semibold text-gray-800">{cert.internshipTitle || cert.course}</h3>
+                                <p className="text-sm text-gray-600">Issued on: {cert.completionDate ? new Date(cert.completionDate).toLocaleDateString() : '-'}</p>
+                                <p className="text-xs text-gray-400 mt-2">ID: {cert.certificateId?.split('-').slice(-1)[0]}</p>
+                            </div>
+                            <a 
+                                href={cert.fileUrl || `/verify-certificate/${cert.certificateId}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="mt-4 text-center bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+                            >
+                                {cert.fileUrl ? 'Download PDF' : 'View Certificate'}
+                            </a>
+                        </div>
+                    ))}
+
+                    {/* Render pending certificates */}
+                    {Object.entries(internshipTaskStatus).map(([internshipId, statuses]) => {
+                        const internship = allTasks.find(t => t.internship._id === internshipId)?.internship;
+                        const allCompleted = statuses.length > 0 && statuses.every(s => s === 'completed');
+                        const alreadyHasCert = certificates.some(cert => cert.internshipTitle === internship?.title);
+                        if (alreadyHasCert) return null;
+                        return (
+                            <div key={internshipId} className="bg-gray-100 border border-dashed rounded-lg p-4 flex flex-col justify-between">
+                                <div>
+                                    <Clock className="h-10 w-10 text-gray-400 mb-2" />
+                                    <h3 className="text-lg font-semibold text-gray-600">{internship?.title || 'Internship'}</h3>
+                                    {!allCompleted ? (
+                                        <>
+                                            <p className="text-sm text-yellow-700 mt-2">Complete all tasks and upload your work to generate your certificate.</p>
+                                            <ul className="text-xs text-gray-500 mt-1 list-disc ml-4">
+                                                {statuses.map((s, i) => <li key={i}>{s === 'completed' ? 'Task completed' : 'Task pending'}</li>)}
+                                            </ul>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <p className="text-sm text-gray-500 mt-2">You are eligible to generate your certificate.</p>
+                                            <button
+                                                className="mt-4 w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 transition disabled:opacity-60"
+                                                onClick={() => handleGenerate(internshipId)}
+                                                disabled={genLoading[internshipId]}
+                                            >
+                                                {genLoading[internshipId] ? 'Generating...' : 'Generate Certificate'}
+                                            </button>
+                                            {genError[internshipId] && (
+                                                <div className="mt-2 text-sm text-red-600">{genError[internshipId]}</div>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default Certificates; 

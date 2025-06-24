@@ -1,0 +1,90 @@
+import React from "react";
+import Footer from "../components/Footer";
+
+const About = () => (
+  <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex flex-col">
+    {/* Hero Section */}
+    <div className="max-w-6xl mx-auto w-full px-4 py-12">
+      <div className="flex flex-col md:flex-row items-center gap-8">
+        {/* Left: Image/Graphic */}
+        <div className="flex-1 flex justify-center">
+          <div className="bg-blue-600 rounded-2xl shadow-lg flex flex-col items-center justify-center w-80 h-80">
+            <span className="text-white text-lg font-semibold mb-2 mt-4">INSPIRE COMPANY</span>
+            <div className="flex flex-col items-center justify-center flex-1">
+              <span className="bg-pink-400 text-white px-4 py-2 rounded-lg text-2xl font-bold mb-2">WHY YOU SHOULD</span>
+              <span className="bg-white text-blue-600 px-4 py-2 rounded-lg text-4xl font-extrabold mb-2">CHOOSE</span>
+              <span className="bg-pink-400 text-white px-4 py-2 rounded-lg text-2xl font-bold mb-2">OUR COMPANY</span>
+              <span className="text-white text-xs mt-4">OUR ADVANTAGES</span>
+            </div>
+          </div>
+        </div>
+        {/* Right: Mission and Core Values */}
+        <div className="flex-1">
+          <div className="bg-white rounded-2xl shadow-lg p-8">
+            <h2 className="text-2xl font-bold text-blue-700 mb-4 flex items-center gap-2">
+              <span className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-base font-semibold">Our Mission</span>
+            </h2>
+            <p className="mb-6 text-gray-700">To bridge the gap between education and industry by equipping students with cutting-edge knowledge, practical skills, and real-world experience through innovative programs and expert mentorship.</p>
+            <h3 className="text-xl font-bold text-purple-700 mb-2">Core Values</h3>
+            <ul className="space-y-2">
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-1">💡</span> <span><b>Innovation</b>: Pioneering creative solutions and future-ready approaches to education.</span></li>
+              <li className="flex items-start gap-2"><span className="text-purple-500 mt-1">🛡️</span> <span><b>Integrity</b>: Upholding trust, transparency and ethical practices in all we do.</span></li>
+              <li className="flex items-start gap-2"><span className="text-green-500 mt-1">🤝</span> <span><b>Collaboration</b>: Partnering with students, educators and industry for collective success.</span></li>
+              <li className="flex items-start gap-2"><span className="text-pink-500 mt-1">🏆</span> <span><b>Excellence</b>: Committing to the highest standards in learning and innovation.</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      {/* Empowering Section */}
+      <div className="text-center mt-12">
+        <span className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold mb-2">About STUDENT ERA</span>
+        <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-purple-600 to-pink-500 mb-2">Empowering Future Leaders</h1>
+        <p className="text-lg text-gray-700 max-w-2xl mx-auto">We create transformative learning experiences that bridge academia and industry, preparing students to excel in tomorrow's world.</p>
+      </div>
+      {/* Approach to Learning */}
+      <div className="mt-16">
+        <h2 className="text-2xl font-bold text-center mb-8">Our Approach to Learning</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center">
+            <img src="https://img.icons8.com/ios-filled/100/000000/idea.png" alt="Innovative Learning" className="w-16 h-16 mb-4" />
+            <h3 className="font-bold text-lg mb-2">Innovative Learning</h3>
+            <p className="text-gray-700 text-center">Our programs foster creativity and critical thinking through project-based learning, preparing students to lead with innovative solutions.</p>
+          </div>
+          <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center">
+            <img src="https://img.icons8.com/ios-filled/100/000000/artificial-intelligence.png" alt="Empowering Minds" className="w-16 h-16 mb-4" />
+            <h3 className="font-bold text-lg mb-2">Empowering Minds</h3>
+            <p className="text-gray-700 text-center">We equip students with technical skills, problem-solving abilities, and the growth mindset needed to tackle real-world challenges.</p>
+          </div>
+          <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center">
+            <img src="https://img.icons8.com/ios-filled/100/000000/virtual-reality.png" alt="Future-Ready Students" className="w-16 h-16 mb-4" />
+            <h3 className="font-bold text-lg mb-2">Future-Ready Students</h3>
+            <p className="text-gray-700 text-center">Our curriculum evolves with industry trends, helping students adapt, innovate and succeed in an increasingly digital world.</p>
+          </div>
+        </div>
+      </div>
+      {/* Certifications Section */}
+      <div className="mt-16 text-center">
+        <span className="inline-block bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-sm font-semibold mb-2">Accreditations</span>
+        <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-purple-600 to-pink-500 mb-2">Officially Certified & Recognized</h2>
+        <p className="text-gray-700 mb-8">Our accreditations reflect our commitment to quality education and compliance with national standards.</p>
+        <div className="flex flex-wrap justify-center gap-8">
+          <div className="flex flex-col items-center">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6e/MSME_Logo.png" alt="MSME Certified" className="w-20 h-20 object-contain mb-2" />
+            <span className="text-gray-700 text-sm">MSME Certified</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Startup_India_Logo.png" alt="Startup India Recognized" className="w-20 h-20 object-contain mb-2" />
+            <span className="text-gray-700 text-sm">Startup India Recognized</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/MeitY_Logo.png" alt="MeitY Certified" className="w-20 h-20 object-contain mb-2" />
+            <span className="text-gray-700 text-sm">MeitY Certified</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <Footer />
+  </div>
+);
+
+export default About; 

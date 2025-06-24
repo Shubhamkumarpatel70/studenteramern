@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Offer Letter</title>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #f4f4f4; }
+    .container { background: #fff; margin: 32px auto; padding: 40px 48px; border-radius: 8px; max-width: 800px; box-shadow: 0 2px 16px rgba(0,0,0,0.08); }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #e0e0e0; padding-bottom: 16px; margin-bottom: 24px; }
+    .logo-block { display: flex; flex-direction: column; align-items: flex-start; }
+    .logo { height: 60px; margin-bottom: 8px; }
+    .company-name { font-size: 1.5rem; font-weight: bold; color: #2d3a4a; letter-spacing: 2px; }
+    .address-block { text-align: right; font-size: 0.98rem; color: #444; }
+    .ref-date-row { display: flex; justify-content: space-between; margin: 24px 0 8px 0; font-size: 1rem; }
+    .bold { font-weight: bold; }
+    .subject-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .subject { font-weight: bold; text-decoration: underline; font-size: 1.1rem; }
+    .date { font-weight: bold; }
+    .content { font-size: 1.05rem; color: #222; }
+    .highlight { font-weight: bold; color: #1a237e; }
+    .confidential { font-weight: bold; text-align: center; margin: 18px 0 8px 0; text-decoration: underline; }
+    .terms { margin: 0 0 18px 0; }
+    .terms li { margin-bottom: 6px; }
+    .signature-block { margin-top: 40px; display: flex; justify-content: space-between; align-items: flex-end; }
+    .signatures { width: 100%; display: flex; justify-content: space-between; margin-top: 48px; font-size: 0.98rem; }
+    .sign-col { text-align: center; width: 24%; }
+    .footer { margin-top: 32px; font-size: 0.98rem; color: #555; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo-block">
+        <img src="{{companyLogo}}" alt="Company Logo" class="logo" />
+        <div class="company-name">{{company}}</div>
+      </div>
+      <div class="address-block">
+        {{companyAddress}}<br />
+        {{companyEmail}}<br />
+        {{companyWebsite}}
+      </div>
+    </div>
+    <div class="ref-date-row">
+      <div>REF: {{referenceNo}}</div>
+      <div><span class="bold">Dated:</span> {{issueDate}}</div>
+    </div>
+    <div class="subject-row">
+      <div class="subject">LETTER OF OFFER</div>
+    </div>
+    <div class="content">
+      <p>Dear <span class="highlight">{{candidateName}}</span>,<br />
+      Intern ID <span class="highlight">{{internId}}</span></p>
+      <p>Congratulations!!</p>
+      <div class="confidential">STRICTLY PRIVATE &amp; CONFIDENTIAL</div>
+      <p>We are pleased to offer you a Summer Internship with <span class="highlight">{{company}}</span>, based on your application and the interview &amp; discussions you had with us. Details of the terms &amp; conditions of offer are as under:</p>
+      <ol class="terms">
+        <li>You must always maintain utmost secrecy and confidentiality of your offer, its terms, and of any information about the company, and shall not disclose any such details to outsiders.</li>
+        <li>You will be designated as <span class="highlight">{{title}}</span>.</li>
+        <li>Your date of commencement of internship will be from <span class="highlight">{{startDate}}</span> in WFH mode.</li>
+        <li>You will be entitled to receive compensation and benefits as discussed at the time of interview.</li>
+        <li>You agree to work in both work environments i.e., WFH, Work from office.</li>
+        <li>{{techPartner}} shall be the official Technology Partner for this internship.</li>
+        <li>The company reserves all rights to withdraw this internship offer at any time without giving any reasons.</li>
+        <li>In addition to core responsibilities of this internship, the company may assign additional tasks or projects based on operational needs and availability. The intern is expected to contribute effectively to such assignments as per the company's discretion.</li>
+      </ol>
+      <p>Kindly sign and return a copy of this letter as a token of your acceptance of the offer.</p>
+      <p>Looking forward to a long and mutually beneficial career with us</p>
+      <div class="footer">Yours truly,<br />For {{company}}<br /><br /><img src="{{hrSignature}}" alt="HR Signature" style="height:40px; margin:8px 0;" /><br />{{hrName}} ({{hrTitle}})</div>
+      <div class="signatures">
+        <div class="sign-col">{{hrName}}<br /><span style="font-size:0.95em;">({{hrTitle}})</span></div>
+        <div class="sign-col">Applicant Sign</div>
+        <div class="sign-col">College</div>
+        <div class="sign-col">Location</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html> 
