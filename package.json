@@ -1,5 +1,25 @@
 {
+  "name": "student-era-mern",
+  "version": "1.0.0",
+  "description": "Student Era MERN Stack Application",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && npm start",
+    "build": "cd frontend && npm run build",
+    "install-server": "cd backend && npm install",
+    "install-client": "cd frontend && npm install",
+    "install-all": "npm run install-server && npm run install-client",
+    "vercel-build": "cd frontend && npm install && npm run build"
+  },
+  "keywords": ["mern", "react", "node", "express", "mongodb"],
+  "author": "Shubham Kumar Patel",
+  "license": "MIT",
   "dependencies": {
     "pdfkit": "^0.17.1"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
   }
 }
