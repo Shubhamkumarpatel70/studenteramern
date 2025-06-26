@@ -285,10 +285,7 @@ const LatestInternships = () => {
                 const res = await api.get('/internships/public');
                 setInternships(res.data.data);
             } catch (err) {
-                setError('Could not fetch internships at the moment. Please try again later.');
-                console.error(err);
-            } finally {
-                setLoading(false);
+                console.error('Error fetching internships:', err);
             }
         };
         fetchInternships();
@@ -334,9 +331,6 @@ const TestimonialsSection = () => {
                 setTestimonials(data.data);
             } catch (error) {
                 console.error("Could not fetch testimonials", error);
-                // Keep the static testimonials as a fallback
-            } finally {
-                setLoading(false);
             }
         };
         fetchTestimonials();
