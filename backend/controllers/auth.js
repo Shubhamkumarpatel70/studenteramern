@@ -27,24 +27,35 @@ exports.register = async (req, res, next) => {
             user.password = password; // This will trigger the pre-save hook to re-hash
             await user.save();
         } else {
-            // Create user
+            // Create new user with OTP
             const internId = `SE${Date.now()}`;
             user = await User.create({
                 name,
                 email,
                 password,
                 role,
-                internId
+                internId,
+                otp: hashedOtp,
+                otpExpires: otpExpires
             });
         }
         
         // Send OTP email
-        await sendEmailToUser(user, otp);
-
-        res.status(200).json({ success: true, message: `An OTP has been sent to ${user.email}` });
+        try {
+            await sendEmailToUser(user, otp);
+            res.status(200).json({ success: true, message: `An OTP has been sent to ${user.email}` });
+        } catch (emailError) {
+            console.error("Failed to send OTP email:", emailError);
+            // Still save the user but inform about email issue
+            res.status(200).json({ 
+                success: true, 
+                message: `Registration successful but OTP email failed. Please contact support.`,
+                emailError: true
+            });
+        }
 
     } catch (err) {
-        console.error(err);
+        console.error('Registration error:', err);
         // Check for duplicate key error
         if (err.code === 11000) {
             return res.status(400).json({ success: false, message: 'An account with this email already exists.' });

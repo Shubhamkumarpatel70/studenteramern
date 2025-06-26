@@ -53,6 +53,23 @@ app.use('/api/contact-queries', require('./routes/contactQueries'));
 app.use('/api/help-queries', require('./routes/helpQueries'));
 app.use('/api/payment-options', require('./routes/paymentOptions'));
 
+// Root route
+app.get('/', (req, res) => {
+    res.json({ 
+        message: 'Student Era Backend API is running!',
+        version: '1.0.0',
+        status: 'active'
+    });
+});
+
+// Handle 404 for undefined routes
+app.use('*', (req, res) => {
+    res.status(404).json({ 
+        success: false, 
+        message: `Route ${req.originalUrl} not found` 
+    });
+});
+
 const PORT = process.env.PORT || 5000;
 
 const server = app.listen(
