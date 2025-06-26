@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
+import api from '../config/api';
 import { Loader2, AlertCircle } from 'lucide-react';
 
 const InternshipCard = ({ internship }) => {
@@ -32,7 +32,7 @@ const Internships = () => {
     useEffect(() => {
         const fetchInternships = async () => {
             try {
-                const { data } = await axios.get('/api/internships/public');
+                const { data } = await api.get('/internships/public');
                 setInternships(data.data);
             } catch (err) {
                 setError('Failed to load internships.');

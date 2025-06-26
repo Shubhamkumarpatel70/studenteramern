@@ -1,5 +1,5 @@
 import React, { createContext, useReducer, useEffect } from 'react';
-import axios from 'axios';
+import api from '../config/api';
 import setAuthToken from '../utils/setAuthToken';
 import { toast } from 'react-toastify';
 
@@ -92,7 +92,7 @@ export const AuthProvider = ({ children }) => {
         const config = { headers: { 'Content-Type': 'application/json' } };
         const body = JSON.stringify({ email, password });
         try {
-            const res = await axios.post('/api/auth/login', body, config);
+            const res = await api.post('/auth/login', body, config);
             dispatch({ type: 'LOGIN_SUCCESS', payload: res.data });
             // Removed notification for login
             return res.data.user;
@@ -105,7 +105,7 @@ export const AuthProvider = ({ children }) => {
     const register = async (userData) => {
         const config = { headers: { 'Content-Type': 'application/json' } };
         try {
-            const res = await axios.post('/api/auth/register', userData, config);
+            const res = await api.post('/auth/register', userData, config);
             // Add notification with login ID and intern ID (if available)
             addLocalNotification(`Registration successful! Login ID: ${res.data.user?.email || userData.email} | Intern ID: ${res.data.user?.internId || 'Check your email/OTP'}`);
             return res.data;
@@ -116,7 +116,7 @@ export const AuthProvider = ({ children }) => {
 
     const updateUserProfile = async (profileData) => {
         try {
-            const res = await axios.put('/api/profile', profileData);
+            const res = await api.put('/profile', profileData);
             dispatch({ type: 'PROFILE_UPDATE_SUCCESS', payload: res.data.data });
         } catch (err) {
             console.error('Profile update failed:', err);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { Trash2 } from 'lucide-react';
 
 const PostAnnouncement = () => {
@@ -12,7 +12,7 @@ const PostAnnouncement = () => {
 
     const fetchAnnouncements = async () => {
         try {
-            const { data } = await axios.get('/api/announcements');
+            const { data } = await api.get('/announcements');
             setAnnouncements(data.data);
         } catch (err) {
             console.error("Could not fetch announcements", err);
@@ -32,7 +32,7 @@ const PostAnnouncement = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            await axios.post('/api/announcements', { message, link }, config);
+            await api.post('/announcements', { message, link }, config);
             
             setSuccess('Announcement posted successfully!');
             setMessage('');
@@ -50,7 +50,7 @@ const PostAnnouncement = () => {
             try {
                 const token = localStorage.getItem('token');
                 const config = { headers: { Authorization: `Bearer ${token}` } };
-                await axios.delete(`/api/announcements/${id}`, config);
+                await api.delete(`/announcements/${id}`, config);
                 fetchAnnouncements(); // Refresh the list
             } catch (err) {
                  setError('Could not delete announcement.');

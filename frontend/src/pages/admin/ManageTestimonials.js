@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 
 const TestimonialModal = ({ testimonial, onClose, onSave, isLoading }) => {
@@ -72,7 +72,7 @@ const ManageTestimonials = () => {
     const fetchTestimonials = async () => {
         try {
             setLoading(true);
-            const { data } = await axios.get('/api/testimonials');
+            const { data } = await api.get('/testimonials');
             setTestimonials(data.data);
         } catch (err) {
             setError('Failed to fetch testimonials.');
@@ -93,10 +93,10 @@ const ManageTestimonials = () => {
         try {
             if (testimonialData._id) {
                 // Update existing
-                await axios.put(`/api/testimonials/${testimonialData._id}`, testimonialData, config);
+                await api.put(`/testimonials/${testimonialData._id}`, testimonialData, config);
             } else {
                 // Create new
-                await axios.post('/api/testimonials', testimonialData, config);
+                await api.post('/testimonials', testimonialData, config);
             }
             fetchTestimonials();
             setIsModalOpen(false);
@@ -114,7 +114,7 @@ const ManageTestimonials = () => {
             try {
                 const token = localStorage.getItem('token');
                 const config = { headers: { Authorization: `Bearer ${token}` } };
-                await axios.delete(`/api/testimonials/${id}`, config);
+                await api.delete(`/testimonials/${id}`, config);
                 fetchTestimonials();
             } catch (err) {
                  setError('Could not delete testimonial.');

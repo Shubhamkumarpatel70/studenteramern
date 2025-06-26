@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../config/api';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
@@ -8,7 +8,7 @@ const ForgotPassword = () => {
     const onSubmit = async e => {
         e.preventDefault();
         try {
-            await axios.post('https://studenteramernbackend.onrender.com/api/auth/forgotpassword', { email });
+            await api.post('/auth/forgotpassword', { email });
             setMessage('An email has been sent with password reset instructions.');
         } catch (err) {
             setMessage('Error: Could not send email.');

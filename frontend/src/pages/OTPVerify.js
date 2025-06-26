@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../config/api';
 
 const OTPVerify = () => {
     const [otp, setOtp] = useState('');
@@ -13,7 +13,7 @@ const OTPVerify = () => {
         e.preventDefault();
         setError('');
         try {
-            await axios.post('https://studenteramernbackend.onrender.com/api/auth/verify-otp', { email, otp });
+            await api.post('/auth/verify-otp', { email, otp });
             navigate('/login');
         } catch (err) {
             const msg = err.response?.data?.message || 'Invalid OTP. Please try again.';
@@ -24,7 +24,7 @@ const OTPVerify = () => {
 
     const onResend = async () => {
         try {
-            await axios.post('https://studenteramernbackend.onrender.com/api/auth/resend-otp', { email });
+            await api.post('/auth/resend-otp', { email });
             alert('A new OTP has been sent to your email.');
         } catch (err) {
             alert('Failed to resend OTP.');

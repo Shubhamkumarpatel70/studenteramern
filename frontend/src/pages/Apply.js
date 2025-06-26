@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../config/api';
 import AuthContext from '../context/AuthContext';
 import { Loader2, AlertCircle } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
@@ -32,7 +32,7 @@ const Apply = () => {
         
         const fetchInternship = async () => {
             try {
-                const res = await axios.get(`/api/internships/public/${internshipId}`);
+                const res = await api.get(`/internships/public/${internshipId}`);
                 setInternship(res.data.data);
             } catch (err) {
                 console.error(err);
@@ -44,7 +44,7 @@ const Apply = () => {
         fetchInternship();
 
         // Fetch payment options
-        axios.get('/api/payment-options').then(res => {
+        api.get('/payment-options').then(res => {
             setPaymentOptions(res.data.data);
             setSelectedOption(res.data.data[0] || null);
         });
@@ -77,7 +77,7 @@ const Apply = () => {
                 certificateName,
                 utr
             };
-            const { data } = await axios.post('/api/applications', applicationData, config);
+            const { data } = await api.post('/applications', applicationData, config);
             navigate(`/payment/${data.data._id}`);
         } catch (err) {
             setError(err.response?.data?.message || 'Could not start application process.');

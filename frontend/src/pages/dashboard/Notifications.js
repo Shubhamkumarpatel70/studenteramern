@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { Bell, Check, Loader2, X } from 'lucide-react';
 import AuthContext from '../../context/AuthContext';
 
@@ -13,7 +13,7 @@ const Notifications = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            const res = await axios.get('/api/notifications', config);
+            const res = await api.get('/notifications', config);
             setNotifications(res.data.data);
         } catch (err) {
             setError('Could not fetch notifications.');
@@ -31,7 +31,7 @@ const Notifications = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            await axios.put(`/api/notifications/${id}/read`, {}, config);
+            await api.put(`/notifications/${id}/read`, {}, config);
             
             // Update the state locally to reflect the change immediately
             setNotifications(notifications.map(n => n._id === id ? { ...n, read: true } : n));

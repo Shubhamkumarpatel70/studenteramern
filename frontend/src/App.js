@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import axios from 'axios';
+import api from './config/api';
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
@@ -83,7 +83,7 @@ const AppContent = () => {
     window.addEventListener('offline', handleOffline);
 
     // Axios interceptor for server errors
-    const responseInterceptor = axios.interceptors.response.use(
+    const responseInterceptor = api.interceptors.response.use(
       response => response,
       error => {
         if (!error.response) {
@@ -100,7 +100,7 @@ const AppContent = () => {
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
-      axios.interceptors.response.eject(responseInterceptor);
+      api.interceptors.response.eject(responseInterceptor);
     };
   }, []);
 

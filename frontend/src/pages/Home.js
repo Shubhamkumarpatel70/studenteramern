@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../config/api';
 import AuthContext from '../context/AuthContext';
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -123,7 +123,7 @@ const AnnouncementBar = () => {
     useEffect(() => {
         const fetchAnnouncements = async () => {
             try {
-                const { data } = await axios.get('/api/announcements');
+                const { data } = await api.get('/announcements');
                 if (data.data && data.data.length > 0) {
                     setAnnouncements(data.data);
                 }
@@ -282,7 +282,7 @@ const LatestInternships = () => {
     useEffect(() => {
         const fetchInternships = async () => {
             try {
-                const res = await axios.get('/api/internships/public');
+                const res = await api.get('/internships/public');
                 setInternships(res.data.data);
             } catch (err) {
                 setError('Could not fetch internships at the moment. Please try again later.');
@@ -330,7 +330,7 @@ const TestimonialsSection = () => {
     useEffect(() => {
         const fetchTestimonials = async () => {
             try {
-                const { data } = await axios.get('/api/testimonials');
+                const { data } = await api.get('/testimonials');
                 setTestimonials(data.data);
             } catch (error) {
                 console.error("Could not fetch testimonials", error);

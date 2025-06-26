@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../config/api';
 import AuthContext from '../context/AuthContext';
 import { Loader2, AlertCircle, Briefcase, Calendar, MapPin, Code, IndianRupee } from 'lucide-react';
 
@@ -15,7 +15,7 @@ const InternshipDetails = () => {
     useEffect(() => {
         const fetchInternship = async () => {
             try {
-                const { data } = await axios.get(`/api/internships/public/${id}`);
+                const { data } = await api.get(`/internships/public/${id}`);
                 setInternship(data.data);
             } catch (err) {
                 setError('Could not load internship details. It might be closed or invalid.');

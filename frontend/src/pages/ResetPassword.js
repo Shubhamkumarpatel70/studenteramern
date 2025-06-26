@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../config/api';
 
 const ResetPassword = () => {
     const { resettoken } = useParams();
@@ -16,7 +16,7 @@ const ResetPassword = () => {
             return;
         }
         try {
-            await axios.put(`https://studenteramernbackend.onrender.com/api/auth/resetpassword/${resettoken}`, { password });
+            await api.put(`/auth/resetpassword/${resettoken}`, { password });
             setMessage('Password has been reset successfully. You can now log in.');
             setTimeout(() => navigate('/login'), 3000);
         } catch (err) {

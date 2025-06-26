@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { Link } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
 import setAuthToken from '../../utils/setAuthToken';
@@ -28,7 +28,7 @@ const DashboardHome = () => {
                 setAuthToken(localStorage.token);
             }
             try {
-                const res = await axios.get('https://studenteramernbackend.onrender.com/api/dashboard/stats');
+                const res = await api.get('/dashboard/stats');
                 setStats(res.data.data);
                 setLoading(false);
             } catch (err) {

@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../config/api';
 import AuthContext from '../context/AuthContext';
 import { AlertTriangle, BadgeCheck, CreditCard, Loader2 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
@@ -34,7 +34,7 @@ const PaymentPage = () => {
         }
         const fetchInternship = async () => {
             try {
-                const res = await axios.get(`/api/internships/public/${internshipId}`);
+                const res = await api.get(`/internships/public/${internshipId}`);
                 setInternship(res.data.data);
             } catch (err) {
                 setError('Could not load internship details. It might be closed or invalid.');
@@ -43,7 +43,7 @@ const PaymentPage = () => {
             }
         };
         fetchInternship();
-        axios.get('/api/payment-options').then(res => {
+        api.get('/payment-options').then(res => {
             setPaymentOptions(res.data.data);
             setSelectedOption(res.data.data[0] || null);
         });
@@ -78,7 +78,7 @@ const PaymentPage = () => {
             formData.append('certificateName', certificateName);
             formData.append('utr', utr);
             formData.append('paymentScreenshot', screenshot);
-            await axios.post('/api/applications', formData, config);
+            await api.post('/applications', formData, config);
             setSuccess(true);
         } catch (err) {
             setError(err.response?.data?.message || 'Could not submit application.');
