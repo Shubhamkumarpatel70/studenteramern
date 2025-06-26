@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import AuthContext from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { Loader2, AlertCircle, Eye } from 'lucide-react';
@@ -28,7 +28,7 @@ const AppliedInternships = () => {
             try {
                 const token = localStorage.getItem('token');
                 const config = { headers: { Authorization: `Bearer ${token}` } };
-                const res = await axios.get('/api/applications/my-applications', config);
+                const res = await api.get('/applications/my-applications', config);
                 setApplications(res.data.data);
             } catch (err) {
                 setError('Failed to fetch your applications.');

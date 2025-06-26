@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { Link } from 'react-router-dom';
 import { Loader2, Calendar, Clock, Video } from 'lucide-react';
 
@@ -73,7 +73,7 @@ const Meetings = () => {
             try {
                 const token = localStorage.getItem('token');
                 const config = { headers: { Authorization: `Bearer ${token}` } };
-                const { data } = await axios.get('/api/meetings', config);
+                const { data } = await api.get('/meetings', config);
                 setMeetings(data.data);
             } catch (err) {
                 setError('Could not fetch meetings.');

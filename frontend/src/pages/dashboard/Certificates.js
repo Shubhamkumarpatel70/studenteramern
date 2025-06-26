@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { Award, Clock, Loader2 } from 'lucide-react';
 
 const Certificates = () => {
@@ -19,8 +19,8 @@ const Certificates = () => {
             
             try {
                 const [certsRes, tasksRes] = await Promise.all([
-                    axios.get('/api/certificates/my-certificates', config),
-                    axios.get('/api/assigned-tasks/my-tasks', config)
+                    api.get('/certificates/my-certificates', config),
+                    api.get('/assigned-tasks/my-tasks', config)
                 ]);
                 
                 setCertificates(certsRes.data.data);
@@ -43,7 +43,7 @@ const Certificates = () => {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
             try {
-                const res = await axios.get('/api/assigned-tasks/my-tasks', config);
+                const res = await api.get('/assigned-tasks/my-tasks', config);
                 setAllTasks(res.data.data);
             } catch (err) {
                 // ignore
@@ -71,9 +71,9 @@ const Certificates = () => {
         const token = localStorage.getItem('token');
         const config = { headers: { Authorization: `Bearer ${token}` } };
         try {
-            await axios.post('/api/certificates/generate-self', { internshipId }, config);
+            await api.post('/certificates/generate-self', { internshipId }, config);
             // Refresh certificates
-            const certsRes = await axios.get('/api/certificates/my-certificates', config);
+            const certsRes = await api.get('/certificates/my-certificates', config);
             setCertificates(certsRes.data.data);
         } catch (err) {
             setGenError(prev => ({ ...prev, [internshipId]: err.response?.data?.message || 'Failed to generate certificate.' }));

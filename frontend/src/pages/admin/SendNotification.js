@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { Send, User, Users, AtSign, Loader2 } from 'lucide-react';
 
 const SendNotification = () => {
@@ -42,7 +42,7 @@ const SendNotification = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            const res = await axios.post('/api/notifications', { message, target }, config);
+            const res = await api.post('/notifications', { message, target }, config);
 
             setSuccess(res.data.message || 'Notification sent successfully!');
             setMessage('');

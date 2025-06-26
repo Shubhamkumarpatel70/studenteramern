@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import setAuthToken from '../../utils/setAuthToken';
+import api from '../../config/api';
 import EditUserModal from '../../components/admin/EditUserModal';
 import { Trash, Edit } from 'lucide-react';
 
@@ -12,9 +11,8 @@ const ManageUsers = () => {
 
     const fetchUsers = async () => {
         setLoading(true);
-        if (localStorage.token) setAuthToken(localStorage.token);
         try {
-            const res = await axios.get('https://studenteramernbackend.onrender.com/api/users');
+            const res = await api.get('/users');
             setUsers(res.data.data);
         } catch (err) {
             console.error('Failed to fetch users', err);
@@ -36,7 +34,7 @@ const ManageUsers = () => {
     const handleDelete = async (userId) => {
         if (window.confirm('Are you sure you want to delete this user? This cannot be undone.')) {
             try {
-                await axios.delete(`https://studenteramernbackend.onrender.com/api/users/${userId}`);
+                await api.delete(`/users/${userId}`);
                 fetchUsers(); // Refresh user list
             } catch (err) {
                 console.error('Failed to delete user', err);
@@ -47,7 +45,7 @@ const ManageUsers = () => {
 
     const handleModalSave = async (updatedUser) => {
         try {
-            await axios.put(`https://studenteramernbackend.onrender.com/api/users/${updatedUser._id}`, updatedUser);
+            await api.put(`/users/${updatedUser._id}`, updatedUser);
             setIsModalOpen(false);
             setSelectedUser(null);
             fetchUsers(); // Refresh user list

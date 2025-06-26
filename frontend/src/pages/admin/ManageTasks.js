@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { Loader2, CheckCircle, XCircle, FileText, ExternalLink } from 'lucide-react';
 
 const ManageTasks = () => {
@@ -11,7 +11,7 @@ const ManageTasks = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            const res = await axios.get('/api/tasks/admin', config);
+            const res = await api.get('/tasks/admin', config);
             setTasks(res.data.data);
         } catch (err) {
             setError('Could not fetch tasks.');
@@ -29,7 +29,7 @@ const ManageTasks = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            await axios.put(`/api/tasks/${id}/status`, { status }, config);
+            await api.put(`/tasks/${id}/status`, { status }, config);
             // Refresh the tasks list to show the updated status
             fetchTasks(); 
         } catch (err) {

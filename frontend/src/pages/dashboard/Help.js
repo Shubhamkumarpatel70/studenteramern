@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
-import axios from "axios";
+import api from '../../config/api';
 import AuthContext from "../../context/AuthContext";
 
 const Help = () => {
@@ -19,7 +19,7 @@ const Help = () => {
       setLoading(true);
       setError("");
       try {
-        const res = await axios.get("/api/help-queries/my");
+        const res = await api.get("/help-queries/my");
         setAllQueries(res.data.data);
         // Find open query or most recent
         const openQuery = res.data.data.find(q => q.status === "open");
@@ -52,14 +52,14 @@ const Help = () => {
     try {
       if (!queryId) {
         // Start a new query
-        const res = await axios.post("/api/help-queries/start", { text: input });
+        const res = await api.post("/help-queries/start", { text: input });
         setQueryId(res.data.data._id);
         setMessages(res.data.data.messages || []);
         setAllQueries(qs => [res.data.data, ...qs]);
       } else {
         // Add message to existing query
         try {
-          const res = await axios.post(`/api/help-queries/${queryId}/message`, { text: input, from: "user" });
+          const res = await api.post(`/help-queries/${queryId}/message`, { text: input, from: "user" });
           setMessages(res.data.data.messages || []);
           setAllQueries(qs => qs.map(q => q._id === res.data.data._id ? res.data.data : q));
         } catch (err) {
@@ -68,7 +68,7 @@ const Help = () => {
           // If any 400 error, start a new query
           if (err.response && err.response.status === 400) {
             try {
-              const res = await axios.post("/api/help-queries/start", { text: input });
+              const res = await api.post("/help-queries/start", { text: input });
               setQueryId(res.data.data._id);
               setMessages(res.data.data.messages || []);
               setAllQueries(qs => [res.data.data, ...qs]);

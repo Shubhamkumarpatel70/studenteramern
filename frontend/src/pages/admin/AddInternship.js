@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { useNavigate } from 'react-router-dom';
 import { Edit, Trash } from 'lucide-react';
 import EditInternshipModal from './EditInternshipModal';
@@ -33,7 +33,7 @@ const AddInternship = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            const res = await axios.get('/api/internships', config);
+            const res = await api.get('/internships', config);
             setInternships(res.data.data);
         } catch (err) {
             console.error('Failed to fetch internships', err);
@@ -90,7 +90,7 @@ const AddInternship = () => {
                 }
             };
             
-            await axios.post('/api/internships', internshipData, config);
+            await api.post('/internships', internshipData, config);
             
             setSuccess('Internship created successfully!');
             fetchInternships(); // Refresh the list
@@ -120,7 +120,7 @@ const AddInternship = () => {
             try {
                 const token = localStorage.getItem('token');
                 const config = { headers: { Authorization: `Bearer ${token}` } };
-                await axios.delete(`/api/internships/${id}`, config);
+                await api.delete(`/internships/${id}`, config);
                 fetchInternships(); // Refresh the list
             } catch (err) {
                 console.error('Failed to delete internship', err);
@@ -138,7 +138,7 @@ const AddInternship = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            await axios.put(`/api/internships/${updatedInternship._id}`, updatedInternship, config);
+            await api.put(`/internships/${updatedInternship._id}`, updatedInternship, config);
             
             setIsModalOpen(false);
             fetchInternships(); // Refresh list

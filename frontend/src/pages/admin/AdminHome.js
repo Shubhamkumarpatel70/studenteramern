@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import setAuthToken from '../../utils/setAuthToken';
+import api from '../../config/api';
 import { Users, Briefcase, Calendar, DollarSign, FileText, CheckCircle2 } from 'lucide-react';
 
 const StatCard = ({ icon, title, value, color }) => (
@@ -22,10 +21,10 @@ const AdminHome = () => {
     useEffect(() => {
         const fetchStats = async () => {
             if (localStorage.token) {
-                setAuthToken(localStorage.token);
+                api.defaults.headers.common['Authorization'] = `Bearer ${localStorage.token}`;
             }
             try {
-                const res = await axios.get('https://studenteramernbackend.onrender.com/api/dashboard/stats');
+                const res = await api.get('/dashboard/stats');
                 setStats(res.data.data);
             } catch (err) {
                 console.error('Failed to fetch admin stats', err);

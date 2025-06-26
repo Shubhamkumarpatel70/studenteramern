@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { Loader2, Calendar, Clock, CheckCircle, AlertCircle, PlayCircle, User, Briefcase } from 'lucide-react';
 
 const MyTasks = () => {
@@ -12,7 +12,7 @@ const MyTasks = () => {
             try {
                 const token = localStorage.getItem('token');
                 const config = { headers: { Authorization: `Bearer ${token}` } };
-                const res = await axios.get('/api/assigned-tasks/my-tasks', config);
+                const res = await api.get('/assigned-tasks/my-tasks', config);
                 setTasks(res.data.data);
             } catch (err) {
                 setError('Could not fetch your tasks.');

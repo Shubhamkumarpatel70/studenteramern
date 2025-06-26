@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { Trash, Edit } from 'lucide-react';
 
 const ManageMeetings = () => {
@@ -25,7 +25,7 @@ const ManageMeetings = () => {
 
     const fetchMeetings = async () => {
         try {
-            const res = await axios.get('/api/meetings', apiConfig());
+            const res = await api.get('/meetings', apiConfig());
             setMeetings(res.data.data);
         } catch (err) {
             console.error('Failed to fetch meetings', err);
@@ -34,7 +34,7 @@ const ManageMeetings = () => {
 
     const fetchInternships = async () => {
         try {
-            const res = await axios.get('/api/internships', apiConfig());
+            const res = await api.get('/internships', apiConfig());
             setInternships(res.data.data);
         } catch (err) {
             console.error('Failed to fetch internships', err);
@@ -69,7 +69,7 @@ const ManageMeetings = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this meeting?')) {
             try {
-                await axios.delete(`/api/meetings/${id}`, apiConfig());
+                await api.delete(`/meetings/${id}`, apiConfig());
                 fetchMeetings();
             } catch (err) {
                 setError('Could not delete meeting.');
@@ -96,10 +96,10 @@ const ManageMeetings = () => {
 
         try {
             if (editMode) {
-                await axios.put(`/api/meetings/${selectedMeetingId}`, meetingData, apiConfig());
+                await api.put(`/meetings/${selectedMeetingId}`, meetingData, apiConfig());
                 setSuccess('Meeting updated successfully!');
             } else {
-                await axios.post('/api/meetings', meetingData, apiConfig());
+                await api.post('/meetings', meetingData, apiConfig());
                 setSuccess('Meeting created successfully!');
             }
             fetchMeetings();

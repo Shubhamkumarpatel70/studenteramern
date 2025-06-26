@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import setAuthToken from '../../utils/setAuthToken';
 
 const StatusBadge = ({ status }) => {
@@ -22,7 +22,7 @@ const Transactions = () => {
                 setAuthToken(localStorage.token);
             }
             try {
-                const res = await axios.get('https://studenteramernbackend.onrender.com/api/transactions/my-transactions');
+                const res = await api.get('/transactions/my-transactions');
                 setTransactions(res.data.data);
             } catch (err) {
                 console.error('Failed to fetch transactions', err);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { Link } from 'react-router-dom';
 import { FileText, Loader2, Inbox } from 'lucide-react';
 
@@ -17,8 +17,8 @@ const OfferLetters = () => {
             
             try {
                 const [lettersRes, appsRes] = await Promise.all([
-                    axios.get('/api/offer-letters/my-offer-letters', config),
-                    axios.get('/api/applications/my-applications', config)
+                    api.get('/offer-letters/my-offer-letters', config),
+                    api.get('/applications/my-applications', config)
                 ]);
                 
                 setOfferLetters(lettersRes.data.data);

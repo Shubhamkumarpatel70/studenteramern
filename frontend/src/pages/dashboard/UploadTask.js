@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { Upload, Loader2, PlusCircle, XCircle, File, Edit, Trash2 } from 'lucide-react';
 
 const UploadTask = () => {
@@ -23,7 +23,7 @@ const UploadTask = () => {
             try {
                 const token = localStorage.getItem('token');
                 const config = { headers: { Authorization: `Bearer ${token}` } };
-                const res = await axios.get('/api/assigned-tasks/my-tasks', config);
+                const res = await api.get('/assigned-tasks/my-tasks', config);
                 const activeTasks = res.data.data.filter(task => task.status !== 'completed');
                 setAssignedTasks(activeTasks);
             } catch (err) {
@@ -36,7 +36,7 @@ const UploadTask = () => {
             try {
                 const token = localStorage.getItem('token');
                 const config = { headers: { Authorization: `Bearer ${token}` } };
-                const res = await axios.get('/api/tasks/my-uploads', config);
+                const res = await api.get('/tasks/my-uploads', config);
                 setUploadedTasks(res.data.data);
             } catch (err) {
                 // ignore
@@ -109,7 +109,7 @@ const UploadTask = () => {
                     Authorization: `Bearer ${token}` 
                 }
             };
-            await axios.post('/api/tasks', submissionData, config);
+            await api.post('/tasks', submissionData, config);
             setSuccess('Your task has been submitted successfully!');
             // Reset form
             setFormData({ assignedTask: '', internship: '', title: '' });
@@ -139,7 +139,7 @@ const UploadTask = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            await axios.delete(`/api/tasks/${id}`, config);
+            await api.delete(`/tasks/${id}`, config);
             setUploadedTasks(uploadedTasks.filter(t => t._id !== id));
         } catch (err) {
             alert('Failed to delete uploaded task.');

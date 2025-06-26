@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { Plus, Loader2, Calendar, User, Briefcase, Clock } from 'lucide-react';
 
 const AssignTasks = () => {
@@ -27,9 +27,9 @@ const AssignTasks = () => {
                 const config = { headers: { Authorization: `Bearer ${token}` } };
                 
                 const [usersRes, internshipsRes, tasksRes] = await Promise.all([
-                    axios.get('/api/users', config),
-                    axios.get('/api/internships', config),
-                    axios.get('/api/assigned-tasks', config)
+                    api.get('/users', config),
+                    api.get('/internships', config),
+                    api.get('/assigned-tasks', config)
                 ]);
                 
                 setUsers(usersRes.data.data.filter(user => user.role === 'user'));
@@ -56,7 +56,7 @@ const AssignTasks = () => {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
             
-            const res = await axios.post('/api/assigned-tasks', formData, config);
+            const res = await api.post('/assigned-tasks', formData, config);
             
             setSuccess('Task assigned successfully!');
             setAssignedTasks([res.data.data, ...assignedTasks]);

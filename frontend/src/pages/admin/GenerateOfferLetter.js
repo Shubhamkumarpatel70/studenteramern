@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import setAuthToken from '../../utils/setAuthToken';
 
 const GenerateOfferLetter = () => {
@@ -11,7 +11,7 @@ const GenerateOfferLetter = () => {
         company: 'Student Era',
         issueDate: '',
         startDate: '',
-        techPartner: '',
+        techPartner: 'Student Era',
         stipend: ''
     });
     const [showPreview, setShowPreview] = useState(false);
@@ -24,7 +24,7 @@ const GenerateOfferLetter = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            const res = await axios.get('https://studenteramernbackend.onrender.com/api/offer-letters', config);
+            const res = await api.get('/offer-letters', config);
             setAllLetters(res.data.data);
         } catch (err) {
             setAllLetters([]);
@@ -41,7 +41,7 @@ const GenerateOfferLetter = () => {
         e.preventDefault();
         if (localStorage.token) setAuthToken(localStorage.token);
         try {
-            const res = await axios.post('https://studenteramernbackend.onrender.com/api/offer-letters', formData);
+            const res = await api.post('/offer-letters', formData);
             alert('Offer letter generated successfully!');
             setGeneratedLetter(res.data.data);
             setFormData({ user: '', candidateName: '', internId: '', title: '', company: 'Student Era', issueDate: '', startDate: '', techPartner: '', stipend: '' });
@@ -58,7 +58,7 @@ const GenerateOfferLetter = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            await axios.delete(`https://studenteramernbackend.onrender.com/api/offer-letters/${id}`, config);
+            await api.delete(`/offer-letters/${id}`, config);
             fetchAllLetters();
         } catch (err) {
             alert('Failed to delete offer letter.');

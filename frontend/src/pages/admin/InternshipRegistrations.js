@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { CheckCircle2, XCircle, Eye } from 'lucide-react';
 
 const InternshipRegistrations = () => {
@@ -15,7 +15,7 @@ const InternshipRegistrations = () => {
     const fetchApplications = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get('/api/applications', {
+            const res = await api.get('/applications', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setApplications(res.data.data);
@@ -34,7 +34,7 @@ const InternshipRegistrations = () => {
         try {
             const token = localStorage.getItem('token');
             const body = { status, rejectionReason: reason };
-            await axios.put(`/api/applications/${id}/status`, body, {
+            await api.put(`/applications/${id}/status`, body, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchApplications(); // Refresh the list
