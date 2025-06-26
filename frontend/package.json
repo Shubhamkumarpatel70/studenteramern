@@ -14,6 +14,8 @@
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.2",
     "react-scripts": "5.0.1",
+    "react-toastify": "^11.0.5",
+    "react-tooltip": "^5.29.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -29,7 +31,7 @@
       "react-app/jest"
     ]
   },
-  "proxy": "https://your-backend-url.vercel.app",
+  "proxy": "http://localhost:5000",
   "browserslist": {
     "production": [
       ">0.2%",

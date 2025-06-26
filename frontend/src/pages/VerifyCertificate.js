@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Footer from "../components/Footer";
 import { CheckCircle2, XCircle, Mail } from 'lucide-react';
 
@@ -9,6 +9,34 @@ const VerifyCertificate = () => {
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [waiting, setWaiting] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [showAlmostComplete, setShowAlmostComplete] = useState(false);
+  const progressRef = useRef();
+
+  useEffect(() => {
+    let interval;
+    if (waiting) {
+      setProgress(0);
+      setShowAlmostComplete(false);
+      let start = Date.now();
+      interval = setInterval(() => {
+        const elapsed = Date.now() - start;
+        let percent = Math.min(100, Math.round((elapsed / 10000) * 100));
+        setProgress(percent);
+        if (elapsed >= 5000 && !showAlmostComplete) {
+          setShowAlmostComplete(true);
+        }
+        if (percent >= 100) {
+          clearInterval(interval);
+        }
+      }, 100);
+    } else {
+      setProgress(0);
+      setShowAlmostComplete(false);
+      if (interval) clearInterval(interval);
+    }
+    return () => interval && clearInterval(interval);
+  }, [waiting]);
 
   const handleVerify = async (e) => {
     e.preventDefault();
@@ -59,8 +87,18 @@ const VerifyCertificate = () => {
           </button>
         </form>
         {waiting && (
-          <div className="mt-6 text-lg font-semibold text-blue-700 animate-pulse text-center">
-            Please wait, checking data...<br />Almost complete...
+          <div className="mt-6 flex flex-col items-center justify-center">
+            <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent border-solid rounded-full animate-spin mb-4"></div>
+            <div className="w-full max-w-xs mb-2">
+              <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
+                <div className="h-3 bg-gradient-to-r from-blue-400 to-pink-400 rounded-full transition-all duration-200" style={{ width: `${progress}%` }}></div>
+              </div>
+              <div className="text-xs text-center mt-1 text-blue-700 font-semibold">{progress}%</div>
+            </div>
+            <div className="text-lg font-semibold text-blue-700 text-center">
+              Please wait, checking data...<br />
+              {showAlmostComplete && <span>Almost complete...</span>}
+            </div>
           </div>
         )}
         {showModal && (

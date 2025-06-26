@@ -60,6 +60,8 @@ import ResetPassword from "./pages/ResetPassword";
 
 import AuthContext, { AuthProvider } from './context/AuthContext';
 import ProfileCompletionModal from './components/ProfileCompletionModal';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Error Pages
 import NotFound from './pages/NotFound';
@@ -112,6 +114,7 @@ const AppContent = () => {
 
   return (
     <>
+      <ToastContainer position="top-right" autoClose={4000} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
       {showProfileModal && <ProfileCompletionModal />}
       <Router>
         <Navbar />

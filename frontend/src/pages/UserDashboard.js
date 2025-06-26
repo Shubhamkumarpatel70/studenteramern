@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from '../components/dashboard/Sidebar';
 import { Menu } from 'lucide-react';
+import MobileBottomNav from '../components/MobileBottomNav';
 
 const UserDashboard = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -18,6 +19,7 @@ const UserDashboard = () => {
                 <main className="flex-1 p-4 md:p-8">
                     <Outlet />
                 </main>
+                <MobileBottomNav />
             </div>
         </div>
     );

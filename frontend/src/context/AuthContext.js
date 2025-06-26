@@ -1,12 +1,14 @@
 import React, { createContext, useReducer, useEffect } from 'react';
 import axios from 'axios';
 import setAuthToken from '../utils/setAuthToken';
+import { toast } from 'react-toastify';
 
 const initialState = {
     isAuthenticated: false,
     user: null,
     token: localStorage.getItem('token'),
-    showProfileModal: false
+    showProfileModal: false,
+    localNotifications: []
 };
 
 const AuthContext = createContext(initialState);
@@ -48,6 +50,8 @@ const authReducer = (state, action) => {
                 user: null,
                 showProfileModal: false
             };
+        case 'ADD_LOCAL_NOTIFICATION':
+            return { ...state, localNotifications: [action.payload, ...state.localNotifications] };
         default:
             return state;
     }
@@ -75,12 +79,22 @@ export const AuthProvider = ({ children }) => {
         loadUser();
     }, []);
     
+    const addLocalNotification = (message) => {
+        dispatch({ type: 'ADD_LOCAL_NOTIFICATION', payload: {
+            message,
+            createdAt: new Date().toISOString(),
+            read: false,
+            _id: Math.random().toString(36).substr(2, 9)
+        }});
+    };
+
     const login = async (email, password) => {
         const config = { headers: { 'Content-Type': 'application/json' } };
         const body = JSON.stringify({ email, password });
         try {
             const res = await axios.post('/api/auth/login', body, config);
             dispatch({ type: 'LOGIN_SUCCESS', payload: res.data });
+            // Removed notification for login
             return res.data.user;
         } catch (err) {
             console.error(err.response.data.message);
@@ -92,11 +106,11 @@ export const AuthProvider = ({ children }) => {
         const config = { headers: { 'Content-Type': 'application/json' } };
         try {
             const res = await axios.post('/api/auth/register', userData, config);
-            // We don't dispatch anything here, user needs to verify OTP first
+            // Add notification with login ID and intern ID (if available)
+            addLocalNotification(`Registration successful! Login ID: ${res.data.user?.email || userData.email} | Intern ID: ${res.data.user?.internId || 'Check your email/OTP'}`);
             return res.data;
         } catch (err) {
             console.error('Registration failed:', err.response.data.message);
-            // Optionally, dispatch an error action
         }
     };
 

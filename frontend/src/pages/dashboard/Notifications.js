@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { Bell, Check, Loader2, X } from 'lucide-react';
+import AuthContext from '../../context/AuthContext';
 
 const Notifications = () => {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const { localNotifications } = useContext(AuthContext);
 
     const fetchNotifications = async () => {
         try {
@@ -53,12 +55,24 @@ const Notifications = () => {
                 <Bell className="mr-3 h-8 w-8 text-indigo-500" /> My Notifications
             </h1>
             <div className="bg-white rounded-lg shadow-md">
-                {notifications.length === 0 ? (
+                {(localNotifications.length === 0 && notifications.length === 0) ? (
                     <div className="p-8 text-center text-gray-500">
                         You have no notifications.
                     </div>
                 ) : (
                     <ul className="divide-y divide-gray-200">
+                        {/* Local notifications (login/registration) */}
+                        {localNotifications.map(notification => (
+                            <li key={notification._id} className={`p-4 flex justify-between items-center transition-colors duration-300 bg-blue-50 text-blue-900`}>
+                                <div>
+                                    <p className="text-blue-900 font-semibold">{notification.message}</p>
+                                    <p className="text-sm text-blue-500 mt-1">
+                                        {new Date(notification.createdAt).toLocaleString()}
+                                    </p>
+                                </div>
+                            </li>
+                        ))}
+                        {/* Backend notifications */}
                         {notifications.map(notification => (
                             <li key={notification._id} className={`p-4 flex justify-between items-center transition-colors duration-300 ${notification.read ? 'bg-gray-50 text-gray-500' : 'bg-white'}`}>
                                 <div>

@@ -59,9 +59,26 @@ const UserSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    linkedin: {
+        type: String,
+        default: ''
+    },
+    github: {
+        type: String,
+        default: ''
+    },
+    website: {
+        type: String,
+        default: ''
+    },
     profileCompleteness: {
         type: Number,
         default: 0
+    },
+    level: {
+        type: String,
+        enum: ['Beginner', 'Intermediate', 'Pro'],
+        default: 'Beginner'
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date

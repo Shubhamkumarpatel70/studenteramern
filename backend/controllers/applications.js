@@ -1,5 +1,6 @@
 const Application = require('../models/Application');
 const Internship = require('../models/Internship'); // Import Internship model
+const User = require('../models/User');
 
 // @desc    Create a new application
 // @route   POST /api/applications
@@ -38,6 +39,14 @@ exports.createApplication = async (req, res, next) => {
         };
 
         const application = await Application.create(applicationData);
+
+        // Update user level based on number of applications
+        const appCount = await Application.countDocuments({ user: userId });
+        let newLevel = 'Beginner';
+        if (appCount > 6) newLevel = 'Pro';
+        else if (appCount > 2) newLevel = 'Intermediate';
+        await User.findByIdAndUpdate(userId, { level: newLevel });
+
         res.status(201).json({ success: true, data: application });
 
     } catch (err) {

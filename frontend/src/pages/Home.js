@@ -3,7 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import AuthContext from '../context/AuthContext';
 import Header from "../components/Header";
-import { Briefcase, ArrowRight, Server, Code, ShieldCheck, Megaphone } from 'lucide-react';
+import Footer from "../components/Footer";
+
+import { Briefcase, ArrowRight, Server, Code, ShieldCheck, Megaphone, CheckCircle2 } from 'lucide-react';
 
 const internshipCategories = [
   {
@@ -92,8 +94,31 @@ const staticTestimonials = [
   }
 ];
 
+// Helper to parse URLs in text and make them clickable
+function parseMessageWithLinks(message) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = message.split(urlRegex);
+  return parts.map((part, i) => {
+    if (urlRegex.test(part)) {
+      return (
+        <a
+          key={i}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline text-pink-200 hover:text-white font-semibold transition-colors duration-150"
+        >
+          {part}
+        </a>
+      );
+    }
+    return part;
+  });
+}
+
 const AnnouncementBar = () => {
     const [announcements, setAnnouncements] = useState([]);
+    const [show, setShow] = useState(true);
 
     useEffect(() => {
         const fetchAnnouncements = async () => {
@@ -109,27 +134,53 @@ const AnnouncementBar = () => {
         fetchAnnouncements();
     }, []);
 
-    if (announcements.length === 0) {
+    if (!show || announcements.length === 0) {
         return null;
     }
 
     // Join all announcement messages for a continuous marquee
-    const marqueeText = announcements.map(a => a.message).join(' || ');
+    const marqueeText = announcements.map((a, i) =>
+      i === 0
+        ? (
+            <span key={i} className="mr-8">
+              <span className="bg-pink-500 text-white text-xs font-bold px-2 py-0.5 rounded-full mr-2 align-middle">NEW</span>
+              {parseMessageWithLinks(a.message)}
+            </span>
+          )
+        : (
+            <span key={i} className="ml-8">
+              {parseMessageWithLinks(a.message)}
+            </span>
+          )
+    );
 
     return (
-        <div className="bg-indigo-700 text-white">
-            <div className="max-w-7xl mx-auto py-2 px-3 sm:px-6 lg:px-8">
+        <div className="bg-gradient-to-r from-indigo-700 via-purple-600 to-indigo-700 shadow-lg">
+            <div className="max-w-7xl mx-auto py-2 px-3 sm:px-6 lg:px-8 relative">
                 <div className="flex items-center justify-between flex-wrap">
                     <div className="w-0 flex-1 flex items-center overflow-hidden">
-                        <span className="flex p-2 rounded-lg bg-indigo-800">
-                            <Megaphone className="h-6 w-6" aria-hidden="true" />
+                        <span className="flex p-2 rounded-lg bg-white bg-opacity-10 mr-2 animate-pulse">
+                            <Megaphone className="h-7 w-7 text-white" aria-hidden="true" />
                         </span>
-                        <p className="ml-3 font-medium whitespace-nowrap">
-                            <span className="inline-block animate-marquee">{marqueeText}</span>
-                        </p>
+                        <div className="ml-2 font-semibold text-lg whitespace-nowrap overflow-x-hidden w-full">
+                            <span className="inline-block animate-marquee-smooth">
+                                {marqueeText}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
+            <style>{`
+                @keyframes marquee-smooth {
+                  0% { transform: translateX(100%); }
+                  100% { transform: translateX(-100%); }
+                }
+                .animate-marquee-smooth {
+                  display: inline-block;
+                  min-width: 100%;
+                  animation: marquee-smooth 18s linear infinite;
+                }
+            `}</style>
         </div>
     );
 };
@@ -151,6 +202,18 @@ const HeroSection = () => (
             </Link>
         </div>
     </div>
+);
+
+const CertifiedSection = () => (
+  <div className="bg-green-50 py-10 px-4 sm:px-6 lg:px-8 flex justify-center">
+    <div className="max-w-3xl w-full flex flex-col items-center text-center">
+      <CheckCircle2 size={48} className="text-green-600 mb-2" />
+      <h2 className="text-2xl sm:text-3xl font-bold text-green-800 mb-2">Officially Certified & Recognized</h2>
+      <p className="text-gray-700 text-lg max-w-2xl">
+        Our accreditations reflect our commitment to quality education and compliance with national standards.
+      </p>
+    </div>
+  </div>
 );
 
 const Feature = ({ icon, title, description }) => (
@@ -309,50 +372,12 @@ const TestimonialsSection = () => {
     );
 };
 
-const Footer = () => (
-    <footer className="bg-gray-800 text-white">
-        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                <div>
-                    <h3 className="text-sm font-semibold uppercase tracking-wider">Solutions</h3>
-                    <ul className="mt-4 space-y-4">
-                        <li><Link to="/internships" className="text-base text-gray-300 hover:text-white">Internships</Link></li>
-                        <li><Link to="/verify-certificate" className="text-base text-gray-300 hover:text-white">Verify</Link></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 className="text-sm font-semibold uppercase tracking-wider">Support</h3>
-                    <ul className="mt-4 space-y-4">
-                         <li><Link to="/faq" className="text-base text-gray-300 hover:text-white">FAQ</Link></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 className="text-sm font-semibold uppercase tracking-wider">Company</h3>
-                    <ul className="mt-4 space-y-4">
-                        <li><Link to="/about" className="text-base text-gray-300 hover:text-white">About</Link></li>
-                    </ul>
-                </div>
-                 <div>
-                    <h3 className="text-sm font-semibold uppercase tracking-wider">Legal</h3>
-                    <ul className="mt-4 space-y-4">
-                        <li><Link to="/privacy" className="text-base text-gray-300 hover:text-white">Privacy</Link></li>
-                        <li><Link to="/terms" className="text-base text-gray-300 hover:text-white">Terms</Link></li>
-                         <li><Link to="/refund" className="text-base text-gray-300 hover:text-white">Refund Policy</Link></li>
-                    </ul>
-                </div>
-            </div>
-            <div className="mt-8 border-t border-gray-700 pt-8 text-center">
-                <p className="text-base text-gray-400">&copy; {new Date().getFullYear()} Student-Era. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-);
-
 const Home = () => {
     return (
         <div className="bg-white">
             <AnnouncementBar />
             <HeroSection />
+            <CertifiedSection />
             <FeaturesSection />
             <LatestInternships />
             <TestimonialsSection />

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
 import setAuthToken from '../../utils/setAuthToken';
+import MobileBottomNav from '../../components/MobileBottomNav';
 
 const StatCard = ({ title, value, linkTo }) => (
     <Link to={linkTo} className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
@@ -58,6 +59,7 @@ const DashboardHome = () => {
                     <StatCard title="Offer Letters" value={stats.offerLetters} linkTo="/dashboard/offer-letters" />
                 </div>
             )}
+            <MobileBottomNav />
         </div>
     );
 };
