@@ -25,7 +25,7 @@ const AdminHome = () => {
                 setAuthToken(localStorage.token);
             }
             try {
-                const res = await axios.get('http://localhost:5000/api/dashboard/stats');
+                const res = await axios.get('https://studenteramernbackend.onrender.com/api/dashboard/stats');
                 setStats(res.data.data);
             } catch (err) {
                 console.error('Failed to fetch admin stats', err);

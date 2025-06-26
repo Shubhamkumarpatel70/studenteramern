@@ -14,7 +14,7 @@ const ManageUsers = () => {
         setLoading(true);
         if (localStorage.token) setAuthToken(localStorage.token);
         try {
-            const res = await axios.get('http://localhost:5000/api/users');
+            const res = await axios.get('https://studenteramernbackend.onrender.com/api/users');
             setUsers(res.data.data);
         } catch (err) {
             console.error('Failed to fetch users', err);
@@ -36,7 +36,7 @@ const ManageUsers = () => {
     const handleDelete = async (userId) => {
         if (window.confirm('Are you sure you want to delete this user? This cannot be undone.')) {
             try {
-                await axios.delete(`http://localhost:5000/api/users/${userId}`);
+                await axios.delete(`https://studenteramernbackend.onrender.com/api/users/${userId}`);
                 fetchUsers(); // Refresh user list
             } catch (err) {
                 console.error('Failed to delete user', err);
@@ -47,7 +47,7 @@ const ManageUsers = () => {
 
     const handleModalSave = async (updatedUser) => {
         try {
-            await axios.put(`http://localhost:5000/api/users/${updatedUser._id}`, updatedUser);
+            await axios.put(`https://studenteramernbackend.onrender.com/api/users/${updatedUser._id}`, updatedUser);
             setIsModalOpen(false);
             setSelectedUser(null);
             fetchUsers(); // Refresh user list

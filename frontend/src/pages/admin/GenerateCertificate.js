@@ -35,7 +35,7 @@ const GenerateCertificate = () => {
                 completionDate,
                 certificateId: certId
             };
-            const res = await axios.post('http://localhost:5000/api/certificates', payload);
+            const res = await axios.post('https://studenteramernbackend.onrender.com/api/certificates', payload);
             alert(`Certificate generated successfully! Certificate ID: ${res.data.data.certificateId}`);
             setFormData({ user: '', candidateName: '', internshipTitle: '', duration: '', completionDate: '', certificateId: '' }); // Clear form
         } catch (err) {

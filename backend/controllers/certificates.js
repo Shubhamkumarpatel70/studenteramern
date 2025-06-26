@@ -30,7 +30,7 @@ exports.generateCertificate = async (req, res, next) => {
         const pdfPath = path.join(pdfDir, `${certificate._id}.pdf`);
         await generateCertificatePDF(certificate.toObject(), pdfPath);
         // Update fileUrl
-        certificate.fileUrl = `http://localhost:5000/uploads/certificates/${certificate._id}.pdf`;
+        certificate.fileUrl = `https://studenteramernbackend.onrender.com/uploads/certificates/${certificate._id}.pdf`;
         await certificate.save();
         res.status(201).json({ success: true, data: certificate });
     } catch (err) {
@@ -136,7 +136,7 @@ exports.generateSelfCertificate = async (req, res, next) => {
         if (!require('fs').existsSync(pdfDir)) require('fs').mkdirSync(pdfDir, { recursive: true });
         const pdfPath = require('path').join(pdfDir, `${certificate._id}.pdf`);
         await generateCertificatePDF(certificate.toObject(), pdfPath);
-        certificate.fileUrl = `http://localhost:5000/uploads/certificates/${certificate._id}.pdf`;
+        certificate.fileUrl = `https://studenteramernbackend.onrender.com/uploads/certificates/${certificate._id}.pdf`;
         await certificate.save();
         res.status(201).json({ success: true, data: certificate });
     } catch (err) {

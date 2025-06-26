@@ -40,7 +40,7 @@ exports.generateOfferLetter = async (req, res, next) => {
         await generateOfferLetterPDF({ ...offerLetter.toObject(), candidateName }, pdfPath);
 
         // Update fileUrl (absolute URL)
-        offerLetter.fileUrl = `http://localhost:5000/uploads/offerLetters/${offerLetter._id}.pdf`;
+        offerLetter.fileUrl = `https://studenteramernbackend.onrender.com/uploads/offerLetters/${offerLetter._id}.pdf`;
         await offerLetter.save();
 
         res.status(201).json({ success: true, data: offerLetter });

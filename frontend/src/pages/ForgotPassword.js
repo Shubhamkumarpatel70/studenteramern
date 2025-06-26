@@ -8,7 +8,7 @@ const ForgotPassword = () => {
     const onSubmit = async e => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/auth/forgotpassword', { email });
+            await axios.post('https://studenteramernbackend.onrender.com/api/auth/forgotpassword', { email });
             setMessage('An email has been sent with password reset instructions.');
         } catch (err) {
             setMessage('Error: Could not send email.');

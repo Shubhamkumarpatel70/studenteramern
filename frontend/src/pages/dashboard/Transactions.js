@@ -22,7 +22,7 @@ const Transactions = () => {
                 setAuthToken(localStorage.token);
             }
             try {
-                const res = await axios.get('http://localhost:5000/api/transactions/my-transactions');
+                const res = await axios.get('https://studenteramernbackend.onrender.com/api/transactions/my-transactions');
                 setTransactions(res.data.data);
             } catch (err) {
                 console.error('Failed to fetch transactions', err);

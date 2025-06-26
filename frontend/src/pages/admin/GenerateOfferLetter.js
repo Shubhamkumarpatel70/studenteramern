@@ -24,7 +24,7 @@ const GenerateOfferLetter = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            const res = await axios.get('http://localhost:5000/api/offer-letters', config);
+            const res = await axios.get('https://studenteramernbackend.onrender.com/api/offer-letters', config);
             setAllLetters(res.data.data);
         } catch (err) {
             setAllLetters([]);
@@ -41,7 +41,7 @@ const GenerateOfferLetter = () => {
         e.preventDefault();
         if (localStorage.token) setAuthToken(localStorage.token);
         try {
-            const res = await axios.post('http://localhost:5000/api/offer-letters', formData);
+            const res = await axios.post('https://studenteramernbackend.onrender.com/api/offer-letters', formData);
             alert('Offer letter generated successfully!');
             setGeneratedLetter(res.data.data);
             setFormData({ user: '', candidateName: '', internId: '', title: '', company: 'Student Era', issueDate: '', startDate: '', techPartner: '', stipend: '' });
@@ -58,7 +58,7 @@ const GenerateOfferLetter = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            await axios.delete(`http://localhost:5000/api/offer-letters/${id}`, config);
+            await axios.delete(`https://studenteramernbackend.onrender.com/api/offer-letters/${id}`, config);
             fetchAllLetters();
         } catch (err) {
             alert('Failed to delete offer letter.');

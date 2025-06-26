@@ -13,7 +13,7 @@ const OTPVerify = () => {
         e.preventDefault();
         setError('');
         try {
-            await axios.post('http://localhost:5000/api/auth/verify-otp', { email, otp });
+            await axios.post('https://studenteramernbackend.onrender.com/api/auth/verify-otp', { email, otp });
             navigate('/login');
         } catch (err) {
             const msg = err.response?.data?.message || 'Invalid OTP. Please try again.';
@@ -24,7 +24,7 @@ const OTPVerify = () => {
 
     const onResend = async () => {
         try {
-            await axios.post('http://localhost:5000/api/auth/resend-otp', { email });
+            await axios.post('https://studenteramernbackend.onrender.com/api/auth/resend-otp', { email });
             alert('A new OTP has been sent to your email.');
         } catch (err) {
             alert('Failed to resend OTP.');

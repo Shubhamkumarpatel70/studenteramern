@@ -28,7 +28,7 @@ const DashboardHome = () => {
                 setAuthToken(localStorage.token);
             }
             try {
-                const res = await axios.get('http://localhost:5000/api/dashboard/stats');
+                const res = await axios.get('https://studenteramernbackend.onrender.com/api/dashboard/stats');
                 setStats(res.data.data);
                 setLoading(false);
             } catch (err) {

@@ -16,7 +16,7 @@ const ResetPassword = () => {
             return;
         }
         try {
-            await axios.put(`http://localhost:5000/api/auth/resetpassword/${resettoken}`, { password });
+            await axios.put(`https://studenteramernbackend.onrender.com/api/auth/resetpassword/${resettoken}`, { password });
             setMessage('Password has been reset successfully. You can now log in.');
             setTimeout(() => navigate('/login'), 3000);
         } catch (err) {

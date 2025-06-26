@@ -78,7 +78,7 @@ const ManageTasks = () => {
                                         </a>
                                     ))}
                                     {task.filePath && (
-                                        <a href={`http://localhost:5000/${task.filePath.replace('backend/', '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center text-blue-600 hover:underline">
+                                        <a href={`https://studenteramernbackend.onrender.com/${task.filePath.replace('backend/', '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center text-blue-600 hover:underline">
                                             <FileText size={16} className="mr-2" /> Download Project File
                                         </a>
                                     )}
