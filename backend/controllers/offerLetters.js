@@ -31,7 +31,19 @@ exports.generateOfferLetter = async (req, res, next) => {
         }
         req.body.candidateName = candidateName;
 
-        const offerLetter = await OfferLetter.create(req.body);
+        const { user, candidateName, internId, title, company, issueDate, startDate, techPartner, stipend, hrName } = req.body;
+        const offerLetter = new OfferLetter({
+            user,
+            candidateName,
+            internId,
+            title,
+            company,
+            issueDate,
+            startDate,
+            techPartner,
+            stipend,
+            hrName
+        });
 
         // Generate PDF
         const pdfDir = path.join(__dirname, '../uploads/offerLetters');

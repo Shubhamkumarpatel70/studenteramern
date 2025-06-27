@@ -8,27 +8,39 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
     const stream = fs.createWriteStream(outputPath);
     doc.pipe(stream);
 
-    // Header: Logo and Company Info (centered)
+    // Watermark
+    doc.save();
+    doc.rotate(-30, { origin: [doc.page.width / 2, doc.page.height / 2] });
+    doc.font('Helvetica-Bold')
+      .fontSize(80)
+      .fillColor('#4f46e5')
+      .opacity(0.08)
+      .text('Student Era', doc.page.width / 2 - 250, doc.page.height / 2 - 40, {
+        align: 'center',
+        width: 500
+      });
+    doc.opacity(1).restore();
+
+    // Header: Logo (top-left, larger) and Company Info (beside logo)
     const logoPath = path.join(__dirname, '../templates/company-logo.png');
     if (fs.existsSync(logoPath)) {
-      doc.image(logoPath, doc.page.width / 2 - 40, 40, { width: 80 });
+      doc.image(logoPath, 50, 40, { width: 90 });
     }
-    doc.moveDown(2);
-    doc.fontSize(18).font('Helvetica-Bold').text('Student Era', { align: 'center' });
-    doc.fontSize(10).font('Helvetica').text('D-107, 91Springboard, Vyapar Marg, Sector-2, Noida, UP 201301', { align: 'center' });
-    doc.text('info@studentera.com | www.studentera.com', { align: 'center' });
+    doc.fontSize(20).font('Helvetica-Bold').fillColor('#4f46e5').text('Student Era', 150, 50, { align: 'left' });
+    doc.fontSize(10).font('Helvetica').fillColor('#444').text('D-107, 91Springboard, Vyapar Marg, Sector-2, Noida, UP 201301', 150, 75, { align: 'left' });
+    doc.text('info@studentera.com | www.studentera.com', 150, 90, { align: 'left' });
 
-    doc.moveDown(1);
-    doc.strokeColor('#888').lineWidth(1).moveTo(50, doc.y).lineTo(545, doc.y).stroke();
+    doc.moveDown(2);
+    doc.strokeColor('#6366f1').lineWidth(2).moveTo(50, 120).lineTo(545, 120).stroke();
     doc.moveDown(1);
 
     // Reference, Date, and Heading
-    doc.fontSize(11).font('Helvetica').text('REF: SE/INTERNSHIP/OFFER', { align: 'left' });
-    doc.font('Helvetica-Bold').text('LETTER OF OFFER', { align: 'left', underline: true });
-    doc.font('Helvetica').text(`Dated: ${new Date(offerLetter.issueDate).toLocaleDateString()}`, { align: 'right' });
+    doc.fontSize(11).font('Helvetica').fillColor('black').text('REF: SE/INTERNSHIP/OFFER', 50, 135, { align: 'left' });
+    doc.font('Helvetica-Bold').text('LETTER OF OFFER', 50, 150, { align: 'left', underline: true });
+    doc.font('Helvetica').text(`Dated: ${new Date(offerLetter.issueDate).toLocaleDateString()}`, 400, 135, { align: 'left' });
 
     doc.moveDown(1.5);
-    doc.fontSize(12).font('Helvetica-Bold').text(`Dear ${offerLetter.candidateName || 'Candidate'},`, { align: 'left' });
+    doc.fontSize(12).font('Helvetica-Bold').text(`Dear ${offerLetter.candidateName || 'Candidate'},`, 50, 180, { align: 'left' });
     doc.font('Helvetica').text(`Intern ID: ${offerLetter.internId || '__________'}`, { align: 'left' });
     doc.moveDown(0.5);
     doc.font('Helvetica-Bold').text('Congratulations!!', { align: 'left' });
@@ -65,13 +77,18 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
     doc.moveDown(1);
 
     // Signature area
-    doc.fontSize(11).font('Helvetica').text('N. Kumar (Sr. HR-Manager)', 50, doc.y, { continued: true });
+    doc.fontSize(11).font('Helvetica').text(`${offerLetter.hrName || 'N. Kumar (Sr. HR-Manager)'}`, 50, doc.y, { continued: true });
     doc.text('Applicant Sign', 220, doc.y, { continued: true });
     doc.text('College', 350, doc.y, { continued: true });
     doc.text('Location', 450, doc.y);
 
     doc.moveDown(2);
-    doc.fontSize(10).text('For Student Era', { align: 'left' });
+    // For Student Era + Stamp
+    doc.fontSize(10).text('For Student Era', 50, doc.y, { align: 'left' });
+    const stampPath = path.join(__dirname, '../templates/stamp.png');
+    if (fs.existsSync(stampPath)) {
+      doc.opacity(0.5).image(stampPath, 150, doc.y - 20, { width: 60 }).opacity(1);
+    }
 
     doc.end();
     stream.on('finish', () => resolve());

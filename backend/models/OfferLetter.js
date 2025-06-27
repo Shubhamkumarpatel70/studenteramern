@@ -27,6 +27,7 @@ const OfferLetterSchema = new mongoose.Schema({
         type: String,
         required: false
     },
+    hrName: { type: String, required: true },
     createdAt: {
         type: Date,
         default: Date.now

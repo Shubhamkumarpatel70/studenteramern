@@ -23,12 +23,28 @@ exports.generateCertificate = async (req, res, next) => {
             // Optionally auto-fill candidateName if not provided
             if (!req.body.candidateName) req.body.candidateName = userDoc.name;
         }
-        const certificate = await Certificate.create(req.body);
+        const { user, candidateName, internshipTitle, duration, completionDate, certificateId, signatureName } = req.body;
+        const certificate = await Certificate.create({
+            user,
+            candidateName,
+            internshipTitle,
+            duration,
+            completionDate,
+            certificateId,
+            signatureName
+        });
         // Generate PDF
         const pdfDir = path.join(__dirname, '../uploads/certificates');
         if (!fs.existsSync(pdfDir)) fs.mkdirSync(pdfDir, { recursive: true });
         const pdfPath = path.join(pdfDir, `${certificate._id}.pdf`);
-        await generateCertificatePDF(certificate.toObject(), pdfPath);
+        await generateCertificatePDF({
+            candidateName,
+            internshipTitle,
+            duration,
+            completionDate,
+            certificateId,
+            signatureName
+        }, pdfPath);
         // Update fileUrl
         certificate.fileUrl = `https://studenteramernbackend.onrender.com/uploads/certificates/${certificate._id}.pdf`;
         await certificate.save();

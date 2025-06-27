@@ -30,6 +30,10 @@ const CertificateSchema = new mongoose.Schema({
     fileUrl: {
         type: String
     },
+    signatureName: {
+        type: String,
+        required: true
+    },
     createdAt: {
         type: Date,
         default: Date.now
