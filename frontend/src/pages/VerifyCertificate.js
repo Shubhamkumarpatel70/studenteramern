@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Footer from "../components/Footer";
 import { CheckCircle2, XCircle, Mail } from 'lucide-react';
+import api from '../config/api';
 
 const VerifyCertificate = () => {
   const [certificateId, setCertificateId] = useState("");
@@ -46,10 +47,8 @@ const VerifyCertificate = () => {
     setWaiting(true);
     setLoading(true);
     try {
-      const res = await fetch(
-        `/api/certificates/verify/${certificateId}`
-      );
-      const data = await res.json();
+      const res = await api.get(`/certificates/verify/${certificateId}`);
+      const data = res.data;
       if (data.success && data.valid) {
         setResult(data.data);
         setError("");
