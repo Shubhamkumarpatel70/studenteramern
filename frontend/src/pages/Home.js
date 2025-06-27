@@ -286,6 +286,9 @@ const LatestInternships = () => {
                 setInternships(res.data.data);
             } catch (err) {
                 console.error('Error fetching internships:', err);
+                setError('Failed to load internships.');
+            } finally {
+                setLoading(false);
             }
         };
         fetchInternships();
