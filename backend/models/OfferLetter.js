@@ -27,6 +27,22 @@ const OfferLetterSchema = new mongoose.Schema({
         type: String,
         required: false
     },
+    internId: {
+        type: String,
+        required: false
+    },
+    startDate: {
+        type: Date,
+        required: false
+    },
+    techPartner: {
+        type: String,
+        required: false
+    },
+    stipend: {
+        type: Number,
+        required: false
+    },
     hrName: { type: String, required: true },
     createdAt: {
         type: Date,
