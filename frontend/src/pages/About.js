@@ -62,26 +62,6 @@ const About = () => (
           </div>
         </div>
       </div>
-      {/* Certifications Section */}
-      <div className="mt-16 text-center">
-        <span className="inline-block bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-sm font-semibold mb-2">Accreditations</span>
-        <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-purple-600 to-pink-500 mb-2">Officially Certified & Recognized</h2>
-        <p className="text-gray-700 mb-8">Our accreditations reflect our commitment to quality education and compliance with national standards.</p>
-        <div className="flex flex-wrap justify-center gap-8">
-          <div className="flex flex-col items-center">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6e/MSME_Logo.png" alt="MSME Certified" className="w-20 h-20 object-contain mb-2" />
-            <span className="text-gray-700 text-sm">MSME Certified</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Startup_India_Logo.png" alt="Startup India Recognized" className="w-20 h-20 object-contain mb-2" />
-            <span className="text-gray-700 text-sm">Startup India Recognized</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/MeitY_Logo.png" alt="MeitY Certified" className="w-20 h-20 object-contain mb-2" />
-            <span className="text-gray-700 text-sm">MeitY Certified</span>
-          </div>
-        </div>
-      </div>
     </div>
     <Footer />
   </div>

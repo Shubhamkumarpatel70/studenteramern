@@ -1,4 +1,5 @@
 import React from "react";
+import { FaWhatsapp, FaLinkedin, FaInstagram, FaTelegram } from 'react-icons/fa';
 
 const Footer = () => (
   <footer className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-gray-200 pt-12 pb-4 px-4 md:px-16">
@@ -26,10 +27,10 @@ const Footer = () => (
         <h3 className="font-bold text-xl mb-4">Connect with Us</h3>
         <p className="mb-4 text-gray-300">Follow us on social media for updates and news.</p>
         <div className="flex space-x-4 text-2xl">
-          <a href="#" aria-label="WhatsApp" className="hover:text-green-400"><i className="fab fa-whatsapp"></i>🟢</a>
-          <a href="#" aria-label="LinkedIn" className="hover:text-blue-400"><i className="fab fa-linkedin"></i>🔵</a>
-          <a href="#" aria-label="Instagram" className="hover:text-pink-400"><i className="fab fa-instagram"></i>🟣</a>
-          <a href="#" aria-label="Telegram" className="hover:text-blue-300"><i className="fab fa-telegram"></i>🔷</a>
+          <a href="#" aria-label="WhatsApp" className="hover:text-green-400"><FaWhatsapp /></a>
+          <a href="#" aria-label="LinkedIn" className="hover:text-blue-400"><FaLinkedin /></a>
+          <a href="#" aria-label="Instagram" className="hover:text-pink-400"><FaInstagram /></a>
+          <a href="#" aria-label="Telegram" className="hover:text-blue-300"><FaTelegram /></a>
         </div>
       </div>
       {/* Contact Us */}

@@ -12,13 +12,14 @@ const GenerateOfferLetter = () => {
         issueDate: '',
         startDate: '',
         techPartner: 'Student Era',
-        stipend: ''
+        stipend: '',
+        hrName: ''
     });
     const [showPreview, setShowPreview] = useState(false);
     const [generatedLetter, setGeneratedLetter] = useState(null);
     const [allLetters, setAllLetters] = useState([]);
 
-    const { user, candidateName, internId, title, company, issueDate, startDate, techPartner, stipend } = formData;
+    const { user, candidateName, internId, title, company, issueDate, startDate, techPartner, stipend, hrName } = formData;
 
     const fetchAllLetters = async () => {
         try {
@@ -44,7 +45,7 @@ const GenerateOfferLetter = () => {
             const res = await api.post('/offer-letters', formData);
             alert('Offer letter generated successfully!');
             setGeneratedLetter(res.data.data);
-            setFormData({ user: '', candidateName: '', internId: '', title: '', company: 'Student Era', issueDate: '', startDate: '', techPartner: '', stipend: '' });
+            setFormData({ user: '', candidateName: '', internId: '', title: '', company: 'Student Era', issueDate: '', startDate: '', techPartner: 'Student Era', stipend: '', hrName: '' });
             setShowPreview(false);
             fetchAllLetters();
         } catch (err) {
@@ -64,6 +65,79 @@ const GenerateOfferLetter = () => {
             alert('Failed to delete offer letter.');
         }
     };
+
+    // HTML/CSS Offer Letter Preview
+    const offerLetterHTML = `
+    <!DOCTYPE html>
+    <html><head><meta charset='utf-8'>
+    <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #f4f4f4; }
+    .container { background: #fff; margin: 40px auto; padding: 56px 64px 48px 64px; border-radius: 16px; max-width: 950px; box-shadow: 0 4px 32px rgba(44,62,80,0.10); border: 2.5px solid #4f46e5; position: relative; min-height: 1100px; }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #6366f1; padding-bottom: 24px; margin-bottom: 44px; }
+    .logo-block { display: flex; align-items: center; gap: 24px; }
+    .logo { height: 290px; margin-bottom: 2px; margin-top: -120px; margin-left: -70px; }
+    .company-name { font-size: 2.4rem; font-weight: bold; color: #4f46e5; letter-spacing: 2px; margin-left: 0; }
+    .address-block { text-align: right; font-size: 1.13rem; color: #444; line-height: 1.6; margin-top: 8px; }
+    .ref-date-row { display: flex; justify-content: space-between; margin: 44px 0 18px 0; font-size: 1.13rem; }
+    .subject-row { display: flex; justify-content: center; align-items: center; margin-bottom: 24px; }
+    .subject { font-weight: bold; text-decoration: underline; font-size: 1.5rem; color: #4f46e5; letter-spacing: 1px; }
+    .content { font-size: 1.18rem; color: #222; line-height: 1.8; margin-top: 36px; }
+    .highlight { font-weight: bold; color: #4f46e5; }
+    .confidential { font-weight: bold; text-align: center; margin: 28px 0 14px 0; text-decoration: underline; color: #b91c1c; }
+    .terms { margin: 0 0 28px 0; }
+    .terms li { margin-bottom: 12px; }
+    .footer { margin-top: 56px; font-size: 1.13rem; color: #555; position: relative; min-height: 120px; }
+    .footer .stamp-img { display:inline-block;vertical-align:middle;width:90px;margin-left:18px;opacity:0.55;position:relative;top:8px; }
+    .signatures { width: 100%; display: flex; justify-content: space-between; margin-top: 64px; font-size: 1.08rem; }
+    .sign-col { text-align: center; width: 24%; }
+    .watermark { position: absolute; top: 44%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-size: 5.5rem; color: #6366f1; opacity: 0.09; pointer-events: none; z-index: 0; user-select: none; }
+    </style></head><body>
+    <div class='container'>
+      <div class='watermark'>Student Era</div>
+      <div class='header'>
+        <div class='logo-block'>
+          <img src='/logo.png' alt='Company Logo' class='logo' />
+          <div class='company-name'>${company || 'Student Era'}</div>
+        </div>
+        <div class='address-block'>Bihar, India<br />contact.studentera@gmail.com<br />www.studentera.live</div>
+      </div>
+      <div class='ref-date-row'>
+        <div>REF: ${internId || 'SE12345'}</div>
+        <div><span class='highlight'>Dated:</span> ${issueDate || '2024-06-01'}</div>
+      </div>
+      <div class='subject-row'>
+        <div class='subject'>LETTER OF OFFER</div>
+      </div>
+      <div class='content'>
+        <p>Dear <span class='highlight'>${candidateName || 'Candidate Name'}</span>,<br />Intern ID <span class='highlight'>${internId || 'SE1750975236268'}</span></p>
+        <p>Congratulations!!</p>
+        <div class='confidential'>STRICTLY PRIVATE &amp; CONFIDENTIAL</div>
+        <p>We are pleased to offer you a Summer Internship with <span class='highlight'>${company || 'Student Era'}</span>, based on your application and the interview &amp; discussions you had with us. Details of the terms &amp; conditions of offer are as under:</p>
+        <ol class='terms'>
+          <li>You must always maintain utmost secrecy and confidentiality of your offer, its terms, and of any information about the company, and shall not disclose any such details to outsiders.</li>
+          <li>You will be designated as <span class='highlight'>${title || 'MERN Developer'}</span>.</li>
+          <li>Your date of commencement of internship will be from <span class='highlight'>${startDate || '2024-06-10'}</span> in WFH mode.</li>
+          <li>You will be entitled to receive compensation and benefits as discussed at the time of interview.</li>
+          <li>You agree to work in both work environments i.e., WFH, Work from office.</li>
+          <li>${techPartner || 'Tech Partner'} shall be the official Technology Partner for this internship.</li>
+          <li>The company reserves all rights to withdraw this internship offer at any time without giving any reasons.</li>
+          <li>In addition to core responsibilities of this internship, the company may assign additional tasks or projects based on operational needs and availability. The intern is expected to contribute effectively to such assignments as per the company's discretion.</li>
+        </ol>
+        <p>Kindly sign and return a copy of this letter as a token of your acceptance of the offer.</p>
+        <p>Looking forward to a long and mutually beneficial career with us</p>
+        <div class='footer'>Yours truly,<br />For ${company || 'Student Era'}
+        <img src='/stamp.png' alt='Stamp' class='stamp-img' />
+        <br />${hrName || 'HR Name'} (HR)</div>
+        <div class='signatures'>
+          <div class='sign-col'>${hrName || 'HR Name'}<br /><span style='font-size:0.95em;'>(HR)</span></div>
+          <div class='sign-col'>Applicant Sign</div>
+          <div class='sign-col'>College</div>
+          <div class='sign-col'>Location</div>
+        </div>
+      </div>
+    </div>
+    </body></html>
+    `;
 
     return (
         <div className="p-8">
@@ -106,6 +180,10 @@ const GenerateOfferLetter = () => {
                         <label className="block text-sm font-medium text-gray-700">Stipend (per month)</label>
                         <input type="number" name="stipend" value={stipend} onChange={onChange} required className="mt-1 block w-full px-3 py-2 border rounded-md" />
                     </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">HR Name</label>
+                        <input type="text" name="hrName" value={hrName} onChange={onChange} required className="mt-1 block w-full px-3 py-2 border rounded-md" placeholder="Enter HR Name" />
+                    </div>
                     <div className="flex gap-2">
                         <button type="button" onClick={() => setShowPreview(!showPreview)} className="w-1/2 py-2 px-4 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">{showPreview ? 'Hide' : 'Preview'}</button>
                         <button type="submit" className="w-1/2 py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700">Generate Offer Letter</button>
@@ -114,14 +192,13 @@ const GenerateOfferLetter = () => {
                 {showPreview && (
                     <div className="mt-8 p-4 border rounded bg-gray-50">
                         <h2 className="text-xl font-bold mb-2">Offer Letter Preview</h2>
-                        <div><b>Candidate Name:</b> {candidateName}</div>
-                        <div><b>Intern ID:</b> {internId}</div>
-                        <div><b>Title:</b> {title}</div>
-                        <div><b>Company:</b> {company}</div>
-                        <div><b>Issue Date:</b> {issueDate}</div>
-                        <div><b>Start Date:</b> {startDate}</div>
-                        <div><b>Tech Partner:</b> {techPartner}</div>
-                        <div><b>Stipend:</b> {stipend}</div>
+                        <iframe
+                            title="Offer Letter Preview"
+                            srcDoc={offerLetterHTML}
+                            width="900"
+                            height="1200"
+                            style={{ border: 'none', background: 'transparent' }}
+                        />
                     </div>
                 )}
                 {generatedLetter && generatedLetter.fileUrl && (
