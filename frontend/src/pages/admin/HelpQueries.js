@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
-import axios from "axios";
+import api from "../../config/api";
 import AuthContext from "../../context/AuthContext";
 
 const HelpQueries = () => {
@@ -18,7 +18,7 @@ const HelpQueries = () => {
       setLoading(true);
       setError("");
       try {
-        const res = await axios.get("/api/help-queries");
+        const res = await api.get("/help-queries");
         setQueries(res.data.data);
         if (res.data.data.length > 0) {
           setSelectedQuery(res.data.data[0]);
@@ -45,7 +45,7 @@ const HelpQueries = () => {
     if (!input.trim() || !selectedQuery) return;
     setError("");
     try {
-      const res = await axios.post(`/api/help-queries/${selectedQuery._id}/message`, { text: input, from: "admin" });
+      const res = await api.post(`/help-queries/${selectedQuery._id}/message`, { text: input, from: "admin" });
       // Update the selected query and queries list
       setSelectedQuery(res.data.data);
       setQueries(queries => queries.map(q => q._id === res.data.data._id ? res.data.data : q));
@@ -60,7 +60,7 @@ const HelpQueries = () => {
     setResolving(true);
     setError("");
     try {
-      const res = await axios.put(`/api/help-queries/${selectedQuery._id}/resolve`);
+      const res = await api.put(`/help-queries/${selectedQuery._id}/resolve`);
       setSelectedQuery(res.data.data);
       setQueries(queries => queries.map(q => q._id === res.data.data._id ? res.data.data : q));
     } catch (err) {

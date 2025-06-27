@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import api from '../../config/api';
 
 const Queries = () => {
   const [queries, setQueries] = useState([]);
@@ -11,12 +12,10 @@ const Queries = () => {
       setError("");
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch('/api/contact-queries', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await res.json();
-        if (res.ok && data.success) {
-          setQueries(data.data);
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+        const res = await api.get('/contact-queries', config);
+        if (res.data && res.data.success) {
+          setQueries(res.data.data);
         } else {
           setError("Failed to fetch queries.");
         }
