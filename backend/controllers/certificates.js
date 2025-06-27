@@ -90,8 +90,8 @@ exports.verifyCertificate = async (req, res, next) => {
             certificate = await Certificate.findById(certificateId);
         }
         if (!certificate) {
-            // Try to find by custom certificateId field
-            certificate = await Certificate.findOne({ certificateId });
+            // Case-insensitive, trimmed search for certificateId
+            certificate = await Certificate.findOne({ certificateId: { $regex: `^${certificateId.trim()}$`, $options: 'i' } });
         }
         if (!certificate) {
             return res.status(404).json({ success: false, valid: false, message: 'Certificate not found.' });
