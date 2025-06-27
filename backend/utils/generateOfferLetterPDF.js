@@ -27,8 +27,8 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
       doc.image(logoPath, 50, 40, { width: 90 });
     }
     doc.fontSize(20).font('Helvetica-Bold').fillColor('#4f46e5').text('Student Era', 150, 50, { align: 'left' });
-    doc.fontSize(10).font('Helvetica').fillColor('#444').text('D-107, 91Springboard, Vyapar Marg, Sector-2, Noida, UP 201301', 150, 75, { align: 'left' });
-    doc.text('info@studentera.com | www.studentera.com', 150, 90, { align: 'left' });
+    doc.fontSize(10).font('Helvetica').fillColor('#444').text('Bihar, Patna, India', 150, 75, { align: 'left' });
+    doc.text('contact.studentera@gmail.com | www.studentera.live', 150, 90, { align: 'left' });
 
     doc.moveDown(2);
     doc.strokeColor('#6366f1').lineWidth(2).moveTo(50, 120).lineTo(545, 120).stroke();
