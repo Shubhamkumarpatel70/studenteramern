@@ -121,14 +121,14 @@ const GenerateOfferLetter = () => {
         <div class='subject'>LETTER OF OFFER</div>
       </div>
       <div class='content'>
-        <p>Dear <span class='highlight'>${candidateName || 'Candidate Name'}</span>,<br />Intern ID: <span class='highlight'>${internId || '__________'}</span></p>
+        <p>Dear <span class='highlight'>${candidateName || 'Candidate Name'}</span>,<br />Intern ID: <span class='highlight'>${internId && internId.trim() !== '' ? internId : '__________'}</span></p>
         <p>Congratulations!!</p>
         <div class='confidential'>STRICTLY PRIVATE &amp; CONFIDENTIAL</div>
         <p>We are pleased to offer you a Summer Internship with <span class='highlight'>${company || 'Student Era'}</span>, based on your application and the interview &amp; discussions you had with us. Details of the terms &amp; conditions of offer are as under:</p>
         <ol class='terms'>
           <li>You must always maintain utmost secrecy and confidentiality of your offer, its terms, and of any information about the company, and shall not disclose any such details to outsiders.</li>
           <li>You will be designated as <span class='highlight'>${title || 'MERN Developer'}</span>.</li>
-          <li>Your date of commencement of internship will be from <span class='highlight'>${formatDate(startDate)}</span> in WFH mode.</li>
+          <li>Your date of commencement of internship will be from <span class='highlight'>${startDate && startDate.trim() !== '' ? formatDate(startDate) : '__________'}</span> in WFH mode.</li>
           <li>You will be entitled to receive compensation and benefits as discussed at the time of interview.</li>
           <li>You agree to work in both work environments i.e., WFH, Work from office.</li>
           <li>${techPartner || 'Tech Partner'} shall be the official Technology Partner for this internship.</li>
