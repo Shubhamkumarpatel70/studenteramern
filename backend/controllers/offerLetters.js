@@ -82,4 +82,42 @@ exports.getAllOfferLetters = async (req, res, next) => {
         console.error(err);
         res.status(500).json({ success: false, message: 'Server Error' });
     }
+};
+
+// @desc    Get offer letter by ID (Admin)
+// @route   GET /api/offer-letters/:id
+// @access  Private/Admin
+exports.getOfferLetterById = async (req, res) => {
+    try {
+        const offerLetter = await OfferLetter.findById(req.params.id);
+        if (!offerLetter) {
+            return res.status(404).json({ success: false, message: 'Offer letter not found' });
+        }
+        res.status(200).json({ success: true, data: offerLetter });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};
+
+// @desc    Delete offer letter by ID (Admin)
+// @route   DELETE /api/offer-letters/:id
+// @access  Private/Admin
+exports.deleteOfferLetter = async (req, res) => {
+    try {
+        const offerLetter = await OfferLetter.findById(req.params.id);
+        if (!offerLetter) {
+            return res.status(404).json({ success: false, message: 'Offer letter not found' });
+        }
+        // Delete PDF file if exists
+        if (offerLetter.fileUrl) {
+            const filePath = path.join(__dirname, '../uploads/offerLetters', `${offerLetter._id}.pdf`);
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+        }
+        await offerLetter.deleteOne();
+        res.status(200).json({ success: true, message: 'Offer letter deleted' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
 }; 
