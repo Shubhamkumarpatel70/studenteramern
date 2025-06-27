@@ -66,6 +66,16 @@ const GenerateOfferLetter = () => {
         }
     };
 
+    // Helper to format date
+    const formatDate = (date) => {
+      if (!date) return '__________';
+      try {
+        return new Date(date).toLocaleDateString();
+      } catch {
+        return date;
+      }
+    };
+
     // HTML/CSS Offer Letter Preview
     const offerLetterHTML = `
     <!DOCTYPE html>
@@ -73,12 +83,13 @@ const GenerateOfferLetter = () => {
     <style>
     body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #f4f4f4; }
     .container { background: #fff; margin: 40px auto; padding: 56px 64px 48px 64px; border-radius: 16px; max-width: 950px; box-shadow: 0 4px 32px rgba(44,62,80,0.10); border: 2.5px solid #4f46e5; position: relative; min-height: 1100px; }
-    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #6366f1; padding-bottom: 24px; margin-bottom: 44px; }
-    .logo-block { display: flex; align-items: center; gap: 24px; }
-    .logo { height: 290px; margin-bottom: 2px; margin-top: -120px; margin-left: -70px; }
-    .company-name { font-size: 2.4rem; font-weight: bold; color: #4f46e5; letter-spacing: 2px; margin-left: 0; }
-    .address-block { text-align: right; font-size: 1.13rem; color: #444; line-height: 1.6; margin-top: 8px; }
-    .ref-date-row { display: flex; justify-content: space-between; margin: 44px 0 18px 0; font-size: 1.13rem; }
+    .header { display: flex; justify-content: flex-start; align-items: flex-start; border-bottom: none; margin-bottom: 0; }
+    .logo { height: 110px; margin: 0 24px 0 0; }
+    .company-info { margin-top: 10px; }
+    .company-name { font-size: 2.1rem; font-weight: bold; color: #4f46e5; letter-spacing: 2px; }
+    .address-block { font-size: 1.05rem; color: #444; line-height: 1.6; }
+    .line { height: 4px; background: #4f46e5; border: none; margin: 0 0 32px 0; }
+    .ref-date-row { display: flex; justify-content: space-between; margin: 24px 0 12px 0; font-size: 1.13rem; }
     .subject-row { display: flex; justify-content: center; align-items: center; margin-bottom: 24px; }
     .subject { font-weight: bold; text-decoration: underline; font-size: 1.5rem; color: #4f46e5; letter-spacing: 1px; }
     .content { font-size: 1.18rem; color: #222; line-height: 1.8; margin-top: 36px; }
@@ -95,28 +106,29 @@ const GenerateOfferLetter = () => {
     <div class='container'>
       <div class='watermark'>Student Era</div>
       <div class='header'>
-        <div class='logo-block'>
-          <img src='/logo.png' alt='Company Logo' class='logo' />
+        <img src='/logo.png' alt='Company Logo' class='logo' />
+        <div class='company-info'>
           <div class='company-name'>${company || 'Student Era'}</div>
+          <div class='address-block'>D-107, 91Springboard, Vyapar Marg, Sector-2, Noida, UP 201301<br />info@studentera.com | www.studentera.com</div>
         </div>
-        <div class='address-block'>Bihar, India<br />contact.studentera@gmail.com<br />www.studentera.live</div>
       </div>
+      <div class='line'></div>
       <div class='ref-date-row'>
-        <div>REF: ${internId || 'SE12345'}</div>
-        <div><span class='highlight'>Dated:</span> ${issueDate || '2024-06-01'}</div>
+        <div>REF: SE/INTERNSHIP/OFFER</div>
+        <div><span class='highlight'>Dated:</span> ${formatDate(issueDate)}</div>
       </div>
       <div class='subject-row'>
         <div class='subject'>LETTER OF OFFER</div>
       </div>
       <div class='content'>
-        <p>Dear <span class='highlight'>${candidateName || 'Candidate Name'}</span>,<br />Intern ID <span class='highlight'>${internId || 'SE1750975236268'}</span></p>
+        <p>Dear <span class='highlight'>${candidateName || 'Candidate Name'}</span>,<br />Intern ID: <span class='highlight'>${internId || '__________'}</span></p>
         <p>Congratulations!!</p>
         <div class='confidential'>STRICTLY PRIVATE &amp; CONFIDENTIAL</div>
         <p>We are pleased to offer you a Summer Internship with <span class='highlight'>${company || 'Student Era'}</span>, based on your application and the interview &amp; discussions you had with us. Details of the terms &amp; conditions of offer are as under:</p>
         <ol class='terms'>
           <li>You must always maintain utmost secrecy and confidentiality of your offer, its terms, and of any information about the company, and shall not disclose any such details to outsiders.</li>
           <li>You will be designated as <span class='highlight'>${title || 'MERN Developer'}</span>.</li>
-          <li>Your date of commencement of internship will be from <span class='highlight'>${startDate || '2024-06-10'}</span> in WFH mode.</li>
+          <li>Your date of commencement of internship will be from <span class='highlight'>${formatDate(startDate)}</span> in WFH mode.</li>
           <li>You will be entitled to receive compensation and benefits as discussed at the time of interview.</li>
           <li>You agree to work in both work environments i.e., WFH, Work from office.</li>
           <li>${techPartner || 'Tech Partner'} shall be the official Technology Partner for this internship.</li>

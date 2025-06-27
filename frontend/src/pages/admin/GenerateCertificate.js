@@ -78,12 +78,12 @@ const GenerateCertificate = () => {
     }
     .logo {
       display: block;
-      margin: 32px auto 24px auto;
+      margin: 40px auto 0 auto;
       height: 120px;
       max-width: 300px;
       object-fit: contain;
     }
-    .title { text-align: center; font-size: 2.8rem; font-weight: bold; color: #1e293b; margin-bottom: 12px; }
+    .title { text-align: center; font-size: 2.8rem; font-weight: bold; color: #1e293b; margin: 48px 0 12px 0; }
     .subtitle { text-align: center; font-size: 1.2rem; color: #333; margin-bottom: 24px; }
     .name { text-align: center; font-size: 2.2rem; font-weight: bold; color: #0e7490; margin-bottom: 8px; }
     .desc { text-align: center; font-size: 1.1rem; color: #222; margin-bottom: 8px; }
