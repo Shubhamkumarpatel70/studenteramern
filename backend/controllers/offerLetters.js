@@ -22,14 +22,11 @@ exports.generateOfferLetter = async (req, res, next) => {
             if (!req.body.internId) req.body.internId = userDoc.internId;
         }
         // Optionally, fetch user name for candidateName if not provided
-        let candidateName = req.body.candidateName;
-        if (!candidateName && req.body.user) {
-            // Populate user name if needed (assumes User model is available)
+        if (!req.body.candidateName && req.body.user) {
             const User = require('../models/User');
             const userDoc = await User.findById(req.body.user);
-            candidateName = userDoc ? userDoc.name : 'Candidate';
+            req.body.candidateName = userDoc ? userDoc.name : 'Candidate';
         }
-        req.body.candidateName = candidateName;
 
         const { user, candidateName, internId, title, company, issueDate, startDate, techPartner, stipend, hrName } = req.body;
         const offerLetter = new OfferLetter({
