@@ -86,7 +86,12 @@ process.on('unhandledRejection', (err, promise) => {
 
 // Serve frontend
 if (process.env.NODE_ENV === 'production') {
-    // ... existing code ...
+    const frontendPath = path.join(__dirname, '../../frontend/build');
+    app.use(express.static(frontendPath));
+    // Serve index.html for any unknown route (except API and uploads)
+    app.get(/^\/(?!api|uploads).*/, (req, res) => {
+        res.sendFile(path.join(frontendPath, 'index.html'));
+    });
 }
 
 // After DB connect, ensure default payment option
