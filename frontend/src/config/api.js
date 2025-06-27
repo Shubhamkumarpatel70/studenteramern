@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Set base URL for axios
 const baseURL = process.env.NODE_ENV === 'production' 
-  ? 'https://studenteramernbackend.onrender.com/api'
+  ? 'https://studentera.live/api'
   : 'http://localhost:5000/api';
 
 // Create axios instance with base URL
