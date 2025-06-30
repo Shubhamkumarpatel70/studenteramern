@@ -141,13 +141,14 @@ const AppContent = () => {
           <Route element={<ProtectedRoute roles={['user']} />}>
             <Route path="/dashboard" element={<UserDashboard />}>
               <Route index element={<DashboardHome />} />
+              <Route path="overview" element={<DashboardHome />} />
+              <Route path="transactions" element={<Transactions />} />
+              <Route path="certificates" element={<Certificates />} />
               <Route path="profile" element={<Profile />} />
               <Route path="applied-internships" element={<AppliedInternships />} />
               <Route path="meetings" element={<Meetings />} />
               <Route path="notifications" element={<Notifications />} />
-              <Route path="certificates" element={<Certificates />} />
               <Route path="offer-letters" element={<OfferLetters />} />
-              <Route path="transactions" element={<Transactions />} />
               <Route path="upload-task" element={<UploadTask />} />
               <Route path="my-tasks" element={<MyTasks />} />
               <Route path="help" element={<Help />} />

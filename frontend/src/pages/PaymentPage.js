@@ -5,6 +5,10 @@ import AuthContext from '../context/AuthContext';
 import { AlertTriangle, BadgeCheck, CreditCard, Loader2 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 
+// Add Cloudinary config
+const CLOUDINARY_UPLOAD_PRESET = 'your_upload_preset'; // TODO: Replace with your actual preset
+const CLOUDINARY_CLOUD_NAME = 'your_cloud_name'; // TODO: Replace with your actual cloud name
+
 const PaymentPage = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -23,6 +27,8 @@ const PaymentPage = () => {
     const [selectedOption, setSelectedOption] = useState(null);
     const [success, setSuccess] = useState(false);
     const [screenshot, setScreenshot] = useState(null);
+    const [screenshotUrl, setScreenshotUrl] = useState('');
+    const [uploading, setUploading] = useState(false);
 
     const APPLICATION_FEE = 129;
 
@@ -49,6 +55,29 @@ const PaymentPage = () => {
         });
     }, [internshipId]);
 
+    // Cloudinary upload handler
+    const handleScreenshotChange = async (e) => {
+        const file = e.target.files[0];
+        setScreenshot(file);
+        if (!file) return;
+        setUploading(true);
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+        try {
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            setScreenshotUrl(data.secure_url);
+        } catch (err) {
+            setScreenshotUrl('');
+            alert('Failed to upload screenshot. Please try again.');
+        }
+        setUploading(false);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!agreed) {
@@ -63,7 +92,7 @@ const PaymentPage = () => {
             setError('Please enter the UTR/Transaction ID after payment.');
             return;
         }
-        if (!screenshot) {
+        if (!screenshotUrl) {
             setError('Please upload a payment screenshot.');
             return;
         }
@@ -77,7 +106,7 @@ const PaymentPage = () => {
             formData.append('duration', duration);
             formData.append('certificateName', certificateName);
             formData.append('utr', utr);
-            formData.append('paymentScreenshot', screenshot);
+            formData.append('paymentScreenshot', screenshotUrl); // Send Cloudinary URL
             await api.post('/applications', formData, config);
             setSuccess(true);
         } catch (err) {
@@ -207,9 +236,11 @@ const PaymentPage = () => {
                                 type="file"
                                 accept="image/jpeg,image/png,image/jpg,image/webp"
                                 required
-                                onChange={e => setScreenshot(e.target.files[0])}
+                                onChange={handleScreenshotChange}
                                 className="mt-1 block w-full px-3 py-2 border rounded-md bg-white"
                             />
+                            {uploading && <div className="text-sm text-indigo-600 mt-1">Uploading screenshot...</div>}
+                            {screenshotUrl && <div className="text-green-600 text-xs mt-1">Screenshot uploaded!</div>}
                         </div>
                         <div>
                             <div className="flex items-start">

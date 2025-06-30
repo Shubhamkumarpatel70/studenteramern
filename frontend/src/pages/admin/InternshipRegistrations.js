@@ -136,7 +136,7 @@ const InternshipRegistrations = () => {
                                     &times;
                                 </button>
                                 <img
-                                    src={`https://studenteramernbackend.onrender.com/uploads/paymentScreenshots/${selectedApp.paymentScreenshot.replace(/^.*[\\/]/, '')}`}
+                                    src={selectedApp.paymentScreenshot}
                                     alt="Payment Screenshot"
                                     className="max-w-full max-h-[70vh] rounded border"
                                 />

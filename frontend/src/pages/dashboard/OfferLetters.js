@@ -71,24 +71,12 @@ const OfferLetters = () => {
 
         // Case 3: User has offer letters
         return (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
                 {offerLetters.map(letter => (
-                    <div key={letter._id} className="bg-white border rounded-lg p-4 flex flex-col justify-between shadow-sm transition-shadow hover:shadow-lg">
-                        <div>
-                            <FileText className="h-10 w-10 text-blue-500 mb-2" />
-                            <h3 className="text-lg font-semibold text-gray-800">{letter.title}</h3>
-                            <p className="text-sm text-gray-600">{letter.company}</p>
-                            <p className="text-xs text-gray-500 mt-2">Issued on: {new Date(letter.issueDate).toLocaleDateString()}</p>
-                        </div>
-                        {letter.fileUrl ? (
-                            <a href={letter.fileUrl} target="_blank" rel="noopener noreferrer" className="mt-4 text-center bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition block">
-                                View / Download PDF
-                            </a>
-                        ) : (
-                            <button className="mt-4 text-center bg-blue-600 text-white py-2 rounded-md opacity-50 cursor-not-allowed" disabled>
-                                PDF Not Available
-                            </button>
-                        )}
+                    <div key={letter._id} className="bg-white rounded-lg shadow p-4 flex flex-col gap-2">
+                        <div className="font-semibold text-gray-800">{letter.title}</div>
+                        <div className="text-xs text-gray-500">{new Date(letter.issuedAt).toLocaleDateString()}</div>
+                        <a href={letter.offerLetterUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline text-sm">View Offer Letter</a>
                     </div>
                 ))}
             </div>
@@ -96,9 +84,11 @@ const OfferLetters = () => {
     };
 
     return (
-        <div className="p-6 bg-gray-50 min-h-screen">
-            <h1 className="text-3xl font-bold mb-6 text-gray-800">My Offer Letters</h1>
-            {renderContent()}
+        <div className="p-2 sm:p-4 md:p-8 bg-gray-50 min-h-screen">
+            <div className="max-w-lg mx-auto">
+                <h1 className="text-3xl font-bold mb-6 text-gray-800">My Offer Letters</h1>
+                {renderContent()}
+            </div>
         </div>
     );
 };

@@ -51,8 +51,8 @@ const Profile = () => {
     }
 
     // Default avatar if profile picture is not a valid URL
-    const isInvalidUrl = !localUser.profilePicture || localUser.profilePicture.startsWith('images/users/');
-    const avatar = isInvalidUrl ? `https://ui-avatars.com/api/?name=${localUser.name}&background=random` : localUser.profilePicture;
+    const isInvalidUrl = !localUser.profilePicture || localUser.profilePicture.startsWith('images/users/') || localUser.profilePicture === 'default-avatar.png';
+    const avatar = isInvalidUrl ? `https://ui-avatars.com/api/?name=${encodeURIComponent(localUser.name)}&background=random` : localUser.profilePicture;
 
     // Handle save from modal
     const handleSave = (updated) => {

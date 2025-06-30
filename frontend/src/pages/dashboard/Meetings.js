@@ -89,28 +89,25 @@ const Meetings = () => {
     if (error) return <div className="p-8 text-red-500">{error}</div>;
 
     return (
-        <div className="p-6 bg-gray-50 min-h-full">
-            <h1 className="text-3xl font-bold mb-6 text-gray-800">Your Meetings</h1>
-            {meetings.length > 0 ? (
-                <div className="space-y-4">
-                    {meetings.map(meeting => (
-                        <div key={meeting._id} className="bg-white p-6 rounded-lg shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center">
-                            <div className="mb-4 sm:mb-0">
-                                <h2 className="text-xl font-bold text-gray-900">{meeting.title}</h2>
-                                <div className="flex items-center text-gray-600 mt-2">
-                                    <Calendar className="h-5 w-5 mr-2" />
-                                    <span>{new Date(meeting.date).toLocaleDateString()}</span>
-                                    <Clock className="h-5 w-5 ml-4 mr-2" />
-                                    <span>{new Date(meeting.date).toLocaleTimeString()}</span>
-                                </div>
+        <div className="p-2 sm:p-4 md:p-8 bg-gray-50 min-h-screen">
+            <div className="max-w-lg mx-auto">
+                <h1 className="text-3xl font-bold mb-6 text-gray-800">My Meetings</h1>
+                {loading ? (
+                    <div className="text-center py-8">Loading meetings...</div>
+                ) : meetings.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">No meetings scheduled.</div>
+                ) : (
+                    <div className="space-y-4">
+                        {meetings.map(meeting => (
+                            <div key={meeting._id} className="bg-white rounded-lg shadow p-4 flex flex-col gap-2">
+                                <div className="font-semibold text-gray-800">{meeting.title}</div>
+                                <div className="text-xs text-gray-500">{new Date(meeting.date).toLocaleString()}</div>
+                                <div className="text-sm text-gray-600">{meeting.description}</div>
                             </div>
-                            <JoinMeetingButton meetingDate={meeting.date} meetingLink={meeting.link} expireAfterMinutes={meeting.expireAfterMinutes} />
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                <p>You have no scheduled meetings.</p>
-            )}
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

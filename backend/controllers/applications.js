@@ -35,7 +35,7 @@ exports.createApplication = async (req, res, next) => {
             status: 'Applied', // Use valid enum value
             certificateName,
             utr,
-            paymentScreenshot: req.file ? req.file.path.replace(/\\/g, "/") : undefined
+            paymentScreenshot: req.body.paymentScreenshot // Cloudinary URL
         };
 
         const application = await Application.create(applicationData);

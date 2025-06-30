@@ -21,11 +21,12 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
     const inactiveClass = 'text-gray-600 hover:bg-blue-50';
 
     const navItems = [
-        { href: '/dashboard', icon: <LayoutDashboard />, label: 'Dashboard' },
+        { href: '/dashboard/overview', icon: <LayoutDashboard />, label: 'Overview' },
+        { href: '/dashboard/transactions', icon: <FileText />, label: 'Transactions' },
+        { href: '/dashboard/certificates', icon: <Award />, label: 'Certificates' },
         { href: '/dashboard/applied-internships', icon: <Briefcase />, label: 'Applied Internships' },
         { href: '/dashboard/meetings', icon: <Calendar />, label: 'Meetings' },
         { href: '/dashboard/notifications', icon: <Bell />, label: 'Notifications' },
-        { href: '/dashboard/certificates', icon: <Award />, label: 'My Certificates' },
         { href: '/dashboard/offer-letters', icon: <FileText />, label: 'My Offer Letters' },
         { href: '/dashboard/upload-task', icon: <Upload />, label: 'Upload Task' },
         { href: '/dashboard/my-tasks', icon: <ListChecks />, label: 'My Tasks' },
@@ -54,7 +55,7 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
                 />
             )}
             <aside
-                className={`fixed inset-y-0 left-0 bg-white shadow-xl w-64 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:relative md:translate-x-0 z-50 flex flex-col mt-16 md:mt-0`}
+                className={`fixed inset-y-0 left-0 bg-white shadow-xl w-64 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:relative md:translate-x-0 z-50 flex flex-col`}
                 aria-label="User dashboard sidebar"
             >
                 <div className="p-4 flex items-center justify-between border-b border-gray-100">

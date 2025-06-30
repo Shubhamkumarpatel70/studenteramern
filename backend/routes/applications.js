@@ -12,7 +12,7 @@ const upload = require('../middleware/upload');
 const router = express.Router();
 
 // User routes
-router.route('/').post(protect, upload.uploadPaymentScreenshot, createApplication);
+router.route('/').post(protect, createApplication);
 router.route('/my-applications').get(protect, getMyApplications);
 router.route('/:id').get(protect, getApplicationById);
 

@@ -52,61 +52,46 @@ const Notifications = () => {
     }
 
     return (
-        <div className="p-4 sm:p-6 md:p-8">
-            <div className="flex items-center justify-between mb-6">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center">
-                    <Bell className="mr-3 h-8 w-8 text-indigo-500" /> My Notifications
-                    <span className="ml-3 text-sm bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full font-semibold">{notifications.filter(n => !n.read).length} unread</span>
-                </h1>
-                <button
-                    onClick={() => { setLoading(true); fetchNotifications(); }}
-                    className="flex items-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition disabled:opacity-50"
-                    title="Refresh notifications"
-                    disabled={loading}
-                >
-                    <RefreshCw className={loading ? 'animate-spin' : ''} size={18} />
-                    Refresh
-                </button>
-            </div>
-            <div className="bg-white rounded-lg shadow-md">
-                {(localNotifications.length === 0 && notifications.length === 0) ? (
-                    <div className="p-8 text-center text-gray-500">
-                        You have no notifications.
-                    </div>
+        <div className="p-2 sm:p-4 md:p-8 bg-gray-50 min-h-full">
+            <div className="max-w-lg mx-auto">
+                <div className="flex items-center gap-2 mb-6">
+                    <Bell className="h-7 w-7 text-indigo-600" />
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">My Notifications</h1>
+                    <span className="ml-auto flex items-center gap-2">
+                        <span className="bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full text-xs font-semibold">{notifications.filter(n => !n.read).length} unread</span>
+                        <button onClick={fetchNotifications} className="ml-2 px-3 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition text-xs sm:text-sm flex items-center gap-1" disabled={loading}>
+                            <RefreshCw className={loading ? 'animate-spin' : ''} size={16} /> Refresh
+                        </button>
+                    </span>
+                </div>
+                {loading ? (
+                    <div className="text-center py-8">Loading notifications...</div>
+                ) : notifications.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">No notifications yet.</div>
                 ) : (
-                    <ul className="divide-y divide-gray-200">
+                    <div className="space-y-4">
                         {/* Local notifications (login/registration) */}
                         {localNotifications.map(notification => (
-                            <li key={notification._id} className={`p-4 flex justify-between items-center transition-colors duration-300 bg-blue-50 text-blue-900`}>
-                                <div>
-                                    <p className="text-blue-900 font-semibold">{notification.message}</p>
-                                    <p className="text-sm text-blue-500 mt-1">
-                                        {new Date(notification.createdAt).toLocaleString()}
-                                    </p>
+                            <div key={notification._id} className="bg-white rounded-lg shadow p-4 flex flex-col sm:flex-row sm:items-center gap-2">
+                                <div className="flex-1">
+                                    <div className="font-semibold text-gray-800">{notification.message}</div>
+                                    <div className="text-xs text-gray-500 mt-1">{new Date(notification.createdAt).toLocaleString()}</div>
                                 </div>
-                            </li>
+                            </div>
                         ))}
                         {/* Backend notifications */}
                         {notifications.map(notification => (
-                            <li key={notification._id} className={`p-4 flex justify-between items-center transition-colors duration-300 ${notification.read ? 'bg-gray-50 text-gray-500' : 'bg-white'}`}>
-                                <div>
-                                    <p className={`text-gray-800 ${notification.read ? 'font-normal' : 'font-semibold'}`}>{notification.message}</p>
-                                    <p className="text-sm text-gray-500 mt-1">
-                                        {new Date(notification.createdAt).toLocaleString()}
-                                    </p>
+                            <div key={notification._id} className="bg-white rounded-lg shadow p-4 flex flex-col sm:flex-row sm:items-center gap-2">
+                                <div className="flex-1">
+                                    <div className="font-semibold text-gray-800">{notification.message}</div>
+                                    <div className="text-xs text-gray-500 mt-1">{new Date(notification.createdAt).toLocaleString()}</div>
                                 </div>
                                 {!notification.read && (
-                                    <button 
-                                        onClick={() => handleMarkAsRead(notification._id)}
-                                        className="text-sm flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-full hover:bg-green-200"
-                                        title="Mark as read"
-                                    >
-                                        <Check size={16} /> Mark as Read
-                                    </button>
+                                    <button onClick={() => handleMarkAsRead(notification._id)} className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold hover:bg-green-200 transition">Mark as Read</button>
                                 )}
-                            </li>
+                            </div>
                         ))}
-                    </ul>
+                    </div>
                 )}
             </div>
         </div>
