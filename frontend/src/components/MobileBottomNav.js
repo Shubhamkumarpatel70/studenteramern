@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Home, Menu as MenuIcon, User, LogOut } from 'lucide-react';
+import { Home, Menu as MenuIcon, User, LogOut, MessagesSquare } from 'lucide-react';
 import AuthContext from '../context/AuthContext';
 
 const MobileBottomNav = ({ onMenuClick }) => {
@@ -22,6 +22,10 @@ const MobileBottomNav = ({ onMenuClick }) => {
         <MenuIcon size={24} />
         <span className="text-xs mt-1">Menu</span>
       </button>
+      <Link to="/dashboard/messages" className="flex flex-col items-center text-gray-600 hover:text-indigo-600 transition">
+        <MessagesSquare size={24} />
+        <span className="text-xs mt-1">Messages</span>
+      </Link>
       <Link to="/dashboard/profile" className="flex flex-col items-center text-gray-600 hover:text-indigo-600 transition">
         <User size={24} />
         <span className="text-xs mt-1">Account</span>

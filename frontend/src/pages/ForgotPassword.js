@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import api from '../config/api';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Mail } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
@@ -25,8 +26,11 @@ const ForgotPassword = () => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100">
-            <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md text-center border-t-4 border-indigo-500">
-                <h2 className="text-3xl font-extrabold mb-2 text-indigo-700">Forgot Password?</h2>
+            <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md text-center border-t-4 border-indigo-500">
+                <div className="flex flex-col items-center mb-4">
+                    <Mail className="h-12 w-12 text-indigo-500 mb-2" />
+                    <h2 className="text-3xl font-extrabold mb-1 text-indigo-700">Forgot Password?</h2>
+                </div>
                 <p className="mb-6 text-gray-600">Enter your email address and we'll send you a link to reset your password.</p>
                 <form onSubmit={onSubmit} className="space-y-4">
                     <input
@@ -48,6 +52,9 @@ const ForgotPassword = () => {
                 </form>
                 {message && <p className="mt-4 text-green-600 font-medium">{message}</p>}
                 {error && <p className="mt-4 text-red-600 font-medium">{error}</p>}
+                <div className="mt-6">
+                    <Link to="/login" className="text-indigo-600 hover:underline font-medium">Back to Login</Link>
+                </div>
             </div>
         </div>
     );

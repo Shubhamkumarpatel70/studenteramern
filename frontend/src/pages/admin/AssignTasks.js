@@ -20,6 +20,8 @@ const AssignTasks = () => {
         domain: ''
     });
 
+    const [userSearch, setUserSearch] = useState('');
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -110,6 +112,13 @@ const AssignTasks = () => {
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Select User</label>
+                        <input
+                            type="text"
+                            placeholder="Search user by name or ID..."
+                            value={userSearch}
+                            onChange={e => setUserSearch(e.target.value)}
+                            className="w-full mb-2 p-2 border border-gray-300 rounded-md"
+                        />
                         <select 
                             name="userId" 
                             value={formData.userId} 
@@ -118,7 +127,10 @@ const AssignTasks = () => {
                             className="w-full p-2 border border-gray-300 rounded-md"
                         >
                             <option value="">-- Select User --</option>
-                            {users.map(user => (
+                            {users.filter(user =>
+                                user.name.toLowerCase().includes(userSearch.toLowerCase()) ||
+                                (user.internId && user.internId.toLowerCase().includes(userSearch.toLowerCase()))
+                            ).map(user => (
                                 <option key={user._id} value={user._id}>
                                     {user.name} ({user.internId})
                                 </option>

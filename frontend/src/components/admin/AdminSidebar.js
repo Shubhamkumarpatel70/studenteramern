@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { FileText, FileCheck2, Users, Briefcase, ClipboardList, MessageSquare, Megaphone, Mail } from 'lucide-react';
+import { FileText, FileCheck2, Users, Briefcase, ClipboardList, MessageSquare, Megaphone, Mail, MessagesSquare } from 'lucide-react';
 
 const AdminSidebar = ({ isSidebarOpen, setSidebarOpen }) => {
     const commonClasses = 'flex items-center px-4 py-2.5 rounded-lg transition-colors duration-200';
@@ -27,6 +27,7 @@ const AdminSidebar = ({ isSidebarOpen, setSidebarOpen }) => {
                 <NavLink to="/admin-dashboard/manage-tasks" className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}>Manage Tasks</NavLink>
                 <NavLink to="/admin-dashboard/assign-tasks" className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}>Assign Tasks</NavLink>
                 <NavLink to="/admin-dashboard/manage-testimonials" className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}>Manage Testimonials</NavLink>
+                <NavLink to="/admin-dashboard/messages" className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}><MessagesSquare className="mr-2" size={18}/>Messages</NavLink>
                 <NavLink to="/admin-dashboard/queries" className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}><Mail className="mr-2" size={18}/>Queries</NavLink>
                 <NavLink to="/admin-dashboard/help-queries" className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}><MessageSquare className="mr-2" size={18}/>Help Queries</NavLink>
                 <NavLink to="/admin-dashboard/post-announcement" className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}>Post Announcement</NavLink>

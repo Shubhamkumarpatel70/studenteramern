@@ -67,9 +67,8 @@ export const AuthProvider = ({ children }) => {
         }
 
         try {
-            // This endpoint should be created to get user data from token
-            // const res = await axios.get('/api/auth/me'); 
-            // dispatch({ type: 'USER_LOADED', payload: res.data });
+            const res = await api.get('/auth/me');
+            dispatch({ type: 'USER_LOADED', payload: res.data.user });
         } catch (err) {
             dispatch({ type: 'LOGOUT' });
         }

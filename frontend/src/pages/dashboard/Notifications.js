@@ -74,7 +74,7 @@ const Notifications = () => {
                         ))}
                         {/* Backend notifications */}
                         {notifications.map(notification => (
-                            <li key={notification._id} className={`p-4 flex justify-between items-center transition-colors duration-300 ${notification.read ? 'bg-gray-50 text-gray-500' : 'bg-white'}`}>
+                            <li key={notification._id} className={`p-4 flex justify-between items-center transition-colors duration-300 ${notification.read ? 'bg-gray-50 text-gray-500' : 'bg-yellow-50 border-l-4 border-yellow-400 shadow-sm'}`}>
                                 <div>
                                     <p className={`text-gray-800 ${notification.read ? 'font-normal' : 'font-semibold'}`}>{notification.message}</p>
                                     <p className="text-sm text-gray-500 mt-1">
@@ -82,13 +82,16 @@ const Notifications = () => {
                                     </p>
                                 </div>
                                 {!notification.read && (
-                                    <button 
-                                        onClick={() => handleMarkAsRead(notification._id)}
-                                        className="text-sm flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-full hover:bg-green-200"
-                                        title="Mark as read"
-                                    >
-                                        <Check size={16} /> Mark as Read
-                                    </button>
+                                    <div className="flex items-center gap-2">
+                                        <span className="inline-block bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full mr-2">New</span>
+                                        <button 
+                                            onClick={() => handleMarkAsRead(notification._id)}
+                                            className="text-sm flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-full hover:bg-green-200"
+                                            title="Mark as read"
+                                        >
+                                            <Check size={16} /> Mark as Read
+                                        </button>
+                                    </div>
                                 )}
                             </li>
                         ))}

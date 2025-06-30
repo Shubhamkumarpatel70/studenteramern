@@ -18,7 +18,8 @@ const DashboardHome = () => {
         meetings: 0,
         notifications: 0,
         certificates: 0,
-        offerLetters: 0
+        offerLetters: 0,
+        messages: 0
     });
     const [loading, setLoading] = useState(true);
 
@@ -45,16 +46,17 @@ const DashboardHome = () => {
     }
 
     return (
-        <div className="p-8">
+        <div className="p-8 pt-4 md:pt-8 md:ml-64">
             <h1 className="text-3xl font-bold mb-2">Welcome Back, {user.name}!</h1>
             <p className="text-gray-600 mb-8">Here's a summary of your internship activities.</p>
 
             {loading ? (
                 <p>Loading stats...</p>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
                     <StatCard title="Meetings" value={stats.meetings} linkTo="/dashboard/meetings" />
                     <StatCard title="Notifications" value={stats.notifications} linkTo="/dashboard/notifications" />
+                    <StatCard title="Messages" value={stats.messages} linkTo="/dashboard/messages" />
                     <StatCard title="Certificates" value={stats.certificates} linkTo="/dashboard/certificates" />
                     <StatCard title="Offer Letters" value={stats.offerLetters} linkTo="/dashboard/offer-letters" />
                 </div>

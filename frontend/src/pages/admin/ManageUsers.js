@@ -70,6 +70,7 @@ const ManageUsers = () => {
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Registered</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Verified</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Profile %</th>
                                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
                                 </tr>
                             </thead>
@@ -85,6 +86,9 @@ const ManageUsers = () => {
                                             <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.isVerified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
                                                 {user.isVerified ? 'Yes' : 'No'}
                                             </span>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-center font-bold">
+                                            {typeof user.profileCompleteness === 'number' ? user.profileCompleteness : 0}%
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <button onClick={() => handleEdit(user)} className="text-indigo-600 hover:text-indigo-900 mr-4"><Edit size={20} /></button>

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
+import { RefreshCw } from "lucide-react";
 import api from '../../config/api';
 import AuthContext from "../../context/AuthContext";
 
@@ -7,39 +8,47 @@ const Help = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   const [queryId, setQueryId] = useState(null);
   const [allQueries, setAllQueries] = useState([]);
   const [expanded, setExpanded] = useState({});
   const chatEndRef = useRef(null);
 
+  const fetchQuery = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await api.get("/help-queries/my");
+      setAllQueries(res.data.data);
+      // Find open query or most recent
+      const openQuery = res.data.data.find(q => q.status === "open");
+      if (openQuery) {
+        setQueryId(openQuery._id);
+        setMessages(openQuery.messages || []);
+      } else if (res.data.data.length > 0) {
+        setQueryId(res.data.data[0]._id);
+        setMessages(res.data.data[0].messages || []);
+      } else {
+        setQueryId(null);
+        setMessages([]);
+      }
+    } catch (err) {
+      setError("Failed to load help chat. Please try again later.");
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (!isAuthenticated) return;
-    const fetchQuery = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const res = await api.get("/help-queries/my");
-        setAllQueries(res.data.data);
-        // Find open query or most recent
-        const openQuery = res.data.data.find(q => q.status === "open");
-        if (openQuery) {
-          setQueryId(openQuery._id);
-          setMessages(openQuery.messages || []);
-        } else if (res.data.data.length > 0) {
-          setQueryId(res.data.data[0]._id);
-          setMessages(res.data.data[0].messages || []);
-        } else {
-          setQueryId(null);
-          setMessages([]);
-        }
-      } catch (err) {
-        setError("Failed to load help chat. Please try again later.");
-      }
-      setLoading(false);
-    };
     fetchQuery();
   }, [isAuthenticated]);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchQuery();
+    setRefreshing(false);
+  };
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -101,7 +110,17 @@ const Help = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex flex-col items-center justify-center px-2">
       <div className="bg-white bg-opacity-90 p-6 rounded-xl shadow-2xl max-w-lg w-full mt-8 mb-8 flex flex-col">
-        <h1 className="text-3xl font-bold mb-4 text-indigo-700 text-center">Help & Support Chat</h1>
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-3xl font-bold text-indigo-700">Help & Support Chat</h1>
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="flex items-center space-x-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} />
+            <span className="text-sm">{refreshing ? 'Refreshing...' : 'Refresh'}</span>
+          </button>
+        </div>
         {loading ? (
           <div className="text-center py-8">Loading chat...</div>
         ) : error ? (

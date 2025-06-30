@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
     LayoutDashboard,
@@ -11,20 +11,49 @@ import {
     LogOut,
     Upload,
     ListChecks,
-    MessageSquare
+    MessageSquare,
+    MessagesSquare
 } from 'lucide-react';
+import api from '../../config/api';
+import setAuthToken from '../../utils/setAuthToken';
 
 const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
     const location = useLocation();
+    const [unreadCount, setUnreadCount] = useState(0);
     const commonClasses = 'flex items-center px-4 py-2.5 rounded-lg transition-colors duration-200';
     const activeClass = 'bg-blue-600 text-white shadow';
     const inactiveClass = 'text-gray-600 hover:bg-blue-50';
+
+    useEffect(() => {
+        const fetchUnreadCount = async () => {
+            if (localStorage.token) {
+                setAuthToken(localStorage.token);
+            }
+            try {
+                const res = await api.get('/messages/unread/count');
+                setUnreadCount(res.data.data.unreadCount);
+            } catch (err) {
+                console.error('Failed to fetch unread count', err);
+            }
+        };
+
+        fetchUnreadCount();
+        // Fetch unread count every 30 seconds
+        const interval = setInterval(fetchUnreadCount, 30000);
+        return () => clearInterval(interval);
+    }, []);
 
     const navItems = [
         { href: '/dashboard', icon: <LayoutDashboard />, label: 'Dashboard' },
         { href: '/dashboard/applied-internships', icon: <Briefcase />, label: 'Applied Internships' },
         { href: '/dashboard/meetings', icon: <Calendar />, label: 'Meetings' },
         { href: '/dashboard/notifications', icon: <Bell />, label: 'Notifications' },
+        { 
+            href: '/dashboard/messages', 
+            icon: <MessagesSquare />, 
+            label: 'Messages',
+            badge: unreadCount > 0 ? unreadCount : null
+        },
         { href: '/dashboard/certificates', icon: <Award />, label: 'My Certificates' },
         { href: '/dashboard/offer-letters', icon: <FileText />, label: 'My Offer Letters' },
         { href: '/dashboard/upload-task', icon: <Upload />, label: 'Upload Task' },
@@ -54,7 +83,7 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
                 />
             )}
             <aside
-                className={`fixed inset-y-0 left-0 bg-white shadow-xl w-64 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:relative md:translate-x-0 z-50 flex flex-col`}
+                className={`fixed inset-y-0 left-0 bg-white shadow-xl w-64 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:relative md:translate-x-0 z-40 flex flex-col pt-16`}
                 aria-label="User dashboard sidebar"
             >
                 <div className="p-4 flex items-center justify-between border-b border-gray-100">
@@ -79,6 +108,11 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
                         >
                             {item.icon}
                             <span className="ml-2">{item.label}</span>
+                            {item.badge && (
+                                <span className="ml-auto bg-red-500 text-white text-xs rounded-full px-2 py-1 min-w-[20px] text-center">
+                                    {item.badge}
+                                </span>
+                            )}
                         </NavLink>
                     ))}
                     <div className="pt-4 border-t border-gray-200">

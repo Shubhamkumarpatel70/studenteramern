@@ -1,23 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../config/api';
-import { Loader2, AlertCircle } from 'lucide-react';
+import { Loader2, AlertCircle, Lock } from 'lucide-react';
 
 const InternshipCard = ({ internship }) => {
     return (
-        <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
-            {internship.image && (
-                 <img src={internship.image} alt={internship.title} className="w-full h-48 object-cover" />
-            )}
-            <div className="p-6">
-                <h3 className="text-xl font-bold mb-2 text-gray-800">{internship.title}</h3>
-                <p className="text-gray-600 mb-4 h-20 overflow-hidden">{internship.shortDescription}</p>
-                <div className="flex justify-between items-center text-sm text-gray-500 mb-4">
-                    <span>Stipend: ₹{internship.stipend}</span>
-                    <span>Duration: {internship.duration}</span>
+        <div className="bg-white rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 border border-gray-100 flex flex-col h-full">
+            <div className="relative">
+                {internship.image && (
+                    <img src={internship.image} alt={internship.title} className="w-full h-44 object-cover" />
+                )}
+                {!internship.isAccepting && (
+                    <span className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow">Closed</span>
+                )}
+            </div>
+            <div className="p-5 flex flex-col flex-1">
+                <h3 className="text-lg font-bold mb-1 text-gray-800 line-clamp-1">{internship.title}</h3>
+                <p className="text-gray-600 mb-3 text-sm line-clamp-2 min-h-[40px]">{internship.shortDescription}</p>
+                <div className="flex justify-between items-center text-xs text-gray-500 mb-3">
+                    <span>Stipend: <span className="font-semibold">₹{internship.stipend}</span></span>
+                    <span>Duration: <span className="font-semibold">{internship.duration}</span></span>
                 </div>
-                <Link to={`/internships/${internship._id}`} className="w-full text-center block bg-indigo-600 text-white font-bold py-2 px-4 rounded hover:bg-indigo-700 transition-colors">
-                    View Details
+                <Link to={`/internships/${internship._id}`} className="w-full mt-auto">
+                    <button
+                        className={`w-full py-2 rounded-lg font-bold transition-colors duration-200 text-white ${internship.isAccepting ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-400 cursor-not-allowed'}`}
+                        disabled={!internship.isAccepting}
+                        title={internship.isAccepting ? 'Apply for this internship' : 'Applications are closed'}
+                    >
+                        {internship.isAccepting ? 'View Details' : <span className="flex items-center justify-center gap-2"><Lock size={16}/> View Details</span>}
+                    </button>
                 </Link>
             </div>
         </div>
@@ -58,10 +69,10 @@ const Internships = () => {
     );
 
     return (
-        <div className="bg-gray-50 py-12">
-            <div className="container mx-auto px-4">
-                <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">Available Internships</h1>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12 min-h-screen">
+            <div className="container mx-auto px-2 sm:px-4">
+                <h1 className="text-4xl font-bold text-center mb-10 text-gray-800 drop-shadow">Available Internships</h1>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                     {internships.map(internship => (
                         <InternshipCard key={internship._id} internship={internship} />
                     ))}

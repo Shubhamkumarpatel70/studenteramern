@@ -27,6 +27,7 @@ import Certificates from "./pages/dashboard/Certificates";
 import OfferLetters from "./pages/dashboard/OfferLetters";
 import UploadTask from "./pages/dashboard/UploadTask";
 import MyTasks from "./pages/dashboard/MyTasks";
+import Messages from "./pages/dashboard/Messages";
 import PaymentPage from './pages/PaymentPage';
 import Apply from './pages/Apply';
 import InternshipDetails from './pages/InternshipDetails';
@@ -48,7 +49,7 @@ import PostAnnouncement from './pages/admin/PostAnnouncement';
 import ManageTasks from './pages/admin/ManageTasks';
 import AssignTasks from './pages/admin/AssignTasks';
 import Queries from "./pages/admin/Queries";
-
+import AdminMessages from "./pages/admin/Messages";
 
 // Co-Admin Pages
 import CoAdminHome from "./pages/coadmin/CoAdminHome";
@@ -131,7 +132,9 @@ const AppContent = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/otp-verify" element={<OTPVerify />} />
           <Route path="/forgotpassword" element={<ForgotPassword />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/resetpassword/:resettoken" element={<ResetPassword />} />
+          <Route path="/reset-password/:resettoken" element={<ResetPassword />} />
           <Route path="/internships/:id" element={<InternshipDetails />} />
           <Route path="/internships" element={<Internships />} />
           <Route path="/apply/:internshipId" element={<ProtectedRoute roles={['user']}><Apply /></ProtectedRoute>} />
@@ -145,6 +148,7 @@ const AppContent = () => {
               <Route path="applied-internships" element={<AppliedInternships />} />
               <Route path="meetings" element={<Meetings />} />
               <Route path="notifications" element={<Notifications />} />
+              <Route path="messages" element={<Messages />} />
               <Route path="certificates" element={<Certificates />} />
               <Route path="offer-letters" element={<OfferLetters />} />
               <Route path="transactions" element={<Transactions />} />
@@ -171,6 +175,7 @@ const AppContent = () => {
               <Route path="generate-offer-letter" element={<GenerateOfferLetter />} />
               <Route path="queries" element={<Queries />} />
               <Route path="help-queries" element={<HelpQueries />} />
+              <Route path="messages" element={<AdminMessages />} />
             </Route>
           </Route>
           
@@ -184,6 +189,7 @@ const AppContent = () => {
           </Route>
 
           {/* Not Found Route */}
+          <Route path="/404" element={<NotFound />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
