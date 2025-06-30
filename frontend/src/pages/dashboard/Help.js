@@ -14,31 +14,33 @@ const Help = () => {
   const [expanded, setExpanded] = useState({});
   const chatEndRef = useRef(null);
 
+  // Move fetchQuery outside useEffect
+  const fetchQuery = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await api.get("/help-queries/my");
+      setAllQueries(res.data.data);
+      // Find open query or most recent
+      const openQuery = res.data.data.find(q => q.status === "open");
+      if (openQuery) {
+        setQueryId(openQuery._id);
+        setMessages(openQuery.messages || []);
+      } else if (res.data.data.length > 0) {
+        setQueryId(res.data.data[0]._id);
+        setMessages(res.data.data[0].messages || []);
+      } else {
+        setQueryId(null);
+        setMessages([]);
+      }
+    } catch (err) {
+      setError("Failed to load help chat. Please try again later.");
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (!isAuthenticated) return;
-    const fetchQuery = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const res = await api.get("/help-queries/my");
-        setAllQueries(res.data.data);
-        // Find open query or most recent
-        const openQuery = res.data.data.find(q => q.status === "open");
-        if (openQuery) {
-          setQueryId(openQuery._id);
-          setMessages(openQuery.messages || []);
-        } else if (res.data.data.length > 0) {
-          setQueryId(res.data.data[0]._id);
-          setMessages(res.data.data[0].messages || []);
-        } else {
-          setQueryId(null);
-          setMessages([]);
-        }
-      } catch (err) {
-        setError("Failed to load help chat. Please try again later.");
-      }
-      setLoading(false);
-    };
     fetchQuery();
     const interval = setInterval(fetchQuery, 30000); // auto-refresh every 30s
     return () => clearInterval(interval);
