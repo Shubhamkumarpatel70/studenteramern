@@ -73,7 +73,7 @@ const Internships = () => {
             <div className="container mx-auto px-2 sm:px-4">
                 <h1 className="text-4xl font-bold text-center mb-10 text-gray-800 drop-shadow">Available Internships</h1>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                    {internships.map(internship => (
+                    {internships.filter(i => i.isAccepting).map(internship => (
                         <InternshipCard key={internship._id} internship={internship} />
                     ))}
                 </div>
