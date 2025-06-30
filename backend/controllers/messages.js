@@ -12,8 +12,8 @@ const getConversations = async (req, res) => {
             {
                 $match: {
                     $or: [
-                        { sender: mongoose.Types.ObjectId(userId) },
-                        { receiver: mongoose.Types.ObjectId(userId) }
+                        { sender: new mongoose.Types.ObjectId(userId) },
+                        { receiver: new mongoose.Types.ObjectId(userId) }
                     ]
                 }
             },
@@ -24,7 +24,7 @@ const getConversations = async (req, res) => {
                 $group: {
                     _id: {
                         $cond: [
-                            { $eq: ['$sender', mongoose.Types.ObjectId(userId)] },
+                            { $eq: ['$sender', new mongoose.Types.ObjectId(userId)] },
                             '$receiver',
                             '$sender'
                         ]
@@ -35,7 +35,7 @@ const getConversations = async (req, res) => {
                             $cond: [
                                 {
                                     $and: [
-                                        { $eq: ['$receiver', mongoose.Types.ObjectId(userId)] },
+                                        { $eq: ['$receiver', new mongoose.Types.ObjectId(userId)] },
                                         { $eq: ['$isRead', false] }
                                     ]
                                 },
