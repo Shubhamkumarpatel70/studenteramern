@@ -185,23 +185,37 @@ const AnnouncementBar = () => {
     );
 };
 
-const HeroSection = () => (
-    <div className="text-center py-20 px-4 sm:px-6 lg:px-8 bg-indigo-600 text-white">
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
-            Launch Your Tech Career with <span className="block text-indigo-200">Student-Era</span>
-        </h1>
-        <p className="mt-4 max-w-2xl mx-auto text-lg sm:text-xl text-indigo-100">
-            Gain real-world experience with our virtual internships. Work on live projects, get mentored by experts, and build a portfolio that stands out.
-        </p>
-        <div className="mt-8 flex justify-center gap-4">
-            <Link to="/internships" className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50">
-                Browse Internships
-            </Link>
-            <Link to="/register" className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-500 hover:bg-indigo-400">
-                Sign Up Now
-            </Link>
-        </div>
+const HeroSection = ({ isAuthenticated }) => (
+  <section className="relative overflow-hidden bg-gradient-to-br from-indigo-700 via-purple-600 to-indigo-500 text-white py-24 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center min-h-[60vh]">
+    {/* Decorative shapes */}
+    <div className="absolute top-0 left-0 w-full h-full pointer-events-none select-none">
+      <svg className="absolute top-0 left-0 w-1/2 h-1/2 opacity-30" viewBox="0 0 400 400" fill="none"><circle cx="200" cy="200" r="200" fill="url(#paint0_radial)" /></svg>
+      <svg className="absolute bottom-0 right-0 w-1/3 h-1/3 opacity-20" viewBox="0 0 300 300" fill="none"><circle cx="150" cy="150" r="150" fill="url(#paint1_radial)" /></svg>
+      <defs>
+        <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientTransform="translate(200 200) scale(200)" gradientUnits="userSpaceOnUse"><stop stopColor="#a5b4fc" /><stop offset="1" stopColor="#6366f1" stopOpacity="0" /></radialGradient>
+        <radialGradient id="paint1_radial" cx="0" cy="0" r="1" gradientTransform="translate(150 150) scale(150)" gradientUnits="userSpaceOnUse"><stop stopColor="#f472b6" /><stop offset="1" stopColor="#a78bfa" stopOpacity="0" /></radialGradient>
+      </defs>
     </div>
+    <div className="relative z-10 flex flex-col items-center text-center">
+      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight drop-shadow-xl">
+        <span className="block">Launch Your Tech Career with</span>
+        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-indigo-200 to-white">Student-Era</span>
+      </h1>
+      <p className="mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-indigo-100 font-medium drop-shadow">
+        Gain real-world experience with our virtual internships. Work on live projects, get mentored by experts, and build a portfolio that stands out.
+      </p>
+      <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4 w-full sm:w-auto">
+        <Link to="/internships" className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-lg font-semibold rounded-lg text-indigo-700 bg-white hover:bg-indigo-50 shadow-lg transition">
+          Browse Internships
+        </Link>
+        {!isAuthenticated && (
+          <Link to="/register" className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-lg font-semibold rounded-lg text-white bg-pink-500 hover:bg-pink-600 shadow-lg transition">
+            Sign Up Now
+          </Link>
+        )}
+      </div>
+    </div>
+  </section>
 );
 
 const CertifiedSection = () => (
@@ -370,10 +384,11 @@ const TestimonialsSection = () => {
 };
 
 const Home = () => {
+    const { isAuthenticated } = useContext(AuthContext);
     return (
         <div className="bg-white">
             <AnnouncementBar />
-            <HeroSection />
+            <HeroSection isAuthenticated={isAuthenticated} />
             <CertifiedSection />
             <FeaturesSection />
             <LatestInternships />

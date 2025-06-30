@@ -25,9 +25,9 @@ const InternshipCard = ({ internship }) => {
                     <button
                         className={`w-full py-2 rounded-lg font-bold transition-colors duration-200 text-white ${internship.isAccepting ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-400 cursor-not-allowed'}`}
                         disabled={!internship.isAccepting}
-                        title={internship.isAccepting ? 'Apply for this internship' : 'Applications are closed'}
+                        title={internship.isAccepting ? 'Apply for this internship' : 'Internship Closed'}
                     >
-                        {internship.isAccepting ? 'View Details' : <span className="flex items-center justify-center gap-2"><Lock size={16}/> View Details</span>}
+                        {internship.isAccepting ? 'View Details' : <span className="flex items-center justify-center gap-2"><Lock size={16}/> Internship Closed</span>}
                     </button>
                 </Link>
             </div>
@@ -73,7 +73,7 @@ const Internships = () => {
             <div className="container mx-auto px-2 sm:px-4">
                 <h1 className="text-4xl font-bold text-center mb-10 text-gray-800 drop-shadow">Available Internships</h1>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                    {internships.filter(i => i.isAccepting).map(internship => (
+                    {internships.map(internship => (
                         <InternshipCard key={internship._id} internship={internship} />
                     ))}
                 </div>

@@ -112,12 +112,12 @@ const InternshipDetails = () => {
                                 onClick={handleApplyClick}
                                 className={`w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white ${internship.isAccepting ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-400 cursor-not-allowed'}`}
                                 disabled={!internship.isAccepting}
-                                title={internship.isAccepting ? 'Apply for this internship' : 'Applications are closed'}
+                                title={internship.isAccepting ? 'Apply for this internship' : 'Internship Closed'}
                             >
-                                {internship.isAccepting ? 'Apply Now' : 'Applications Closed'}
+                                {internship.isAccepting ? 'Apply Now' : 'Internship Closed'}
                             </button>
                             {!internship.isAccepting && (
-                                <p className="mt-2 text-sm text-red-500 font-semibold">This internship is not accepting applications at the moment.</p>
+                                <p className="mt-2 text-sm text-red-500 font-semibold">This internship is not accepting applications at the moment. New batches start soon.</p>
                             )}
                         </div>
                     </div>
