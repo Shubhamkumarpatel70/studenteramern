@@ -6,7 +6,8 @@ const {
     updateApplicationStatus,
     getApplicationById
 } = require('../controllers/applications');
-const { protect, authorize } = require('../middleware/auth');
+const protect = require('../middleware/auth');
+const authorize = require('../middleware/auth').authorize;
 const upload = require('../middleware/upload');
 
 const router = express.Router();

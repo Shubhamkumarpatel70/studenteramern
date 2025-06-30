@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
 
-exports.generateOfferLetter = async (req, res, next) => {
+const generateOfferLetter = async (req, res, next) => {
     try {
         // Support using internId (student ID) as well as ObjectId for user
         let userId = req.body.user;
@@ -61,7 +61,7 @@ exports.generateOfferLetter = async (req, res, next) => {
 // @desc    Get all offer letters for the logged-in user
 // @route   GET /api/offer-letters/my-offer-letters
 // @access  Private
-exports.getMyOfferLetters = async (req, res, next) => {
+const getMyOfferLetters = async (req, res, next) => {
     try {
         const offerLetters = await OfferLetter.find({ user: req.user.id }).populate('user', 'name');
         res.status(200).json({ success: true, count: offerLetters.length, data: offerLetters });
@@ -74,7 +74,7 @@ exports.getMyOfferLetters = async (req, res, next) => {
 // @desc    Get all offer letters (Admin)
 // @route   GET /api/offer-letters
 // @access  Private/Admin
-exports.getAllOfferLetters = async (req, res, next) => {
+const getAllOfferLetters = async (req, res, next) => {
     try {
         const offerLetters = await OfferLetter.find().sort({ createdAt: -1 });
         res.status(200).json({ success: true, count: offerLetters.length, data: offerLetters });
@@ -87,7 +87,7 @@ exports.getAllOfferLetters = async (req, res, next) => {
 // @desc    Get offer letter by ID (Admin)
 // @route   GET /api/offer-letters/:id
 // @access  Private/Admin
-exports.getOfferLetterById = async (req, res) => {
+const getOfferLetterById = async (req, res) => {
     try {
         const offerLetter = await OfferLetter.findById(req.params.id);
         if (!offerLetter) {
@@ -102,7 +102,7 @@ exports.getOfferLetterById = async (req, res) => {
 // @desc    Delete offer letter by ID (Admin)
 // @route   DELETE /api/offer-letters/:id
 // @access  Private/Admin
-exports.deleteOfferLetter = async (req, res) => {
+const deleteOfferLetter = async (req, res) => {
     try {
         const offerLetter = await OfferLetter.findById(req.params.id);
         if (!offerLetter) {
@@ -120,4 +120,12 @@ exports.deleteOfferLetter = async (req, res) => {
     } catch (err) {
         res.status(500).json({ success: false, message: 'Server Error' });
     }
+};
+
+module.exports = {
+    generateOfferLetter,
+    getMyOfferLetters,
+    getAllOfferLetters,
+    getOfferLetterById,
+    deleteOfferLetter
 }; 

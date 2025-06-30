@@ -8,7 +8,8 @@ const {
     deleteTestimonial
 } = require('../controllers/testimonials');
 
-const { protect, authorize } = require('../middleware/auth');
+const protect = require('../middleware/auth');
+const authorize = require('../middleware/auth').authorize;
 
 // Public route to get all testimonials
 router.get('/', getTestimonials);

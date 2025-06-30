@@ -1,6 +1,7 @@
 const express = require('express');
 const { getAllTasks, updateTaskStatus, submitTask, getMyTasks, getMyUploads } = require('../controllers/tasks');
-const { protect, authorize } = require('../middleware/auth');
+const protect = require('../middleware/auth');
+const authorize = require('../middleware/auth').authorize;
 const upload = require('../middleware/upload');
 
 const router = express.Router();

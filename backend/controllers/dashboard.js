@@ -2,6 +2,7 @@ const Meeting = require('../models/Meeting');
 const Notification = require('../models/Notification');
 const Certificate = require('../models/Certificate');
 const OfferLetter = require('../models/OfferLetter');
+const Message = require('../models/Message');
 const User = require('../models/User');
 const Internship = require('../models/Internship');
 const Transaction = require('../models/Transaction');
@@ -41,11 +42,36 @@ exports.getDashboardStats = async (req, res, next) => {
             const notificationsCount = await Notification.countDocuments({ user: userId });
             const certificatesCount = await Certificate.countDocuments({ user: userId });
             const offerLettersCount = await OfferLetter.countDocuments({ user: userId });
+            
+            // Get message conversations count
+            const messageConversations = await Message.aggregate([
+                {
+                    $match: {
+                        $or: [
+                            { sender: userId },
+                            { receiver: userId }
+                        ]
+                    }
+                },
+                {
+                    $group: {
+                        _id: {
+                            $cond: [
+                                { $eq: ['$sender', userId] },
+                                '$receiver',
+                                '$sender'
+                            ]
+                        }
+                    }
+                }
+            ]);
+            
             stats = {
                 meetings: meetingsCount,
                 notifications: notificationsCount,
                 certificates: certificatesCount,
-                offerLetters: offerLettersCount
+                offerLetters: offerLettersCount,
+                messages: messageConversations.length
             };
         }
 

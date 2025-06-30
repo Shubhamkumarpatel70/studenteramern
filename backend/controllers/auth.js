@@ -190,8 +190,9 @@ exports.forgotPassword = async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
-    // Create reset URL
-    const resetUrl = `${req.protocol}://${req.get('host')}/resetpassword/${resetToken}`;
+    // Create reset URL (use frontend URL)
+    const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const resetUrl = `${FRONTEND_URL}/resetpassword/${resetToken}`;
 
     const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please click the link to reset your password: \n\n ${resetUrl}`;
 
@@ -274,5 +275,17 @@ exports.resendOtp = async (req, res, next) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ success: false, message: 'Error resending OTP.' });
+    }
+};
+
+// @desc    Get current logged in user
+// @route   GET /api/auth/me
+// @access  Private
+exports.getMe = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id).select('-password');
+        res.status(200).json({ success: true, user });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Failed to fetch user' });
     }
 }; 

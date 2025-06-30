@@ -7,7 +7,8 @@ const {
     deleteAnnouncement,
     getAnnouncements
 } = require('../controllers/announcements');
-const { protect, authorize } = require('../middleware/auth');
+const protect = require('../middleware/auth');
+const authorize = require('../middleware/auth').authorize;
 
 // Public routes
 router.get('/latest', getLatestAnnouncement);

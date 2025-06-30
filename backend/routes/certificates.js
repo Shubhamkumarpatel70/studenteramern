@@ -1,8 +1,8 @@
 const express = require('express');
-const { generateCertificate, getAllCertificates, verifyCertificate, generateSelfCertificate } = require('../controllers/certificates');
+const { generateCertificate, getAllCertificates, verifyCertificate, generateSelfCertificate, getMyCertificates } = require('../controllers/certificates');
 const router = express.Router();
-const { protect, authorize } = require('../middleware/auth');
-const { getMyCertificates } = require('../controllers/certificates');
+const protect = require('../middleware/auth');
+const authorize = require('../middleware/auth').authorize;
 
 router
     .route('/')
