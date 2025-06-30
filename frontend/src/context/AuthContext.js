@@ -64,13 +64,13 @@ export const AuthProvider = ({ children }) => {
     const loadUser = async () => {
         if (localStorage.token) {
             setAuthToken(localStorage.token);
-        }
-
-        try {
-            // This endpoint should be created to get user data from token
-            // const res = await axios.get('/api/auth/me'); 
-            // dispatch({ type: 'USER_LOADED', payload: res.data });
-        } catch (err) {
+            try {
+                const res = await api.get('/auth/me');
+                dispatch({ type: 'USER_LOADED', payload: res.data.data });
+            } catch (err) {
+                dispatch({ type: 'LOGOUT' });
+            }
+        } else {
             dispatch({ type: 'LOGOUT' });
         }
     };

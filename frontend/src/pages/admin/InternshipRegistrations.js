@@ -109,7 +109,7 @@ const InternshipRegistrations = () => {
                         <h2 className="text-2xl font-bold mb-4">Application Details</h2>
                         <p><strong>Applicant:</strong> {selectedApp.user.name}</p>
                         <p><strong>Email:</strong> {selectedApp.user.email}</p>
-                        <p><strong>Internship:</strong> {selectedApp.internship.title}</p>
+                        <p><strong>Internship:</strong> {selectedApp.internship ? selectedApp.internship.title : 'Internship not available'}</p>
                         <p><strong>Duration:</strong> {selectedApp.duration}</p>
                         <p><strong>Status:</strong> {selectedApp.status}</p>
                         <p><strong>Transaction ID:</strong> {selectedApp.transactionId}</p>

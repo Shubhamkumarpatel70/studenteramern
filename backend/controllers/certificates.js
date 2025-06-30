@@ -159,3 +159,28 @@ exports.generateSelfCertificate = async (req, res, next) => {
         res.status(400).json({ success: false, message: err.message });
     }
 };
+
+// @desc    Delete a certificate by ID
+// @route   DELETE /api/certificates/:id
+// @access  Private/Admin
+exports.deleteCertificate = async (req, res, next) => {
+    try {
+        const certificate = await Certificate.findById(req.params.id);
+        if (!certificate) {
+            return res.status(404).json({ success: false, message: 'Certificate not found' });
+        }
+        // Remove PDF file if exists
+        if (certificate.fileUrl) {
+            const fileName = certificate.fileUrl.split('/').pop();
+            const filePath = require('path').join(__dirname, '../uploads/certificates', fileName);
+            const fs = require('fs');
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+        }
+        await certificate.deleteOne();
+        res.status(200).json({ success: true, message: 'Certificate deleted' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};

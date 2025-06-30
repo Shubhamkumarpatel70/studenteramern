@@ -149,9 +149,9 @@ const UploadTask = () => {
     if (loading) return <div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin" /></div>;
 
     return (
-        <div className="p-2 sm:p-4 md:p-8 bg-gray-50 min-h-screen">
-            <div className="max-w-lg mx-auto">
-                <div className="bg-white rounded-lg shadow-lg p-4 sm:p-8 mb-8">
+        <div className="p-2 sm:p-4 md:p-8 bg-gray-50 min-h-screen font-sans font-medium">
+            <div className="max-w-lg mx-auto font-sans font-medium">
+                <div className="bg-white rounded-lg shadow-lg p-4 sm:p-8 mb-8 font-sans font-medium">
                     <h1 className="text-3xl font-bold mb-6 text-gray-800">Upload Task Submission</h1>
                     {assignedTasks.length === 0 ? (
                         <div className="text-center text-gray-600">

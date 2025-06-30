@@ -19,4 +19,8 @@ router.get('/verify/:certificateId', verifyCertificate);
 // User self-certificate generation
 router.post('/generate-self', protect, generateSelfCertificate);
 
+router
+    .route('/:id')
+    .delete(protect, authorize('admin'), require('../controllers/certificates').deleteCertificate);
+
 module.exports = router;

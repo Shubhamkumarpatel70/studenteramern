@@ -52,7 +52,7 @@ const Notifications = () => {
     }
 
     return (
-        <div className="p-2 sm:p-4 md:p-8 bg-gray-50 min-h-full">
+        <div className="p-2 sm:p-4 md:p-8 bg-gray-50 min-h-full font-sans font-medium">
             <div className="max-w-lg mx-auto">
                 <div className="flex items-center gap-2 mb-6">
                     <Bell className="h-7 w-7 text-indigo-600" />
@@ -69,7 +69,7 @@ const Notifications = () => {
                 ) : notifications.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">No notifications yet.</div>
                 ) : (
-                    <div className="space-y-4">
+                    <div className="space-y-4 font-sans font-medium">
                         {/* Local notifications (login/registration) */}
                         {localNotifications.map(notification => (
                             <div key={notification._id} className="bg-white rounded-lg shadow p-4 flex flex-col sm:flex-row sm:items-center gap-2">

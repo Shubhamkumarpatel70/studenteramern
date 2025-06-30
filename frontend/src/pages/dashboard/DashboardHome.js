@@ -47,13 +47,13 @@ const DashboardHome = () => {
     }
 
     return (
-        <div className="p-2 sm:p-4 md:p-8">
+        <div className="p-2 sm:p-4 md:p-8 font-sans font-medium">
             <h1 className="text-3xl font-bold mb-2">Welcome Back, {user.name}!</h1>
             <p className="text-gray-600 mb-8">Here's a summary of your internship activities.</p>
             {loading ? (
                 <p>Loading stats...</p>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-lg mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-lg mx-auto font-sans font-medium">
                     <StatCard title="Meetings" value={stats.meetings} linkTo="/dashboard/meetings" />
                     <StatCard title="Notifications" value={stats.notifications} linkTo="/dashboard/notifications" />
                     <StatCard title="Certificates" value={stats.certificates} linkTo="/dashboard/certificates" />

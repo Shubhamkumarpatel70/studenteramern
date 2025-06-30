@@ -55,7 +55,7 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
                 />
             )}
             <aside
-                className={`fixed inset-y-0 left-0 bg-white shadow-xl w-64 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:relative md:translate-x-0 z-50 flex flex-col`}
+                className={`fixed inset-y-0 left-0 bg-white shadow-xl w-64 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:relative md:translate-x-0 z-[100] flex flex-col font-sans font-medium`}
                 aria-label="User dashboard sidebar"
             >
                 <div className="p-4 flex items-center justify-between border-b border-gray-100">

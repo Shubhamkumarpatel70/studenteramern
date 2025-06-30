@@ -105,7 +105,7 @@ const Help = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex flex-col items-center justify-center px-2">
-      <div className="bg-white bg-opacity-90 p-2 sm:p-6 rounded-xl shadow-2xl max-w-lg w-full mt-8 mb-8 flex flex-col mx-auto">
+      <div className="bg-white bg-opacity-90 p-2 sm:p-6 rounded-xl shadow-2xl max-w-lg w-full mt-8 mb-8 flex flex-col mx-auto font-sans font-medium">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-3xl font-bold text-indigo-700 text-center flex-1">Help & Support Chat</h1>
           <button

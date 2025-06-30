@@ -71,21 +71,42 @@ const OfferLetters = () => {
 
         // Case 3: User has offer letters
         return (
-            <div className="space-y-4">
-                {offerLetters.map(letter => (
-                    <div key={letter._id} className="bg-white rounded-lg shadow p-4 flex flex-col gap-2">
-                        <div className="font-semibold text-gray-800">{letter.title}</div>
-                        <div className="text-xs text-gray-500">{new Date(letter.issuedAt).toLocaleDateString()}</div>
-                        <a href={letter.offerLetterUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline text-sm">View Offer Letter</a>
-                    </div>
-                ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                {offerLetters.map(letter => {
+                    // Fix date: use letter.issueDate or letter.issuedAt, fallback to '-'
+                    let issuedDate = '-';
+                    if (letter.issueDate && !isNaN(new Date(letter.issueDate))) {
+                        issuedDate = new Date(letter.issueDate).toLocaleDateString();
+                    } else if (letter.issuedAt && !isNaN(new Date(letter.issuedAt))) {
+                        issuedDate = new Date(letter.issuedAt).toLocaleDateString();
+                    }
+                    return (
+                        <div key={letter._id} className="bg-white rounded-xl shadow-lg p-4 flex flex-col justify-between transition-transform hover:scale-[1.02] border border-blue-100">
+                            <div>
+                                <FileText className="h-10 w-10 text-blue-500 mb-2" />
+                                <h3 className="text-lg font-bold text-gray-800 mb-1">{letter.title}</h3>
+                                {letter.company && <p className="text-sm text-gray-600 mb-1">{letter.company}</p>}
+                                <p className="text-xs text-gray-500 mb-2">Issued on: {issuedDate}</p>
+                            </div>
+                            {letter.fileUrl ? (
+                                <a href={letter.fileUrl} target="_blank" rel="noopener noreferrer" className="mt-2 text-center bg-gradient-to-r from-blue-600 to-indigo-500 text-white py-2 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-600 transition block shadow">
+                                    View / Download PDF
+                                </a>
+                            ) : (
+                                <button className="mt-2 text-center bg-gray-300 text-gray-500 py-2 rounded-lg font-semibold cursor-not-allowed block shadow" disabled>
+                                    PDF Not Available
+                                </button>
+                            )}
+                        </div>
+                    );
+                })}
             </div>
         );
     };
 
     return (
-        <div className="p-2 sm:p-4 md:p-8 bg-gray-50 min-h-screen">
-            <div className="max-w-lg mx-auto">
+        <div className="p-2 sm:p-4 md:p-8 bg-gray-50 min-h-screen font-sans font-medium">
+            <div className="max-w-2xl mx-auto font-sans font-medium">
                 <h1 className="text-3xl font-bold mb-6 text-gray-800">My Offer Letters</h1>
                 {renderContent()}
             </div>

@@ -134,10 +134,10 @@ exports.updateApplicationStatus = async (req, res, next) => {
             return res.status(404).json({ success: false, message: 'Application not found' });
         }
 
-        // Here you would integrate with a real payment gateway.
-        // For now, we'll just confirm the payment and update the status.
-        application.status = 'Approved';
-        application.transactionId = `txn_${Date.now()}`; // Mock a real transaction ID
+        // Only set transactionId if approved
+        if (status === 'Approved') {
+            application.transactionId = `txn_${Date.now()}`; // Mock a real transaction ID
+        }
         await application.save();
 
         res.status(200).json({ success: true, data: application });

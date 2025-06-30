@@ -54,7 +54,7 @@ const AppliedInternships = () => {
     );
 
     return (
-        <div className="p-2 sm:p-4 md:p-6 bg-gray-50 min-h-full">
+        <div className="p-2 sm:p-4 md:p-6 bg-gray-50 min-h-full font-sans font-medium">
             <h1 className="text-3xl font-bold mb-6 text-gray-800">My Applied Internships</h1>
 
             {applications.length === 0 ? (
@@ -66,7 +66,7 @@ const AppliedInternships = () => {
                     </Link>
                 </div>
             ) : (
-                <div className="bg-white shadow-md rounded-lg overflow-x-auto">
+                <div className="bg-white shadow-md rounded-lg overflow-x-auto font-sans font-medium">
                     <table className="min-w-full divide-y divide-gray-200 text-sm sm:text-base">
                         <thead className="bg-gray-100">
                             <tr>

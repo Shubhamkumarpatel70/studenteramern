@@ -89,8 +89,8 @@ const Meetings = () => {
     if (error) return <div className="p-8 text-red-500">{error}</div>;
 
     return (
-        <div className="p-2 sm:p-4 md:p-8 bg-gray-50 min-h-screen">
-            <div className="max-w-lg mx-auto">
+        <div className="p-2 sm:p-4 md:p-8 bg-gray-50 min-h-screen font-sans font-medium">
+            <div className="max-w-lg mx-auto font-sans font-medium">
                 <h1 className="text-3xl font-bold mb-6 text-gray-800">My Meetings</h1>
                 {loading ? (
                     <div className="text-center py-8">Loading meetings...</div>

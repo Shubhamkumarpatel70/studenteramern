@@ -94,8 +94,8 @@ const Profile = () => {
     }[level];
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex flex-col items-center py-10 px-2">
-        <div className="relative bg-white p-8 rounded-2xl shadow-2xl border border-blue-100 flex flex-col items-center">
+      <div className="p-2 sm:p-4 md:p-8 bg-gray-50 min-h-screen flex flex-col items-center font-sans font-medium">
+        <div className="relative bg-white p-4 sm:p-8 rounded-2xl shadow-2xl border border-blue-100 flex flex-col items-center max-w-lg w-full mx-auto">
           <div className="absolute top-4 right-4">
             {localUser.profileCompleteness < 100 ? (
               <button onClick={() => setShowEdit(true)} className="flex items-center gap-1 px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-lg text-sm font-semibold shadow transition animate-bounce">

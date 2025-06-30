@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../../config/api';
 import setAuthToken from '../../utils/setAuthToken';
+import { Trash2, Eye } from 'lucide-react';
 
 const GenerateCertificate = () => {
     const [formData, setFormData] = useState({
@@ -13,6 +14,8 @@ const GenerateCertificate = () => {
         signatureName: ''
     });
     const [showPreview, setShowPreview] = useState(false);
+    const [certificates, setCertificates] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const { user, candidateName, internshipTitle, duration, completionDate, certificateId, signatureName } = formData;
 
@@ -44,6 +47,36 @@ const GenerateCertificate = () => {
         } catch (err) {
             console.error('Failed to generate certificate', err.response.data);
             alert(`Error: ${err.response.data.message}`);
+        }
+    };
+
+    useEffect(() => {
+        fetchCertificates();
+    }, []);
+
+    const fetchCertificates = async () => {
+        setLoading(true);
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            const res = await api.get('/certificates', config);
+            setCertificates(res.data.data);
+        } catch (err) {
+            // Optionally handle error
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this certificate?')) return;
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            await api.delete(`/certificates/${id}`, config);
+            setCertificates(certificates.filter(cert => cert._id !== id));
+        } catch (err) {
+            alert('Failed to delete certificate.');
         }
     };
 
@@ -166,6 +199,45 @@ const GenerateCertificate = () => {
                             height="800"
                             style={{ border: 'none', background: 'transparent' }}
                         />
+                    </div>
+                )}
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-lg mt-8">
+                <h2 className="text-2xl font-bold mb-4">All Generated Certificates</h2>
+                {loading ? (
+                    <div>Loading certificates...</div>
+                ) : certificates.length === 0 ? (
+                    <div className="text-gray-500">No certificates generated yet.</div>
+                ) : (
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-100">
+                                <tr>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Candidate</th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Internship</th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Duration</th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Completion</th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Certificate ID</th>
+                                    <th className="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {certificates.map(cert => (
+                                    <tr key={cert._id}>
+                                        <td className="px-4 py-2 whitespace-nowrap">{cert.candidateName}</td>
+                                        <td className="px-4 py-2 whitespace-nowrap">{cert.internshipTitle}</td>
+                                        <td className="px-4 py-2 whitespace-nowrap">{cert.duration}</td>
+                                        <td className="px-4 py-2 whitespace-nowrap">{cert.completionDate ? new Date(cert.completionDate).toLocaleDateString() : '-'}</td>
+                                        <td className="px-4 py-2 whitespace-nowrap">{cert.certificateId}</td>
+                                        <td className="px-4 py-2 whitespace-nowrap text-center flex gap-2 justify-center">
+                                            <a href={cert.fileUrl || `/verify-certificate/${cert.certificateId}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-900"><Eye size={20} /></a>
+                                            <button onClick={() => handleDelete(cert._id)} className="text-red-600 hover:text-red-900"><Trash2 size={20} /></button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
                 )}
             </div>
