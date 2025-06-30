@@ -79,18 +79,6 @@ const AdminHome = () => {
                         value={stats.totalRegistrations ?? 0} 
                         color="bg-pink-500"
                     />
-                    <StatCard 
-                        icon={<CheckCircle2 size={32} className="text-white" />} 
-                        title="1 Approve User Count" 
-                        value={stats.approved1 ?? 0} 
-                        color="bg-teal-500"
-                    />
-                    <StatCard 
-                        icon={<CheckCircle2 size={32} className="text-white" />} 
-                        title="2 Approve User Count" 
-                        value={stats.approved2 ?? 0} 
-                        color="bg-indigo-500"
-                    />
                 </div>
             ) : (
                 <p>Could not load statistics.</p>

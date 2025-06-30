@@ -29,7 +29,7 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
         { href: '/dashboard/offer-letters', icon: <FileText />, label: 'My Offer Letters' },
         { href: '/dashboard/upload-task', icon: <Upload />, label: 'Upload Task' },
         { href: '/dashboard/my-tasks', icon: <ListChecks />, label: 'My Tasks' },
-        { href: '/dashboard/help', icon: <MessageSquare />, label: 'Help' },
+        { href: '/dashboard/help', icon: <MessageSquare />, label: 'Message' },
     ];
 
     const bottomNavItems = [
@@ -54,7 +54,7 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
                 />
             )}
             <aside
-                className={`fixed inset-y-0 left-0 bg-white shadow-xl w-64 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:relative md:translate-x-0 z-50 flex flex-col`}
+                className={`fixed inset-y-0 left-0 bg-white shadow-xl w-64 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:relative md:translate-x-0 z-50 flex flex-col mt-16 md:mt-0`}
                 aria-label="User dashboard sidebar"
             >
                 <div className="p-4 flex items-center justify-between border-b border-gray-100">

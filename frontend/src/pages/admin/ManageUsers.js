@@ -64,18 +64,27 @@ const ManageUsers = () => {
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
                                 <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Profile</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student ID</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Registered</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Verified</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Profile %</th>
                                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {users.map(user => (
                                     <tr key={user._id}>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <img
+                                                src={user.profilePicture || '/default-avatar.png'}
+                                                alt={user.name}
+                                                className="w-10 h-10 rounded-full border object-cover shadow"
+                                            />
+                                        </td>
                                         <td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
                                         <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
                                         <td className="px-6 py-4 whitespace-nowrap">{user.internId}</td>
@@ -84,6 +93,11 @@ const ManageUsers = () => {
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.isVerified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
                                                 {user.isVerified ? 'Yes' : 'No'}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
+                                                {user.profileCompleteness || 0}%
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

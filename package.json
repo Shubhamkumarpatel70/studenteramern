@@ -13,11 +13,18 @@
     "install-all": "npm run install-server && npm run install-client",
     "vercel-build": "cd frontend && npm install && npm run build"
   },
-  "keywords": ["mern", "react", "node", "express", "mongodb"],
+  "keywords": [
+    "mern",
+    "react",
+    "node",
+    "express",
+    "mongodb"
+  ],
   "author": "Shubham Kumar Patel",
   "license": "MIT",
   "dependencies": {
-    "pdfkit": "^0.17.1"
+    "pdfkit": "^0.17.1",
+    "react-circular-progressbar": "^2.2.0"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

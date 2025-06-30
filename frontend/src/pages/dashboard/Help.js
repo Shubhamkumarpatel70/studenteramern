@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import api from '../../config/api';
 import AuthContext from "../../context/AuthContext";
+import { RefreshCw } from 'lucide-react';
 
 const Help = () => {
   const { user, isAuthenticated } = useContext(AuthContext);
@@ -39,6 +40,8 @@ const Help = () => {
       setLoading(false);
     };
     fetchQuery();
+    const interval = setInterval(fetchQuery, 30000); // auto-refresh every 30s
+    return () => clearInterval(interval);
   }, [isAuthenticated]);
 
   useEffect(() => {
@@ -101,7 +104,22 @@ const Help = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex flex-col items-center justify-center px-2">
       <div className="bg-white bg-opacity-90 p-6 rounded-xl shadow-2xl max-w-lg w-full mt-8 mb-8 flex flex-col">
-        <h1 className="text-3xl font-bold mb-4 text-indigo-700 text-center">Help & Support Chat</h1>
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-3xl font-bold text-indigo-700 text-center flex-1">Help & Support Chat</h1>
+          <button
+            onClick={fetchQuery}
+            className="flex items-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition disabled:opacity-50 ml-4"
+            title="Refresh chat"
+            disabled={loading}
+          >
+            <RefreshCw className={loading ? 'animate-spin' : ''} size={18} />
+            Refresh
+          </button>
+        </div>
+        <div className="flex justify-between mb-2">
+          <span className="text-sm bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full font-semibold">{allQueries.length} queries</span>
+          <span className="text-sm bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-semibold">{messages.length} messages</span>
+        </div>
         {loading ? (
           <div className="text-center py-8">Loading chat...</div>
         ) : error ? (

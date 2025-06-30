@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
 import setAuthToken from '../../utils/setAuthToken';
 import MobileBottomNav from '../../components/MobileBottomNav';
+import Transactions from './Transactions';
+import Certificates from './Certificates';
 
 const StatCard = ({ title, value, linkTo }) => (
     <Link to={linkTo} className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
@@ -21,6 +23,7 @@ const DashboardHome = () => {
         offerLetters: 0
     });
     const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState('Overview');
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -49,16 +52,34 @@ const DashboardHome = () => {
             <h1 className="text-3xl font-bold mb-2">Welcome Back, {user.name}!</h1>
             <p className="text-gray-600 mb-8">Here's a summary of your internship activities.</p>
 
-            {loading ? (
-                <p>Loading stats...</p>
-            ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <StatCard title="Meetings" value={stats.meetings} linkTo="/dashboard/meetings" />
-                    <StatCard title="Notifications" value={stats.notifications} linkTo="/dashboard/notifications" />
-                    <StatCard title="Certificates" value={stats.certificates} linkTo="/dashboard/certificates" />
-                    <StatCard title="Offer Letters" value={stats.offerLetters} linkTo="/dashboard/offer-letters" />
-                </div>
+            {/* Tabs */}
+            <div className="flex gap-4 mb-8 border-b">
+                {['Overview', 'Transactions', 'Certificates'].map(tab => (
+                    <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        className={`px-4 py-2 font-semibold border-b-2 transition-colors duration-200 ${activeTab === tab ? 'border-indigo-600 text-indigo-700' : 'border-transparent text-gray-500 hover:text-indigo-600'}`}
+                    >
+                        {tab}
+                    </button>
+                ))}
+            </div>
+
+            {/* Tab Content */}
+            {activeTab === 'Overview' && (
+                loading ? (
+                    <p>Loading stats...</p>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <StatCard title="Meetings" value={stats.meetings} linkTo="/dashboard/meetings" />
+                        <StatCard title="Notifications" value={stats.notifications} linkTo="/dashboard/notifications" />
+                        <StatCard title="Certificates" value={stats.certificates} linkTo="/dashboard/certificates" />
+                        <StatCard title="Offer Letters" value={stats.offerLetters} linkTo="/dashboard/offer-letters" />
+                    </div>
+                )
             )}
+            {activeTab === 'Transactions' && <Transactions />}
+            {activeTab === 'Certificates' && <Certificates />}
             <MobileBottomNav />
         </div>
     );

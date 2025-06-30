@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import api from '../../config/api';
-import { Bell, Check, Loader2, X } from 'lucide-react';
+import { Bell, Check, Loader2, X, RefreshCw } from 'lucide-react';
 import AuthContext from '../../context/AuthContext';
 
 const Notifications = () => {
@@ -25,6 +25,8 @@ const Notifications = () => {
 
     useEffect(() => {
         fetchNotifications();
+        const interval = setInterval(fetchNotifications, 30000); // auto-refresh every 30s
+        return () => clearInterval(interval);
     }, []);
 
     const handleMarkAsRead = async (id) => {
@@ -51,9 +53,21 @@ const Notifications = () => {
 
     return (
         <div className="p-4 sm:p-6 md:p-8">
-            <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-800 flex items-center">
-                <Bell className="mr-3 h-8 w-8 text-indigo-500" /> My Notifications
-            </h1>
+            <div className="flex items-center justify-between mb-6">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center">
+                    <Bell className="mr-3 h-8 w-8 text-indigo-500" /> My Notifications
+                    <span className="ml-3 text-sm bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full font-semibold">{notifications.filter(n => !n.read).length} unread</span>
+                </h1>
+                <button
+                    onClick={() => { setLoading(true); fetchNotifications(); }}
+                    className="flex items-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition disabled:opacity-50"
+                    title="Refresh notifications"
+                    disabled={loading}
+                >
+                    <RefreshCw className={loading ? 'animate-spin' : ''} size={18} />
+                    Refresh
+                </button>
+            </div>
             <div className="bg-white rounded-lg shadow-md">
                 {(localNotifications.length === 0 && notifications.length === 0) ? (
                     <div className="p-8 text-center text-gray-500">
