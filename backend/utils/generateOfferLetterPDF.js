@@ -23,39 +23,41 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
 
     // Header: Centered logo and company info
     const logoPath = path.join(__dirname, '../templates/company-logo.png');
+    let headerY = 40;
     if (typeof logoPath === 'string' && fs.existsSync(logoPath)) {
-      doc.image(logoPath, doc.page.width / 2 - 60, 40, { width: 120 });
+      const logoWidth = 120;
+      const logoX = (doc.page.width - logoWidth) / 2;
+      doc.image(logoPath, logoX, headerY, { width: logoWidth });
+      headerY += 100;
     } else {
-      console.warn('Logo path is not a string or does not exist:', logoPath);
+      headerY += 30;
     }
-    doc.fontSize(24).font('Helvetica-Bold').fillColor('#4f46e5').text('Student Era', 0, 170, { align: 'center' });
-    doc.fontSize(12).font('Helvetica').fillColor('#444').text('D-107, 91Springboard, Vyapar Marg, Sector-2, Noida, UP 201301', { align: 'center' });
-    doc.text('info@studentera.com | www.studentera.com', { align: 'center' });
-
-    // Accent line
-    doc.moveDown(1);
-    doc.strokeColor('#4f46e5').lineWidth(3).moveTo(60, 220).lineTo(doc.page.width - 60, 220).stroke();
-    doc.moveDown(1);
-
+    doc.fontSize(28).font('Helvetica-Bold').fillColor('#4f46e5').text('Student Era', 0, headerY, { align: 'center' });
+    headerY += 32;
+    doc.fontSize(13).font('Helvetica').fillColor('#444').text('D-107, 91Springboard, Vyapar Marg, Sector-2, Noida, UP 201301', 0, headerY, { align: 'center' });
+    headerY += 18;
+    doc.fontSize(12).fillColor('#666').text('info@studentera.com | www.studentera.com', 0, headerY, { align: 'center' });
+    headerY += 18;
+    doc.moveTo(60, headerY + 10).lineTo(doc.page.width - 60, headerY + 10).lineWidth(2).strokeColor('#4f46e5').stroke();
+    let contentY = headerY + 30;
     // Reference, Date, and Heading
-    doc.fontSize(12).font('Helvetica').fillColor('black').text('REF: SE/INTERNSHIP/OFFER', 60, 235, { align: 'left' });
-    doc.font('Helvetica-Bold').text('LETTER OF OFFER', 0, 235, { align: 'center', underline: true });
-    doc.font('Helvetica').text(`Dated: ${new Date(offerLetter.issueDate).toLocaleDateString()}`, doc.page.width - 220, 235, { align: 'left' });
-
-    doc.moveDown(2);
-    doc.fontSize(14).font('Helvetica-Bold').text(`Dear ${offerLetter.candidateName || 'Candidate'},`, 60, 270, { align: 'left' });
-    doc.font('Helvetica').text(`Intern ID: ${offerLetter.internId || '__________'}`, { align: 'left' });
-    doc.moveDown(0.5);
-    doc.font('Helvetica-Bold').text('Congratulations!!', { align: 'left' });
-
-    doc.moveDown(1);
-    doc.font('Helvetica-Bold').fontSize(13).text('STRICTLY PRIVATE & CONFIDENTIAL', { align: 'center', underline: true });
-    doc.moveDown(0.5);
-    doc.font('Helvetica').fontSize(11).text(
+    doc.fontSize(12).font('Helvetica').fillColor('black').text('REF: SE/INTERNSHIP/OFFER', 60, contentY, { align: 'left' });
+    doc.font('Helvetica-Bold').fontSize(18).fillColor('#4f46e5').text('LETTER OF OFFER', 0, contentY, { align: 'center', underline: true });
+    doc.font('Helvetica').fontSize(12).fillColor('black').text(`Dated: ${new Date(offerLetter.issueDate).toLocaleDateString()}`, doc.page.width - 220, contentY, { align: 'left' });
+    contentY += 32;
+    doc.fontSize(15).font('Helvetica-Bold').fillColor('#0e7490').text(`Dear ${offerLetter.candidateName || 'Candidate'},`, 60, contentY, { align: 'left' });
+    contentY += 22;
+    doc.font('Helvetica').fontSize(12).fillColor('#222').text(`Intern ID: ${offerLetter.internId || '__________'}`, 60, contentY, { align: 'left' });
+    contentY += 18;
+    doc.font('Helvetica-Bold').fontSize(14).fillColor('#1e293b').text('Congratulations!!', 60, contentY, { align: 'left' });
+    contentY += 24;
+    doc.font('Helvetica-Bold').fontSize(13).fillColor('#4f46e5').text('STRICTLY PRIVATE & CONFIDENTIAL', 0, contentY, { align: 'center', underline: true });
+    contentY += 22;
+    doc.font('Helvetica').fontSize(12).fillColor('black').text(
       'We are pleased to offer you a Summer Internship with Student Era, based on your application and the interview & discussions you had with us. Details of the terms & conditions of offer are as under:',
-      { align: 'left' }
+      60, contentY, { align: 'left', width: doc.page.width - 120 }
     );
-    doc.moveDown(0.5);
+    contentY += 32;
     const terms = [
       'You must always maintain utmost secrecy and confidentiality of your offer, its terms, and of any information about the company, and shall not disclose any such details to outsiders.',
       `You will be designated as ${offerLetter.title || 'Intern'}.`,
@@ -66,28 +68,23 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
       'The company reserves all rights to withdraw this internship offer at any time without giving any reasons.',
       'In addition to core responsibilities of this internship, the company may assign additional tasks or projects based on operational needs and availability. The intern is expected to contribute effectively to such assignments as per the company\'s discretion.'
     ];
+    doc.fontSize(12).fillColor('#222');
     terms.forEach((term, i) => {
-      doc.text(`${i + 1}. ${term}`, { indent: 10, align: 'left' });
+      doc.text(`${i + 1}. ${term}`, 80, doc.y + 2, { width: doc.page.width - 160, lineGap: 2 });
     });
     doc.moveDown(0.5);
-    doc.text('9. Kindly sign and return a copy of this letter as a token of your acceptance of the offer.', { indent: 10, align: 'left' });
+    doc.text('9. Kindly sign and return a copy of this letter as a token of your acceptance of the offer.', 80, doc.y + 2, { width: doc.page.width - 160, lineGap: 2 });
     doc.moveDown(1);
-    doc.text('Looking forward to a long and mutually beneficial career with us', { align: 'left' });
-
-    // Horizontal line before signature area
+    doc.text('Looking forward to a long and mutually beneficial career with us', 60, doc.y + 2, { align: 'left' });
     doc.moveDown(1);
     doc.strokeColor('#888').lineWidth(1).moveTo(60, doc.y).lineTo(doc.page.width - 60, doc.y).stroke();
     doc.moveDown(1);
-
-    // Signature area (modern)
-    doc.fontSize(12).font('Helvetica').text(`${offerLetter.hrName || 'N. Kumar (Sr. HR-Manager)'}`, 60, doc.y, { continued: true });
+    doc.fontSize(12).font('Helvetica').fillColor('#222').text(`${offerLetter.hrName || 'N. Kumar (Sr. HR-Manager)'}`, 60, doc.y, { continued: true });
     doc.text('Applicant Sign', 260, doc.y, { continued: true });
     doc.text('College', 400, doc.y, { continued: true });
     doc.text('Location', 520, doc.y);
-
     doc.moveDown(2);
-    // For Student Era + Stamp
-    doc.fontSize(11).text('For Student Era', 60, doc.y, { align: 'left' });
+    doc.fontSize(11).font('Helvetica-Bold').fillColor('#1e293b').text('For Student Era', 60, doc.y, { align: 'left' });
     const stampPath = path.join(__dirname, '../templates/stamp.png');
     if (typeof stampPath === 'string' && fs.existsSync(stampPath)) {
       doc.opacity(0.5).image(stampPath, 180, doc.y - 20, { width: 60 }).opacity(1);

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 const EditInternshipModal = ({ isOpen, onClose, internship, onSave }) => {
     const [formData, setFormData] = useState(internship);
+    const [featureInput, setFeatureInput] = useState('');
 
     useEffect(() => {
         setFormData({
@@ -18,11 +19,30 @@ const EditInternshipModal = ({ isOpen, onClose, internship, onSave }) => {
         }));
     };
 
+    const addFeature = () => {
+        const value = featureInput.trim();
+        if (value && (!formData.features || !formData.features.includes(value))) {
+            setFormData(prev => ({
+                ...prev,
+                features: [...(prev.features || []), value]
+            }));
+            setFeatureInput('');
+        }
+    };
+
+    const removeFeature = (idx) => {
+        setFormData(prev => ({
+            ...prev,
+            features: prev.features.filter((_, i) => i !== idx)
+        }));
+    };
+
     const handleSubmit = e => {
         e.preventDefault();
         const finalData = {
             ...formData,
-            technologies: formData.technologies.split(',').map(s => s.trim())
+            technologies: formData.technologies.split(',').map(s => s.trim()),
+            features: Array.isArray(formData.features) ? formData.features : (formData.features ? formData.features.split('\n').map(f => f.trim()).filter(f => f.length > 0) : [])
         };
         onSave(finalData);
     };
@@ -61,8 +81,25 @@ const EditInternshipModal = ({ isOpen, onClose, internship, onSave }) => {
                     </div>
 
                     <div>
+                        <label className="block text-sm font-medium text-gray-700">Stipend</label>
+                        <input type="number" name="stipend" value={formData.stipend || ''} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+                    </div>
+
+                    <div>
                         <label className="block text-sm font-medium text-gray-700">Features</label>
-                        <textarea name="features" value={formData.features ? formData.features.join('\n') : ''} onChange={e => setFormData(prev => ({ ...prev, features: e.target.value.split(/\n/).map(f => f.trim()).filter(f => f.length > 0) }))} rows="3" className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+                        <div className="flex gap-2 mb-2">
+                            <input type="text" value={featureInput} onChange={e => setFeatureInput(e.target.value)} className="flex-1 border border-gray-300 rounded-md px-2 py-1" placeholder="Add feature" />
+                            <button type="button" onClick={addFeature} className="px-3 py-1 bg-indigo-600 text-white rounded-md">Add</button>
+                        </div>
+                        <div className="flex flex-wrap gap-2 mb-2">
+                            {Array.isArray(formData.features) && formData.features.map((feature, idx) => (
+                                <span key={idx} className="bg-gray-200 px-2 py-1 rounded-full flex items-center">
+                                    {feature}
+                                    <button type="button" onClick={() => removeFeature(idx)} className="ml-2 text-red-500">&times;</button>
+                                </span>
+                            ))}
+                        </div>
+                        <textarea name="features" value={formData.features ? formData.features.join('\n') : ''} onChange={e => setFormData(prev => ({ ...prev, features: e.target.value.split(/\n/).map(f => f.trim()).filter(f => f.length > 0) }))} rows="3" className="mt-1 block w-full border-gray-300 rounded-md shadow-sm" placeholder="Or paste features, one per line"></textarea>
                     </div>
 
                     {/* Add other fields like stipend, location, duration as needed */}

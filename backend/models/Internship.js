@@ -42,6 +42,10 @@ const InternshipSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
+    features: {
+        type: [String],
+        default: []
+    },
     createdAt: {
         type: Date,
         default: Date.now
