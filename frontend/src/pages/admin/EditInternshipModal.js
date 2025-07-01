@@ -7,7 +7,8 @@ const EditInternshipModal = ({ isOpen, onClose, internship, onSave }) => {
     useEffect(() => {
         setFormData({
             ...internship,
-            technologies: Array.isArray(internship.technologies) ? internship.technologies.join(', ') : ''
+            technologies: Array.isArray(internship.technologies) ? internship.technologies.join(', ') : '',
+            stipendType: internship.stipendType || 'month',
         });
     }, [internship]);
 
@@ -42,7 +43,8 @@ const EditInternshipModal = ({ isOpen, onClose, internship, onSave }) => {
         const finalData = {
             ...formData,
             technologies: formData.technologies.split(',').map(s => s.trim()),
-            features: Array.isArray(formData.features) ? formData.features : (formData.features ? formData.features.split('\n').map(f => f.trim()).filter(f => f.length > 0) : [])
+            features: Array.isArray(formData.features) ? formData.features : (formData.features ? formData.features.split('\n').map(f => f.trim()).filter(f => f.length > 0) : []),
+            stipendType: formData.stipendType || 'month',
         };
         onSave(finalData);
     };
@@ -80,9 +82,19 @@ const EditInternshipModal = ({ isOpen, onClose, internship, onSave }) => {
                         <input type="text" name="technologies" value={formData.technologies} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Stipend</label>
-                        <input type="number" name="stipend" value={formData.stipend || ''} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+                    <div className="flex gap-4">
+                        <div className="flex-1">
+                            <label className="block text-sm font-medium text-gray-700">Stipend</label>
+                            <input type="number" name="stipend" value={formData.stipend || ''} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Stipend Type</label>
+                            <select name="stipendType" value={formData.stipendType || 'month'} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                <option value="day">Per Day</option>
+                                <option value="week">Per Week</option>
+                                <option value="month">Per Month</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div>

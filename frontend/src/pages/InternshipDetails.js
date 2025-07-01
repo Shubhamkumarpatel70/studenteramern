@@ -69,7 +69,7 @@ const InternshipDetails = () => {
                                 <div>
                                     <p className="text-sm text-gray-500">Stipend</p>
                                     <p className="font-semibold">
-                                        {internship.stipend > 0 ? `₹${internship.stipend} /month` : 'Unpaid'}
+                                        {internship.stipend > 0 ? `₹${internship.stipend} /${internship.stipendType || 'month'}` : 'Unpaid'}
                                     </p>
                                 </div>
                             </div>
@@ -102,18 +102,40 @@ const InternshipDetails = () => {
 
                         <div>
                             <h3 className="text-lg font-bold text-gray-800 mb-2">Full Description</h3>
-                            <div className="prose max-w-none text-gray-600">
+                            <div className="prose max-w-none text-gray-600 mb-4">
                                 {internship.description}
                             </div>
+                            {internship.features && internship.features.length > 0 && (
+                                <div className="mt-6">
+                                    <h4 className="text-md font-semibold text-gray-700 mb-2">Key Features</h4>
+                                    <ul className="list-disc ml-6 space-y-1 text-gray-700">
+                                        {internship.features.map((feature, idx) => (
+                                            <li key={idx} className="flex items-start gap-2">
+                                                <span className="mt-0.5">•</span>
+                                                <span>{feature}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
                         </div>
                         
                         <div className="mt-8 text-center">
-                            <button 
-                                onClick={handleApplyClick}
-                                className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
-                            >
-                                Apply Now
-                            </button>
+                            {internship.isAccepting ? (
+                                <button 
+                                    onClick={handleApplyClick}
+                                    className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                                >
+                                    Apply Now
+                                </button>
+                            ) : (
+                                <button 
+                                    disabled
+                                    className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md bg-gray-300 text-gray-500 cursor-not-allowed"
+                                >
+                                    Application Closed
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>

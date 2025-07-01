@@ -4,44 +4,27 @@ const path = require('path');
 
 function generateOfferLetterPDF(offerLetter, outputPath) {
   return new Promise((resolve, reject) => {
-    const doc = new PDFDocument({ margin: 50, size: 'A4' });
+    const doc = new PDFDocument({ margin: 30, size: 'A4' });
     const stream = fs.createWriteStream(outputPath);
     doc.pipe(stream);
 
-    // Watermark
-    doc.save();
-    doc.rotate(-30, { origin: [doc.page.width / 2, doc.page.height / 2] });
-    doc.font('Helvetica-Bold')
-      .fontSize(90)
-      .fillColor('#4f46e5')
-      .opacity(0.07)
-      .text('Student Era', doc.page.width / 2 - 300, doc.page.height / 2 - 50, {
-        align: 'center',
-        width: 600
-      });
-    doc.opacity(1).restore();
-
-    // Header: Centered logo and company info
+    // Header: Logo top left, company details top right
     const logoPath = path.join(__dirname, '../templates/company-logo.png');
-    let headerY = 40;
+    const headerY = 30;
     if (typeof logoPath === 'string' && fs.existsSync(logoPath)) {
-      const logoWidth = 120;
-      const logoX = (doc.page.width - logoWidth) / 2;
-      doc.image(logoPath, logoX, headerY, { width: logoWidth });
-      headerY += 100;
-    } else {
-      headerY += 30;
+      doc.image(logoPath, 30, headerY, { width: 80 });
     }
-    doc.fontSize(28).font('Helvetica-Bold').fillColor('#4f46e5').text('Student Era', 0, headerY, { align: 'center' });
-    headerY += 32;
-    doc.fontSize(13).font('Helvetica').fillColor('#444').text('D-107, 91Springboard, Vyapar Marg, Sector-2, Noida, UP 201301', 0, headerY, { align: 'center' });
-    headerY += 18;
-    doc.fontSize(12).fillColor('#666').text('info@studentera.com | www.studentera.com', 0, headerY, { align: 'center' });
-    headerY += 18;
-    doc.moveTo(60, headerY + 10).lineTo(doc.page.width - 60, headerY + 10).lineWidth(2).strokeColor('#4f46e5').stroke();
-    let contentY = headerY + 30;
+    // Company details top right
+    const companyDetailsX = doc.page.width - 320;
+    doc.fontSize(22).font('Helvetica-Bold').fillColor('#4f46e5').text('Student Era', companyDetailsX, headerY, { width: 290, align: 'right' });
+    doc.fontSize(11).font('Helvetica').fillColor('#444').text('D-107, 91Springboard, Vyapar Marg, Sector-2, Noida, UP 201301', companyDetailsX, headerY + 28, { width: 290, align: 'right' });
+    doc.fontSize(11).fillColor('#666').text('info@studentera.com | www.studentera.com', companyDetailsX, headerY + 46, { width: 290, align: 'right' });
+
+    // Accent line below header
+    doc.moveTo(30, headerY + 70).lineTo(doc.page.width - 30, headerY + 70).lineWidth(2).strokeColor('#4f46e5').stroke();
+    let contentY = headerY + 90;
     // Reference, Date, and Heading
-    doc.fontSize(12).font('Helvetica').fillColor('black').text('REF: SE/INTERNSHIP/OFFER', 60, contentY, { align: 'left' });
+    doc.fontSize(12).font('Helvetica').fillColor('black').text('REF: SE/INTERNSHIP/OFFER', 40, contentY, { align: 'left' });
     doc.font('Helvetica-Bold').fontSize(18).fillColor('#4f46e5').text('LETTER OF OFFER', 0, contentY, { align: 'center', underline: true });
     doc.font('Helvetica').fontSize(12).fillColor('black').text(`Dated: ${new Date(offerLetter.issueDate).toLocaleDateString()}`, doc.page.width - 220, contentY, { align: 'left' });
     contentY += 32;
@@ -91,6 +74,26 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
     } else {
       console.warn('Stamp path is not a string or does not exist:', stampPath);
     }
+
+    // Stipend (if present)
+    if (offerLetter.stipend && offerLetter.stipend > 0) {
+      contentY += 18;
+      doc.font('Helvetica-Bold').fontSize(13).fillColor('#0e7490').text(`Stipend: ₹${offerLetter.stipend} /${offerLetter.stipendType || 'month'}`, 60, contentY, { align: 'left' });
+      contentY += 18;
+    }
+
+    // Watermark (behind all content)
+    doc.save();
+    doc.rotate(-30, { origin: [doc.page.width / 2, doc.page.height / 2] });
+    doc.font('Helvetica-Bold')
+      .fontSize(100)
+      .fillColor('#4f46e5')
+      .opacity(0.07)
+      .text('Student Era', doc.page.width / 2 - 300, doc.page.height / 2 - 50, {
+        align: 'center',
+        width: 600
+      });
+    doc.opacity(1).restore();
 
     doc.end();
     stream.on('finish', () => resolve());

@@ -15,6 +15,7 @@ const AddInternship = () => {
         image: '',
         technologies: '',
         stipend: 0,
+        stipendType: 'month',
         location: 'Remote',
         duration: '4 Weeks',
         isAccepting: true,
@@ -53,6 +54,7 @@ const AddInternship = () => {
         image,
         technologies, 
         stipend, 
+        stipendType,
         location, 
         duration, 
         isAccepting,
@@ -80,7 +82,8 @@ const AddInternship = () => {
 
         const internshipData = { 
             ...formData, 
-            technologies: technologies.split(',').map(s => s.trim()) 
+            technologies: technologies.split(',').map(s => s.trim()),
+            stipendType: stipendType || 'month',
         };
         
         try {
@@ -104,6 +107,7 @@ const AddInternship = () => {
                 image: '',
                 technologies: '',
                 stipend: 0,
+                stipendType: 'month',
                 location: 'Remote',
                 duration: '4 Weeks',
                 isAccepting: true,
@@ -201,9 +205,19 @@ const AddInternship = () => {
                             <label className="ml-2 block text-sm font-medium text-gray-700">Offer Stipend?</label>
                         </div>
                         {hasStipend && (
-                            <div className="flex-1">
-                                <label className="block text-sm font-medium text-gray-700">Stipend (per month)</label>
-                                <input type="number" name="stipend" value={stipend} onChange={onChange} required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+                            <div className="flex gap-4">
+                                <div className="flex-1">
+                                    <label className="block text-sm font-medium text-gray-700">Stipend</label>
+                                    <input type="number" name="stipend" value={stipend || ''} onChange={onChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Stipend Type</label>
+                                    <select name="stipendType" value={stipendType || 'month'} onChange={onChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option value="day">Per Day</option>
+                                        <option value="week">Per Week</option>
+                                        <option value="month">Per Month</option>
+                                    </select>
+                                </div>
                             </div>
                         )}
                     </div>

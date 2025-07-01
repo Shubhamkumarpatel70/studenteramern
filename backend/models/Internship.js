@@ -26,6 +26,11 @@ const InternshipSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    stipendType: {
+        type: String,
+        enum: ['day', 'week', 'month'],
+        default: 'month'
+    },
     location: {
         type: String,
         required: true
