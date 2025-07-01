@@ -18,6 +18,7 @@ const AddInternship = () => {
         location: 'Remote',
         duration: '4 Weeks',
         isAccepting: true,
+        features: [],
     });
 
     const [error, setError] = useState('');
@@ -54,7 +55,8 @@ const AddInternship = () => {
         stipend, 
         location, 
         duration, 
-        isAccepting 
+        isAccepting,
+        features,
     } = formData;
 
     const handleStipendCheck = (e) => {
@@ -105,6 +107,7 @@ const AddInternship = () => {
                 location: 'Remote',
                 duration: '4 Weeks',
                 isAccepting: true,
+                features: [],
             });
 
         } catch (err) {
@@ -215,6 +218,12 @@ const AddInternship = () => {
                     <div className="flex items-center">
                         <input type="checkbox" name="isAccepting" checked={isAccepting} onChange={onChange} className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" />
                         <label className="ml-2 block text-sm text-gray-900">Accepting Applications</label>
+                    </div>
+
+                    {/* Features */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Features</label>
+                        <textarea name="features" value={features ? features.join('\n') : ''} onChange={e => setFormData(prev => ({ ...prev, features: e.target.value.split(/\n/).map(f => f.trim()).filter(f => f.length > 0) }))} rows="3" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
                     </div>
 
                     {error && <div className="text-red-500 text-sm p-3 bg-red-100 rounded">{error}</div>}

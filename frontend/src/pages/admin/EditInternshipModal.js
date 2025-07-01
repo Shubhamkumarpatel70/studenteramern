@@ -31,7 +31,7 @@ const EditInternshipModal = ({ isOpen, onClose, internship, onSave }) => {
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white p-8 rounded-lg shadow-xl max-w-2xl w-full">
+            <div className="bg-white p-8 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                 <h2 className="text-2xl font-bold mb-6">Edit Internship</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     
@@ -58,6 +58,11 @@ const EditInternshipModal = ({ isOpen, onClose, internship, onSave }) => {
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Technologies (comma-separated)</label>
                         <input type="text" name="technologies" value={formData.technologies} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Features</label>
+                        <textarea name="features" value={formData.features ? formData.features.join('\n') : ''} onChange={e => setFormData(prev => ({ ...prev, features: e.target.value.split(/\n/).map(f => f.trim()).filter(f => f.length > 0) }))} rows="3" className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
                     </div>
 
                     {/* Add other fields like stipend, location, duration as needed */}
