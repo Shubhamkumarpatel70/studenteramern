@@ -23,8 +23,10 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
 
     // Header: Centered logo and company info
     const logoPath = path.join(__dirname, '../templates/company-logo.png');
-    if (fs.existsSync(logoPath)) {
+    if (typeof logoPath === 'string' && fs.existsSync(logoPath)) {
       doc.image(logoPath, doc.page.width / 2 - 60, 40, { width: 120 });
+    } else {
+      console.warn('Logo path is not a string or does not exist:', logoPath);
     }
     doc.fontSize(24).font('Helvetica-Bold').fillColor('#4f46e5').text('Student Era', 0, 170, { align: 'center' });
     doc.fontSize(12).font('Helvetica').fillColor('#444').text('D-107, 91Springboard, Vyapar Marg, Sector-2, Noida, UP 201301', { align: 'center' });
@@ -87,8 +89,10 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
     // For Student Era + Stamp
     doc.fontSize(11).text('For Student Era', 60, doc.y, { align: 'left' });
     const stampPath = path.join(__dirname, '../templates/stamp.png');
-    if (fs.existsSync(stampPath)) {
+    if (typeof stampPath === 'string' && fs.existsSync(stampPath)) {
       doc.opacity(0.5).image(stampPath, 180, doc.y - 20, { width: 60 }).opacity(1);
+    } else {
+      console.warn('Stamp path is not a string or does not exist:', stampPath);
     }
 
     doc.end();
