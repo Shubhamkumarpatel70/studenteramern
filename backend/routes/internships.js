@@ -14,6 +14,7 @@ const router = express.Router();
 // Public routes
 router.get('/public', getPublicInternships);
 router.get('/public/:id', getPublicInternshipById);
+router.get('/:id', require('../controllers/internships').getInternshipById);
 
 // Admin routes
 router

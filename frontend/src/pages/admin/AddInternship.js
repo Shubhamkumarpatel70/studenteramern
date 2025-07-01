@@ -20,6 +20,7 @@ const AddInternship = () => {
         duration: '4 Weeks',
         isAccepting: true,
         features: [],
+        totalPositions: 1,
     });
 
     const [error, setError] = useState('');
@@ -59,6 +60,7 @@ const AddInternship = () => {
         duration, 
         isAccepting,
         features,
+        totalPositions,
     } = formData;
 
     const handleStipendCheck = (e) => {
@@ -84,6 +86,7 @@ const AddInternship = () => {
             ...formData, 
             technologies: technologies.split(',').map(s => s.trim()),
             stipendType: stipendType || 'month',
+            totalPositions: Number(totalPositions) || 1,
         };
         
         try {
@@ -112,6 +115,7 @@ const AddInternship = () => {
                 duration: '4 Weeks',
                 isAccepting: true,
                 features: [],
+                totalPositions: 1,
             });
 
         } catch (err) {
@@ -196,6 +200,12 @@ const AddInternship = () => {
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Technologies (comma-separated)</label>
                         <input type="text" name="technologies" value={technologies} onChange={onChange} required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+                    </div>
+
+                    {/* Total Positions */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Total Positions</label>
+                        <input type="number" name="totalPositions" value={totalPositions} onChange={onChange} min="1" required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
                     </div>
 
                     {/* Stipend Toggle and Input */}

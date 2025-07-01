@@ -116,3 +116,22 @@ exports.deleteInternship = async (req, res, next) => {
         res.status(500).json({ success: false, message: 'Server Error' });
     }
 };
+
+// @desc    Get a single internship by ID (public)
+// @route   GET /api/internships/:id
+// @access  Public
+exports.getInternshipById = async (req, res, next) => {
+    try {
+        const internship = await Internship.findById(req.params.id);
+        if (!internship) {
+            return res.status(404).json({ success: false, message: 'Internship not found' });
+        }
+        res.status(200).json({ success: true, data: internship });
+    } catch (err) {
+        console.error(err);
+        if (err.kind === 'ObjectId') {
+            return res.status(404).json({ success: false, message: 'Internship not found' });
+        }
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};
