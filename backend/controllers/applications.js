@@ -16,6 +16,13 @@ exports.createApplication = async (req, res, next) => {
             return res.status(404).json({ success: false, message: 'Internship not found' });
         }
 
+        // Prevent new applications if positions are filled
+        if (internship.currentRegistrations >= internship.totalPositions) {
+            internship.isAccepting = false;
+            await internship.save();
+            return res.status(400).json({ success: false, message: 'All positions for this internship are filled.' });
+        }
+
         // 2. Check if user has already applied and paid
         const existingApplication = await Application.findOne({ user: userId, internship: internshipId, status: 'Approved' });
         if (existingApplication) {
@@ -39,6 +46,13 @@ exports.createApplication = async (req, res, next) => {
         };
 
         const application = await Application.create(applicationData);
+
+        // Increment currentRegistrations and close if filled
+        internship.currentRegistrations += 1;
+        if (internship.currentRegistrations >= internship.totalPositions) {
+            internship.isAccepting = false;
+        }
+        await internship.save();
 
         // Update user level based on number of applications
         const appCount = await Application.countDocuments({ user: userId });

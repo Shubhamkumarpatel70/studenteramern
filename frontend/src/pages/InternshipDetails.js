@@ -15,7 +15,7 @@ const InternshipDetails = () => {
     useEffect(() => {
         const fetchInternship = async () => {
             try {
-                const { data } = await api.get(`/internships/public/${id}`);
+                const { data } = await api.get(`/internships/${id}`);
                 setInternship(data.data);
             } catch (err) {
                 setError('Could not load internship details. It might be closed or invalid.');
@@ -89,6 +89,12 @@ const InternshipDetails = () => {
                             </div>
                         </div>
 
+                        {typeof internship.totalPositions === 'number' && (
+                            <div className="mb-4 text-md text-gray-700 font-semibold">
+                                Positions Remaining: {Math.max(0, internship.totalPositions - (internship.currentRegistrations || 0))} / {internship.totalPositions}
+                            </div>
+                        )}
+
                         {internship.technologies && Array.isArray(internship.technologies) && internship.technologies.length > 0 && (
                             <div className="mb-6">
                                  <h3 className="text-lg font-bold text-gray-800 mb-2 flex items-center gap-2"><Code /> Technologies Used</h3>
@@ -121,7 +127,7 @@ const InternshipDetails = () => {
                         </div>
                         
                         <div className="mt-8 text-center">
-                            {internship.isAccepting ? (
+                            {(internship.isAccepting && (internship.totalPositions - (internship.currentRegistrations || 0)) > 0) ? (
                                 <button 
                                     onClick={handleApplyClick}
                                     className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
@@ -133,7 +139,7 @@ const InternshipDetails = () => {
                                     disabled
                                     className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md bg-gray-300 text-gray-500 cursor-not-allowed"
                                 >
-                                    Application Closed
+                                    {((internship.totalPositions - (internship.currentRegistrations || 0)) <= 0) ? 'All seats are filled' : 'Application Closed'}
                                 </button>
                             )}
                         </div>
