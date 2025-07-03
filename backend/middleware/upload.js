@@ -78,22 +78,22 @@ const uploadPaymentScreenshot = multer({
 }).single('paymentScreenshot');
 
 // Profile image upload config
-const profileImageDir = 'backend/uploads/profileImages';
-if (!fs.existsSync(profileImageDir)) {
-    fs.mkdirSync(profileImageDir, { recursive: true });
-}
+// const profileImageDir = 'backend/uploads/profileImages';
+// if (!fs.existsSync(profileImageDir)) {
+//     fs.mkdirSync(profileImageDir, { recursive: true });
+// }
 
-const profileImageStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, profileImageDir);
-    },
-    filename: (req, file, cb) => {
-        cb(null, `profile-${Date.now()}${path.extname(file.originalname)}`);
-    }
-});
+// const profileImageStorage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, profileImageDir);
+//     },
+//     filename: (req, file, cb) => {
+//         cb(null, `profile-${Date.now()}${path.extname(file.originalname)}`);
+//     }
+// });
 
 const uploadProfileImage = multer({
-    storage: profileImageStorage,
+    storage: multer.memoryStorage(), // Use memory storage for Cloudinary
     limits: { fileSize: 2 * 1024 * 1024 }, // 2MB limit
     fileFilter: (req, file, cb) => {
         checkImageFileType(file, cb);
