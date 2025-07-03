@@ -10,6 +10,8 @@ const ManageUsers = () => {
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [roleLoading, setRoleLoading] = useState(null);
+    const [roleError, setRoleError] = useState('');
 
     const fetchUsers = async () => {
         setLoading(true);
@@ -57,6 +59,19 @@ const ManageUsers = () => {
         }
     };
 
+    const handleRoleChange = async (userId, newRole) => {
+        setRoleLoading(userId);
+        setRoleError('');
+        try {
+            await api.put(`/users/${userId}/role`, { role: newRole });
+            fetchUsers();
+        } catch (err) {
+            setRoleError('Failed to change role');
+        } finally {
+            setRoleLoading(null);
+        }
+    };
+
     return (
         <div className="p-8">
             <h1 className="text-3xl font-bold mb-6">Manage Users</h1>
@@ -91,7 +106,21 @@ const ManageUsers = () => {
                                         <td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
                                         <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
                                         <td className="px-6 py-4 whitespace-nowrap">{user.internId}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap capitalize">{user.role}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <select
+                                                value={user.role}
+                                                onChange={e => handleRoleChange(user._id, e.target.value)}
+                                                className="border rounded px-2 py-1"
+                                                disabled={roleLoading === user._id}
+                                            >
+                                                <option value="user">User</option>
+                                                <option value="co-admin">Co-Admin</option>
+                                                <option value="accountant">Accountant</option>
+                                                <option value="admin">Admin</option>
+                                            </select>
+                                            {roleLoading === user._id && <span className="ml-2 text-xs text-gray-500">Saving...</span>}
+                                            {roleError && <div className="text-xs text-red-500">{roleError}</div>}
+                                        </td>
                                         <td className="px-6 py-4 whitespace-nowrap">{new Date(user.createdAt).toLocaleDateString('en-GB')}</td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.isVerified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>

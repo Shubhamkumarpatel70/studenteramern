@@ -1,22 +1,69 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import api from '../../config/api';
+import { Users, Briefcase, Calendar } from 'lucide-react';
+
+const StatCard = ({ icon, title, value, color }) => (
+    <div className={`p-6 rounded-lg shadow-lg flex items-center space-x-4 ${color}`}>
+        <div className="p-3 rounded-full bg-white bg-opacity-30">
+            {icon}
+        </div>
+        <div>
+            <h3 className="text-lg font-semibold text-white">{title}</h3>
+            <p className="text-3xl font-bold text-white">{value}</p>
+        </div>
+    </div>
+);
 
 const CoAdminHome = () => {
-    const stats = [
-        { title: 'Total Students', value: '800', color: 'bg-teal-500' },
-        { title: 'Meetings This Week', value: '12', color: 'bg-cyan-500' },
-        { title: 'Active Internships', value: '50', color: 'bg-emerald-500' },
-    ];
+    const [stats, setStats] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            if (localStorage.token) {
+                api.defaults.headers.common['Authorization'] = `Bearer ${localStorage.token}`;
+            }
+            try {
+                const res = await api.get('/dashboard/stats');
+                setStats(res.data.data);
+            } catch (err) {
+                console.error('Failed to fetch co-admin stats', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchStats();
+    }, []);
+
     return (
-        <div>
+        <div className="p-8">
             <h1 className="text-3xl font-bold mb-6">Co-Admin Dashboard</h1>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {stats.map(stat => (
-                    <div key={stat.title} className={`${stat.color} text-white p-6 rounded-lg shadow-lg`}>
-                        <h2 className="text-lg font-semibold">{stat.title}</h2>
-                        <p className="text-4xl font-bold">{stat.value}</p>
-                    </div>
-                ))}
-            </div>
+            {loading ? (
+                <p>Loading statistics...</p>
+            ) : stats ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <StatCard 
+                        icon={<Users size={32} className="text-white" />} 
+                        title="Total Students" 
+                        value={stats.totalUsers ?? 0} 
+                        color="bg-teal-500"
+                    />
+                    <StatCard 
+                        icon={<Calendar size={32} className="text-white" />} 
+                        title="Meetings This Week" 
+                        value={stats.totalMeetings ?? 0} 
+                        color="bg-cyan-500"
+                    />
+                    <StatCard 
+                        icon={<Briefcase size={32} className="text-white" />} 
+                        title="Active Internships" 
+                        value={stats.totalInternships ?? 0} 
+                        color="bg-emerald-500"
+                    />
+                </div>
+            ) : (
+                <p>Could not load statistics.</p>
+            )}
         </div>
     );
 };

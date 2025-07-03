@@ -135,6 +135,7 @@ const ManageMeetings = () => {
                         <select name="targetType" value={formData.targetType} onChange={onChange} className="mt-1 block w-full">
                             <option value="all">All Users</option>
                             <option value="co-admins">All Co-Admins</option>
+                            <option value="accountants">All Accountants</option>
                             <option value="internship">Specific Internship</option>
                         </select>
                     </div>
@@ -173,6 +174,7 @@ const ManageMeetings = () => {
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Target</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created By</th>
                                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
                             </tr>
                         </thead>
@@ -182,6 +184,14 @@ const ManageMeetings = () => {
                                     <td className="px-6 py-4 whitespace-nowrap">{meeting.title}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{new Date(meeting.date).toLocaleString()}</td>
                                     <td className="px-6 py-4 whitespace-nowrap capitalize">{meeting.target.type}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        {meeting.user && (
+                                            <span>
+                                                {meeting.user.name} <br />
+                                                <span className="text-xs text-gray-500">{meeting.user.email}</span>
+                                            </span>
+                                        )}
+                                    </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <button onClick={() => handleEdit(meeting)} className="text-indigo-600 hover:text-indigo-900 mr-4"><Edit size={20} /></button>
                                         <button onClick={() => handleDelete(meeting._id)} className="text-red-600 hover:text-red-900"><Trash size={20} /></button>

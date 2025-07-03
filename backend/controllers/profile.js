@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const cloudinary = require('../config/cloudinary');
 
 // @desc    Update user profile details
 // @route   PUT /api/profile
@@ -38,4 +39,20 @@ exports.updateProfile = async (req, res, next) => {
         console.error(err);
         res.status(500).json({ success: false, message: 'Server Error' });
     }
+};
+
+exports.uploadProfileImage = async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+    cloudinary.uploader.upload_stream(
+      { folder: 'profile_pictures', resource_type: 'image' },
+      async (error, result) => {
+        if (error) return res.status(500).json({ message: 'Cloudinary error' });
+        await User.findByIdAndUpdate(req.user.id, { profilePicture: result.secure_url });
+        res.json({ url: result.secure_url });
+      }
+    ).end(req.file.buffer);
+  } catch (err) {
+    res.status(500).json({ message: 'Upload failed' });
+  }
 }; 

@@ -34,6 +34,9 @@ exports.createNotification = async (req, res, next) => {
             case 'co-admins':
                 query = { role: 'co-admin' };
                 break;
+            case 'accountants':
+                query = { role: 'accountant' };
+                break;
             case 'user':
                 if (!target.email) {
                     return res.status(400).json({ success: false, message: 'Please provide a user email' });

@@ -3,6 +3,7 @@ import api from '../../config/api';
 import AuthContext from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { Loader2, AlertCircle, Eye } from 'lucide-react';
+import Modal from '../../components/Modal';
 
 const StatusBadge = ({ status }) => {
     let colorClasses = 'bg-yellow-100 text-yellow-800';
@@ -21,6 +22,7 @@ const AppliedInternships = () => {
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [selectedApp, setSelectedApp] = useState(null);
     
     useEffect(() => {
         const fetchAppliedInternships = async () => {
@@ -89,15 +91,40 @@ const AppliedInternships = () => {
                                         <StatusBadge status={app.status} />
                                     </td>
                                     <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                        <Link to={`/internships/${app.internship?._id}`} className="text-indigo-600 hover:text-indigo-900">
+                                        <button onClick={() => setSelectedApp(app)} className="text-indigo-600 hover:text-indigo-900">
                                             <Eye size={20} />
-                                        </Link>
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 </div>
+            )}
+
+            {selectedApp && (
+                <Modal onClose={() => setSelectedApp(null)}>
+                    <div className="p-6">
+                        <h2 className="text-xl font-bold mb-2">Application Details</h2>
+                        <div className="mb-2"><strong>Internship:</strong> {selectedApp.internship?.title}</div>
+                        <div className="mb-2"><strong>Applied On:</strong> {new Date(selectedApp.dateApplied).toLocaleDateString()}</div>
+                        <div className="mb-2"><strong>Status:</strong> <StatusBadge status={selectedApp.status} /></div>
+                        {selectedApp.paymentScreenshot && (
+                            <div className="mb-2">
+                                <strong>Transaction Screenshot:</strong><br />
+                                <a href={selectedApp.paymentScreenshot} target="_blank" rel="noopener noreferrer">
+                                    <img src={selectedApp.paymentScreenshot} alt="Transaction Screenshot" className="max-w-xs mt-2 rounded shadow" />
+                                </a>
+                            </div>
+                        )}
+                        {selectedApp.status === 'Rejected' && selectedApp.rejectionReason && (
+                            <div className="mb-2 text-red-600 font-semibold">
+                                <strong>Rejection Reason:</strong> {selectedApp.rejectionReason}
+                            </div>
+                        )}
+                        <button onClick={() => setSelectedApp(null)} className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded">Close</button>
+                    </div>
+                </Modal>
             )}
         </div>
     );

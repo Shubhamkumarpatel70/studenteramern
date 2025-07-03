@@ -71,7 +71,7 @@ function checkImageFileType(file, cb) {
 
 const uploadPaymentScreenshot = multer({
     storage: paymentScreenshotStorage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    limits: { fileSize: 2 * 1024 * 1024 }, // 2MB limit
     fileFilter: (req, file, cb) => {
         checkImageFileType(file, cb);
     }
@@ -94,7 +94,7 @@ const profileImageStorage = multer.diskStorage({
 
 const uploadProfileImage = multer({
     storage: profileImageStorage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    limits: { fileSize: 2 * 1024 * 1024 }, // 2MB limit
     fileFilter: (req, file, cb) => {
         checkImageFileType(file, cb);
     }

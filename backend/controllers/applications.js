@@ -1,6 +1,7 @@
 const Application = require('../models/Application');
 const Internship = require('../models/Internship'); // Import Internship model
 const User = require('../models/User');
+const cloudinary = require('../config/cloudinary');
 
 // @desc    Create a new application
 // @route   POST /api/applications
@@ -159,4 +160,20 @@ exports.updateApplicationStatus = async (req, res, next) => {
         console.error(err);
         res.status(500).json({ success: false, message: 'Server Error' });
     }
+};
+
+exports.uploadPaymentScreenshot = async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+    cloudinary.uploader.upload_stream(
+      { folder: 'transaction_screenshots', resource_type: 'image' },
+      async (error, result) => {
+        if (error) return res.status(500).json({ message: 'Cloudinary error' });
+        await Application.findByIdAndUpdate(req.body.applicationId, { paymentScreenshot: result.secure_url });
+        res.json({ url: result.secure_url });
+      }
+    ).end(req.file.buffer);
+  } catch (err) {
+    res.status(500).json({ message: 'Upload failed' });
+  }
 }; 

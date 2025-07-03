@@ -20,6 +20,8 @@ exports.getMeetings = async (req, res, next) => {
             let roleSpecificMeetings;
             if (user.role === 'co-admin') {
                 roleSpecificMeetings = Meeting.find({ 'target.type': 'co-admins' });
+            } else if (user.role === 'accountant') {
+                roleSpecificMeetings = Meeting.find({ 'target.type': 'accountants' });
             } else { // 'user'
                 // Find internships the user is approved for
                 const userApplications = await Application.find({ user: user.id, status: 'Approved' }).select('internship');
