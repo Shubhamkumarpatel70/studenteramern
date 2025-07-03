@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import api from '../../config/api';
 import { CheckCircle2, XCircle, Eye } from 'lucide-react';
 
+const IMAGE_BASE_URL = process.env.REACT_APP_IMAGE_URL || '';
+
 const InternshipRegistrations = () => {
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -136,7 +138,7 @@ const InternshipRegistrations = () => {
                                     &times;
                                 </button>
                                 <img
-                                    src={selectedApp.paymentScreenshot}
+                                    src={selectedApp.paymentScreenshot?.startsWith('http') ? selectedApp.paymentScreenshot : `${IMAGE_BASE_URL}/${selectedApp.paymentScreenshot}`}
                                     alt="Payment Screenshot"
                                     className="max-w-full max-h-[70vh] rounded border"
                                 />

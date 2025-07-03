@@ -6,7 +6,7 @@ import { Linkedin, Github, Globe, Star } from 'lucide-react';
 import { Tooltip } from 'react-tooltip';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import axios from 'axios';
+import api from '../../config/api';
 
 const IMAGE_BASE_URL = process.env.REACT_APP_IMAGE_URL || '';
 
@@ -115,14 +115,12 @@ const Profile = () => {
       try {
         const formData = new FormData();
         formData.append('profilePicture', selectedFile);
-        const token = localStorage.getItem('token');
-        const res = await axios.put(
-          'http://localhost:5000/api/profile/picture',
+        const res = await api.put(
+          '/profile/picture',
           formData,
           {
             headers: {
               'Content-Type': 'multipart/form-data',
-              Authorization: `Bearer ${token}`,
             },
           }
         );

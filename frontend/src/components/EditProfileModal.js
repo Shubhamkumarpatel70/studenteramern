@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import api from '../config/api';
 
 const IMAGE_BASE_URL = process.env.REACT_APP_IMAGE_URL || '';
 
@@ -52,14 +53,12 @@ const EditProfileModal = ({ user, onClose, onSave }) => {
     const formDataBackend = new FormData();
     formDataBackend.append('profilePicture', file);
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.put(
-        'http://localhost:5000/api/profile/picture',
+      const res = await api.put(
+        '/profile/picture',
         formDataBackend,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`,
           },
         }
       );
