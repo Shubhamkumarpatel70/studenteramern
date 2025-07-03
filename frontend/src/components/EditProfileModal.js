@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const IMAGE_BASE_URL = process.env.REACT_APP_IMAGE_URL || '';
+
 const EditProfileModal = ({ user, onClose, onSave }) => {
   const [formData, setFormData] = useState({
     name: '',
@@ -106,7 +108,7 @@ const EditProfileModal = ({ user, onClose, onSave }) => {
             <label className="block text-sm font-medium text-gray-700">Profile Picture</label>
             <input type="file" accept="image/*" onChange={handleFileChange} className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
             {formData.profilePicture && (
-              <img src={formData.profilePicture.startsWith('http') ? formData.profilePicture : `http://localhost:5000/${formData.profilePicture}`} alt="Preview" className="mt-2 w-20 h-20 rounded-full object-cover border-2 border-blue-200" />
+              <img src={formData.profilePicture.startsWith('http') ? formData.profilePicture : `${IMAGE_BASE_URL}/${formData.profilePicture}`} alt="Preview" className="mt-2 w-20 h-20 rounded-full object-cover border-2 border-blue-200" />
             )}
           </div>
           <div className="flex justify-end gap-4 pt-4">

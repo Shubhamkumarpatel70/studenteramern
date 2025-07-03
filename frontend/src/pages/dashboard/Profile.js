@@ -8,6 +8,8 @@ import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import axios from 'axios';
 
+const IMAGE_BASE_URL = process.env.REACT_APP_IMAGE_URL || '';
+
 // Circular progress bar component
 const CircularProgress = ({ value }) => {
   const CIRCUMFERENCE = 100;
@@ -60,7 +62,7 @@ const Profile = () => {
       ? `https://ui-avatars.com/api/?name=${encodeURIComponent(localUser.name)}&background=random`
       : localUser.profilePicture.startsWith('http')
         ? localUser.profilePicture
-        : `http://localhost:5000/${localUser.profilePicture}`;
+        : `${IMAGE_BASE_URL}/${localUser.profilePicture}`;
 
     // Handle save from modal
     const handleSave = (updated) => {
