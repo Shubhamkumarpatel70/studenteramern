@@ -32,6 +32,8 @@ const AddInternship = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedInternship, setSelectedInternship] = useState(null);
 
+    const [featureInput, setFeatureInput] = useState('');
+
     const fetchInternships = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -159,6 +161,24 @@ const AddInternship = () => {
         }
     };
 
+    const addFeature = () => {
+        const value = featureInput.trim();
+        if (value && (!formData.features || !formData.features.includes(value))) {
+            setFormData(prev => ({
+                ...prev,
+                features: [...(prev.features || []), value]
+            }));
+            setFeatureInput('');
+        }
+    };
+
+    const removeFeature = (idx) => {
+        setFormData(prev => ({
+            ...prev,
+            features: prev.features.filter((_, i) => i !== idx)
+        }));
+    };
+
     return (
         <div className="p-6 bg-gray-50 min-h-screen">
             <h1 className="text-3xl font-bold mb-6 text-gray-800">Manage Internships</h1>
@@ -247,7 +267,19 @@ const AddInternship = () => {
                     {/* Features */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Features</label>
-                        <textarea name="features" value={features ? features.join('\n') : ''} onChange={e => setFormData(prev => ({ ...prev, features: e.target.value.split(/\n/).map(f => f.trim()).filter(f => f.length > 0) }))} rows="3" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                        <div className="flex gap-2 mb-2">
+                            <input type="text" value={featureInput} onChange={e => setFeatureInput(e.target.value)} className="flex-1 border border-gray-300 rounded-md px-2 py-1" placeholder="Add feature" />
+                            <button type="button" onClick={addFeature} className="px-3 py-1 bg-indigo-600 text-white rounded-md">Add</button>
+                        </div>
+                        <div className="flex flex-wrap gap-2 mb-2">
+                            {Array.isArray(features) && features.map((feature, idx) => (
+                                <span key={idx} className="bg-gray-200 px-2 py-1 rounded-full flex items-center">
+                                    {feature}
+                                    <button type="button" onClick={() => removeFeature(idx)} className="ml-2 text-red-500">&times;</button>
+                                </span>
+                            ))}
+                        </div>
+                        <textarea name="features" value={features ? features.join('\n') : ''} onChange={e => setFormData(prev => ({ ...prev, features: e.target.value.split(/\n/).map(f => f.trim()).filter(f => f.length > 0) }))} rows="3" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" placeholder="Or paste features, one per line"></textarea>
                     </div>
 
                     {error && <div className="text-red-500 text-sm p-3 bg-red-100 rounded">{error}</div>}

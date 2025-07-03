@@ -9,24 +9,24 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
     doc.pipe(stream);
 
     // Header: Logo top left, company details top right
-    const logoPath = path.join(__dirname, '../templates/company-logo.png');
+    const logoPath = offerLetter.companyLogo || path.join(__dirname, '../templates/company-logo.png');
     const headerY = 30;
     if (typeof logoPath === 'string' && fs.existsSync(logoPath)) {
       doc.image(logoPath, 30, headerY, { width: 80 });
     }
     // Company details top right
     const companyDetailsX = doc.page.width - 320;
-    doc.fontSize(22).font('Helvetica-Bold').fillColor('#4f46e5').text('Student Era', companyDetailsX, headerY, { width: 290, align: 'right' });
-    doc.fontSize(11).font('Helvetica').fillColor('#444').text('D-107, 91Springboard, Vyapar Marg, Sector-2, Noida, UP 201301', companyDetailsX, headerY + 28, { width: 290, align: 'right' });
-    doc.fontSize(11).fillColor('#666').text('info@studentera.com | www.studentera.com', companyDetailsX, headerY + 46, { width: 290, align: 'right' });
+    doc.fontSize(22).font('Helvetica-Bold').fillColor('#4f46e5').text(offerLetter.company || 'Company Name', companyDetailsX, headerY, { width: 290, align: 'right' });
+    doc.fontSize(11).font('Helvetica').fillColor('#444').text(offerLetter.companyAddress || 'Company Address', companyDetailsX, headerY + 28, { width: 290, align: 'right' });
+    doc.fontSize(11).fillColor('#666').text((offerLetter.companyEmail ? offerLetter.companyEmail + ' | ' : '') + (offerLetter.companyWebsite || ''), companyDetailsX, headerY + 46, { width: 290, align: 'right' });
 
     // Accent line below header
     doc.moveTo(30, headerY + 70).lineTo(doc.page.width - 30, headerY + 70).lineWidth(2).strokeColor('#4f46e5').stroke();
     let contentY = headerY + 90;
     // Reference, Date, and Heading
-    doc.fontSize(12).font('Helvetica').fillColor('black').text('REF: SE/INTERNSHIP/OFFER', 40, contentY, { align: 'left' });
+    doc.fontSize(12).font('Helvetica').fillColor('black').text(`REF: ${offerLetter.referenceNo || 'SE/INTERNSHIP/OFFER'}`, 40, contentY, { align: 'left' });
     doc.font('Helvetica-Bold').fontSize(18).fillColor('#4f46e5').text('LETTER OF OFFER', 0, contentY, { align: 'center', underline: true });
-    doc.font('Helvetica').fontSize(12).fillColor('black').text(`Dated: ${new Date(offerLetter.issueDate).toLocaleDateString()}`, doc.page.width - 220, contentY, { align: 'left' });
+    doc.font('Helvetica').fontSize(12).fillColor('black').text(`Dated: ${offerLetter.issueDate ? new Date(offerLetter.issueDate).toLocaleDateString() : ''}`, doc.page.width - 220, contentY, { align: 'left' });
     contentY += 32;
     doc.fontSize(15).font('Helvetica-Bold').fillColor('#0e7490').text(`Dear ${offerLetter.candidateName || 'Candidate'},`, 60, contentY, { align: 'left' });
     contentY += 22;
@@ -37,10 +37,16 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
     doc.font('Helvetica-Bold').fontSize(13).fillColor('#4f46e5').text('STRICTLY PRIVATE & CONFIDENTIAL', 0, contentY, { align: 'center', underline: true });
     contentY += 22;
     doc.font('Helvetica').fontSize(12).fillColor('black').text(
-      'We are pleased to offer you a Summer Internship with Student Era, based on your application and the interview & discussions you had with us. Details of the terms & conditions of offer are as under:',
+      `We are pleased to offer you a Summer Internship with ${offerLetter.company || 'the company'}, based on your application and the interview & discussions you had with us. Details of the terms & conditions of offer are as under:`,
       60, contentY, { align: 'left', width: doc.page.width - 120 }
     );
     contentY += 32;
+    // Stipend (if present) - move this up to main content, after intro paragraph
+    if (offerLetter.stipend && offerLetter.stipend > 0) {
+      contentY += 18;
+      doc.font('Helvetica-Bold').fontSize(13).fillColor('#1976d2').text(`Stipend: ₹${offerLetter.stipend} /${offerLetter.stipendType || 'month'}`, 60, contentY, { align: 'left' });
+      contentY += 18;
+    }
     const terms = [
       'You must always maintain utmost secrecy and confidentiality of your offer, its terms, and of any information about the company, and shall not disclose any such details to outsiders.',
       `You will be designated as ${offerLetter.title || 'Intern'}.`,
@@ -62,24 +68,21 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
     doc.moveDown(1);
     doc.strokeColor('#888').lineWidth(1).moveTo(60, doc.y).lineTo(doc.page.width - 60, doc.y).stroke();
     doc.moveDown(1);
-    doc.fontSize(12).font('Helvetica').fillColor('#222').text(`${offerLetter.hrName || 'N. Kumar (Sr. HR-Manager)'}`, 60, doc.y, { continued: true });
-    doc.text('Applicant Sign', 260, doc.y, { continued: true });
-    doc.text('College', 400, doc.y, { continued: true });
-    doc.text('Location', 520, doc.y);
-    doc.moveDown(2);
-    doc.fontSize(11).font('Helvetica-Bold').fillColor('#1e293b').text('For Student Era', 60, doc.y, { align: 'left' });
-    const stampPath = path.join(__dirname, '../templates/stamp.png');
+    // Signature and stamp area: side by side
+    const signY = doc.y + 10;
+    // Signature block (left)
+    doc.fontSize(11).font('Helvetica-Bold').fillColor('#1e293b').text(`For ${offerLetter.company || 'the company'}`, 60, signY, { align: 'left' });
+    // HR Signature image (if provided)
+    if (offerLetter.hrSignature && fs.existsSync(offerLetter.hrSignature)) {
+      doc.image(offerLetter.hrSignature, 60, signY + 18, { width: 80 });
+    }
+    doc.font('Helvetica').fontSize(11).fillColor('#222').text(`${offerLetter.hrName || 'HR Name (HR)'}`, 60, signY + 38, { align: 'left' });
+    // Stamp (right)
+    const stampPath = offerLetter.companyStamp || path.join(__dirname, '../templates/stamp.png');
     if (typeof stampPath === 'string' && fs.existsSync(stampPath)) {
-      doc.opacity(0.5).image(stampPath, 180, doc.y - 20, { width: 60 }).opacity(1);
+      doc.opacity(0.5).image(stampPath, doc.page.width - 140, signY, { width: 80 }).opacity(1);
     } else {
       console.warn('Stamp path is not a string or does not exist:', stampPath);
-    }
-
-    // Stipend (if present)
-    if (offerLetter.stipend && offerLetter.stipend > 0) {
-      contentY += 18;
-      doc.font('Helvetica-Bold').fontSize(13).fillColor('#0e7490').text(`Stipend: ₹${offerLetter.stipend} /${offerLetter.stipendType || 'month'}`, 60, contentY, { align: 'left' });
-      contentY += 18;
     }
 
     // Watermark (behind all content)

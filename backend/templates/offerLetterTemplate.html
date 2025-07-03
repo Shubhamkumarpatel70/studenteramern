@@ -53,6 +53,7 @@
       <p>Congratulations!!</p>
       <div class="confidential">STRICTLY PRIVATE &amp; CONFIDENTIAL</div>
       <p>We are pleased to offer you a Summer Internship with <span class="highlight">{{company}}</span>, based on your application and the interview &amp; discussions you had with us. Details of the terms &amp; conditions of offer are as under:</p>
+      <p><span style="font-weight:bold; color:#1976d2;">Stipend: ₹{{stipend}}/{{stipendType}}</span></p>
       <ol class="terms">
         <li>You must always maintain utmost secrecy and confidentiality of your offer, its terms, and of any information about the company, and shall not disclose any such details to outsiders.</li>
         <li>You will be designated as <span class="highlight">{{title}}</span>.</li>
@@ -65,12 +66,15 @@
       </ol>
       <p>Kindly sign and return a copy of this letter as a token of your acceptance of the offer.</p>
       <p>Looking forward to a long and mutually beneficial career with us</p>
-      <div class="footer">Yours truly,<br />For {{company}}<br /><br /><img src="{{hrSignature}}" alt="HR Signature" style="height:40px; margin:8px 0;" /><br />{{hrName}} (HR)</div>
-      <div class="signatures">
-        <div class="sign-col">{{hrName}}<br /><span style="font-size:0.95em;">(HR)</span></div>
-        <div class="sign-col">Applicant Sign</div>
-        <div class="sign-col">College</div>
-        <div class="sign-col">Location</div>
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-top: 48px;">
+        <div>
+          <div style="font-weight: bold; font-size: 1.1em;">For {{company}}</div>
+          <img src="{{hrSignature}}" alt="HR Signature" style="height:40px; margin:8px 0;" /><br />
+          <span>{{hrName}} (HR)</span>
+        </div>
+        <div>
+          <img src="{{companyStamp}}" alt="Company Stamp" style="height:80px; opacity:0.5; margin-left: 32px;" />
+        </div>
       </div>
     </div>
   </div>

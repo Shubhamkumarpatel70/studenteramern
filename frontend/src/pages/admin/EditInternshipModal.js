@@ -114,7 +114,10 @@ const EditInternshipModal = ({ isOpen, onClose, internship, onSave }) => {
                         <textarea name="features" value={formData.features ? formData.features.join('\n') : ''} onChange={e => setFormData(prev => ({ ...prev, features: e.target.value.split(/\n/).map(f => f.trim()).filter(f => f.length > 0) }))} rows="3" className="mt-1 block w-full border-gray-300 rounded-md shadow-sm" placeholder="Or paste features, one per line"></textarea>
                     </div>
 
-                    {/* Add other fields like stipend, location, duration as needed */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Total Positions</label>
+                        <input type="number" name="totalPositions" value={formData.totalPositions || 1} onChange={handleChange} min="1" className="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+                    </div>
 
                     <div className="flex items-center">
                         <input type="checkbox" name="isAccepting" checked={formData.isAccepting} onChange={handleChange} className="h-4 w-4 text-indigo-600 rounded" />
