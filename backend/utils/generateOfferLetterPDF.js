@@ -22,12 +22,12 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
 
     // Accent line below header
     doc.moveTo(30, headerY + 70).lineTo(doc.page.width - 30, headerY + 70).lineWidth(2).strokeColor('#4f46e5').stroke();
-    let contentY = headerY + 90;
-    // Reference, Date, and Heading
-    doc.fontSize(12).font('Helvetica').fillColor('black').text(`REF: ${offerLetter.referenceNo || 'SE/INTERNSHIP/OFFER'}`, 40, contentY, { align: 'left' });
-    doc.font('Helvetica-Bold').fontSize(18).fillColor('#4f46e5').text('LETTER OF OFFER', 0, contentY, { align: 'center', underline: true });
-    doc.font('Helvetica').fontSize(12).fillColor('black').text(`Dated: ${offerLetter.issueDate ? new Date(offerLetter.issueDate).toLocaleDateString() : ''}`, doc.page.width - 220, contentY, { align: 'left' });
-    contentY += 32;
+    // Main heading: LETTER OF OFFER (centered)
+    doc.font('Helvetica-Bold').fontSize(22).fillColor('#4f46e5').text('LETTER OF OFFER', 0, headerY + 80, { align: 'center', underline: true });
+    // Sub-header: REF and Dated (centered, below heading)
+    let subHeaderY = headerY + 110;
+    doc.font('Helvetica').fontSize(12).fillColor('black').text(`REF: ${offerLetter.referenceNo || 'SE/INTERNSHIP/OFFER'}    Dated: ${offerLetter.issueDate ? new Date(offerLetter.issueDate).toLocaleDateString() : ''}`, 0, subHeaderY, { align: 'center' });
+    let contentY = subHeaderY + 30;
     doc.fontSize(15).font('Helvetica-Bold').fillColor('#0e7490').text(`Dear ${offerLetter.candidateName || 'Candidate'},`, 60, contentY, { align: 'left' });
     contentY += 22;
     doc.font('Helvetica').fontSize(12).fillColor('#222').text(`Intern ID: ${offerLetter.internId || '__________'}`, 60, contentY, { align: 'left' });
@@ -41,10 +41,10 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
       60, contentY, { align: 'left', width: doc.page.width - 120 }
     );
     contentY += 32;
-    // Stipend (if present) - move this up to main content, after intro paragraph
+    // Stipend (if present) - after intro paragraph, clear and bold
     if (offerLetter.stipend && offerLetter.stipend > 0) {
       contentY += 18;
-      doc.font('Helvetica-Bold').fontSize(13).fillColor('#1976d2').text(`Stipend: ₹${offerLetter.stipend} /${offerLetter.stipendType || 'month'}`, 60, contentY, { align: 'left' });
+      doc.font('Helvetica-Bold').fontSize(13).fillColor('#1976d2').text(`Stipend: ₹${offerLetter.stipend} /${offerLetter.stipendType || 'month'}`.replace(/\s+/g, ' '), 60, contentY, { align: 'left' });
       contentY += 18;
     }
     const terms = [
@@ -72,7 +72,6 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
     const signY = doc.y + 10;
     // Signature block (left)
     doc.fontSize(11).font('Helvetica-Bold').fillColor('#1e293b').text(`For ${offerLetter.company || 'the company'}`, 60, signY, { align: 'left' });
-    // HR Signature image (if provided)
     if (offerLetter.hrSignature && fs.existsSync(offerLetter.hrSignature)) {
       doc.image(offerLetter.hrSignature, 60, signY + 18, { width: 80 });
     }
@@ -84,6 +83,12 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
     } else {
       console.warn('Stamp path is not a string or does not exist:', stampPath);
     }
+    // Signature lines for Intern and College
+    const sigLineY = signY + 80;
+    doc.font('Helvetica').fontSize(11).fillColor('#222').text("Intern's Signature", 60, sigLineY, { align: 'left' });
+    doc.moveTo(160, sigLineY + 12).lineTo(300, sigLineY + 12).strokeColor('#888').lineWidth(1).stroke();
+    doc.font('Helvetica').fontSize(11).fillColor('#222').text('College', 320, sigLineY, { align: 'left' });
+    doc.moveTo(380, sigLineY + 12).lineTo(520, sigLineY + 12).strokeColor('#888').lineWidth(1).stroke();
 
     // Watermark (behind all content)
     doc.save();
