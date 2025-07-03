@@ -57,7 +57,7 @@ const Profile = () => {
     }
 
     // Default avatar if profile picture is not a valid URL
-    const isInvalidUrl = !localUser.profilePicture || localUser.profilePicture === 'default-avatar.png';
+    const isInvalidUrl = !localUser.profilePicture || localUser.profilePicture === 'dafaultava.jpg';
     const avatar = isInvalidUrl
       ? `https://ui-avatars.com/api/?name=${encodeURIComponent(localUser.name)}&background=random`
       : localUser.profilePicture.startsWith('http')

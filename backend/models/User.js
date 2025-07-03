@@ -45,7 +45,7 @@ const UserSchema = new mongoose.Schema({
     },
     profilePicture: {
         type: String,
-        default: 'default-avatar.png' // A default placeholder image
+        default: 'dafaultava.jpg' // A default placeholder image
     },
     tagline: {
         type: String,

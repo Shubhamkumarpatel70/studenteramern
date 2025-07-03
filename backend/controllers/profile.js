@@ -19,7 +19,7 @@ exports.updateProfile = async (req, res, next) => {
         let completedFields = 0;
         
         if (user.name) completedFields++;
-        if (user.profilePicture && user.profilePicture !== 'default-avatar.png') completedFields++;
+        if (user.profilePicture && user.profilePicture !== 'dafaultava.jpg') completedFields++;
         if (user.tagline) completedFields++;
         if (user.skills && user.skills.length > 0) completedFields++;
         if (user.college) completedFields++;

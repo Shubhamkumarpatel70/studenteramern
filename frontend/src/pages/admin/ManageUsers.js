@@ -82,7 +82,7 @@ const ManageUsers = () => {
                                     <tr key={user._id}>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <img
-                                                src={user.profilePicture ? (user.profilePicture.startsWith('http') ? user.profilePicture : `${IMAGE_BASE_URL}/${user.profilePicture}`) : '/default-avatar.png'}
+                                                src={user.profilePicture ? (user.profilePicture.startsWith('http') ? user.profilePicture : `${IMAGE_BASE_URL}/${user.profilePicture}`) : '/dafaultava.jpg'}
                                                 alt={user.name}
                                                 className="w-10 h-10 rounded-full border object-cover shadow"
                                             />
