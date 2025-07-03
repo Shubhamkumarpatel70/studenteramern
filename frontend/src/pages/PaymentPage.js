@@ -5,10 +5,6 @@ import AuthContext from '../context/AuthContext';
 import { AlertTriangle, BadgeCheck, CreditCard, Loader2 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 
-// Add Cloudinary config
-const CLOUDINARY_UPLOAD_PRESET = 'your_upload_preset'; // TODO: Replace with your actual preset
-const CLOUDINARY_CLOUD_NAME = 'your_cloud_name'; // TODO: Replace with your actual cloud name
-
 const PaymentPage = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -55,29 +51,6 @@ const PaymentPage = () => {
         });
     }, [internshipId]);
 
-    // Cloudinary upload handler
-    const handleScreenshotChange = async (e) => {
-        const file = e.target.files[0];
-        setScreenshot(file);
-        if (!file) return;
-        setUploading(true);
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-        try {
-            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
-                method: 'POST',
-                body: formData
-            });
-            const data = await res.json();
-            setScreenshotUrl(data.secure_url);
-        } catch (err) {
-            setScreenshotUrl('');
-            alert('Failed to upload screenshot. Please try again.');
-        }
-        setUploading(false);
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!agreed) {
@@ -113,6 +86,32 @@ const PaymentPage = () => {
             setError(err.response?.data?.message || 'Could not submit application.');
         }
         setIsSubmitting(false);
+    };
+
+    const handleScreenshotChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setUploading(true);
+        const formData = new FormData();
+        formData.append('paymentScreenshot', file);
+        try {
+            const token = localStorage.getItem('token');
+            const res = await api.post(
+                '/applications/upload-payment-screenshot',
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            setScreenshotUrl(res.data.screenshot); // Save backend path
+        } catch (err) {
+            setScreenshotUrl('');
+            alert('Failed to upload screenshot. Please try again.');
+        }
+        setUploading(false);
     };
 
     console.log("PaymentPage rendered", { internshipId, loading, error, internship });

@@ -38,6 +38,7 @@ app.use(cors({
 
 // Set static folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/images/users', express.static(path.join(__dirname, 'images/users')));
 
 // Mount routers
 app.use('/api/auth', require('./routes/auth'));

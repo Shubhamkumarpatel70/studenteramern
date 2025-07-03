@@ -77,4 +77,27 @@ const uploadPaymentScreenshot = multer({
     }
 }).single('paymentScreenshot');
 
-module.exports = Object.assign(upload, { uploadPaymentScreenshot }); 
+// Profile image upload config
+const profileImageDir = 'backend/uploads/profileImages';
+if (!fs.existsSync(profileImageDir)) {
+    fs.mkdirSync(profileImageDir, { recursive: true });
+}
+
+const profileImageStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, profileImageDir);
+    },
+    filename: (req, file, cb) => {
+        cb(null, `profile-${Date.now()}${path.extname(file.originalname)}`);
+    }
+});
+
+const uploadProfileImage = multer({
+    storage: profileImageStorage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    fileFilter: (req, file, cb) => {
+        checkImageFileType(file, cb);
+    }
+}).single('profilePicture');
+
+module.exports = Object.assign(upload, { uploadPaymentScreenshot, uploadProfileImage }); 

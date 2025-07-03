@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const EditProfileModal = ({ user, onClose, onSave }) => {
   const [formData, setFormData] = useState({
@@ -11,10 +12,6 @@ const EditProfileModal = ({ user, onClose, onSave }) => {
     website: '',
     profilePicture: '',
   });
-
-  // Cloudinary config (replace with your own)
-  const CLOUDINARY_CLOUD_NAME = 'dfebg4u9v';
-  const CLOUDINARY_UPLOAD_PRESET = 'studentera_unsigned';
 
   useEffect(() => {
     if (user) {
@@ -50,18 +47,21 @@ const EditProfileModal = ({ user, onClose, onSave }) => {
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const formDataCloud = new FormData();
-    formDataCloud.append('file', file);
-    formDataCloud.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+    const formDataBackend = new FormData();
+    formDataBackend.append('profilePicture', file);
     try {
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
-        method: 'POST',
-        body: formDataCloud,
-      });
-      const data = await res.json();
-      if (data.secure_url) {
-        setFormData((prev) => ({ ...prev, profilePicture: data.secure_url }));
-      }
+      const token = localStorage.getItem('token');
+      const res = await axios.put(
+        'http://localhost:5000/api/profile/picture',
+        formDataBackend,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setFormData((prev) => ({ ...prev, profilePicture: res.data.profilePicture }));
     } catch (err) {
       alert('Image upload failed. Please try again.');
     }
@@ -106,7 +106,7 @@ const EditProfileModal = ({ user, onClose, onSave }) => {
             <label className="block text-sm font-medium text-gray-700">Profile Picture</label>
             <input type="file" accept="image/*" onChange={handleFileChange} className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
             {formData.profilePicture && (
-              <img src={formData.profilePicture} alt="Preview" className="mt-2 w-20 h-20 rounded-full object-cover border-2 border-blue-200" />
+              <img src={formData.profilePicture.startsWith('http') ? formData.profilePicture : `http://localhost:5000/${formData.profilePicture}`} alt="Preview" className="mt-2 w-20 h-20 rounded-full object-cover border-2 border-blue-200" />
             )}
           </div>
           <div className="flex justify-end gap-4 pt-4">

@@ -6,6 +6,7 @@ import { Linkedin, Github, Globe, Star } from 'lucide-react';
 import { Tooltip } from 'react-tooltip';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import axios from 'axios';
 
 // Circular progress bar component
 const CircularProgress = ({ value }) => {
@@ -41,6 +42,9 @@ const Profile = () => {
     const { user, updateUserProfile } = useContext(AuthContext);
     const [showEdit, setShowEdit] = React.useState(false);
     const [localUser, setLocalUser] = React.useState(user);
+    const [file, setFile] = React.useState(null);
+    const [uploading, setUploading] = React.useState(false);
+    const fileInputRef = React.useRef();
 
     React.useEffect(() => {
       setLocalUser(user);
@@ -51,8 +55,12 @@ const Profile = () => {
     }
 
     // Default avatar if profile picture is not a valid URL
-    const isInvalidUrl = !localUser.profilePicture || localUser.profilePicture.startsWith('images/users/') || localUser.profilePicture === 'default-avatar.png';
-    const avatar = isInvalidUrl ? `https://ui-avatars.com/api/?name=${encodeURIComponent(localUser.name)}&background=random` : localUser.profilePicture;
+    const isInvalidUrl = !localUser.profilePicture || localUser.profilePicture === 'default-avatar.png';
+    const avatar = isInvalidUrl
+      ? `https://ui-avatars.com/api/?name=${encodeURIComponent(localUser.name)}&background=random`
+      : localUser.profilePicture.startsWith('http')
+        ? localUser.profilePicture
+        : `http://localhost:5000/${localUser.profilePicture}`;
 
     // Handle save from modal
     const handleSave = (updated) => {
@@ -93,6 +101,37 @@ const Profile = () => {
       },
     }[level];
 
+    const handleCameraClick = () => {
+      if (fileInputRef.current) fileInputRef.current.click();
+    };
+
+    const handleFileChange = async (e) => {
+      const selectedFile = e.target.files[0];
+      if (!selectedFile) return;
+      setFile(selectedFile);
+      setUploading(true);
+      try {
+        const formData = new FormData();
+        formData.append('profilePicture', selectedFile);
+        const token = localStorage.getItem('token');
+        const res = await axios.put(
+          'http://localhost:5000/api/profile/picture',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setLocalUser(prev => ({ ...prev, profilePicture: res.data.profilePicture }));
+        setFile(null);
+      } catch (err) {
+        alert('Profile image upload failed');
+      }
+      setUploading(false);
+    };
+
     return (
       <div className="p-2 sm:p-4 md:p-8 bg-gray-50 min-h-screen flex flex-col items-center font-sans font-medium">
         <div className="relative bg-white p-4 sm:p-8 rounded-2xl shadow-2xl border border-blue-100 flex flex-col items-center max-w-lg w-full mx-auto">
@@ -109,8 +148,24 @@ const Profile = () => {
           </div>
           <div className="relative mb-2">
             <img src={avatar} alt="Avatar" className="w-32 h-32 rounded-full border-4 border-indigo-200 shadow-lg object-cover transition-transform duration-200 hover:scale-105" />
-            <div className="absolute bottom-2 right-2 bg-white rounded-full p-1 shadow cursor-pointer hover:bg-blue-100 transition" title="Change profile picture">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536M9 13h6m2 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+              onChange={handleFileChange}
+              disabled={uploading}
+            />
+            <div
+              className="absolute bottom-2 right-2 bg-white rounded-full p-1 shadow cursor-pointer hover:bg-blue-100 transition"
+              title="Change profile picture"
+              onClick={handleCameraClick}
+            >
+              {uploading ? (
+                <svg className="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536M9 13h6m2 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              )}
             </div>
           </div>
           {/* Social Links - improved with tooltips and hover */}
