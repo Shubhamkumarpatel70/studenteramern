@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 // Set base URL for axios
-const baseURL = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/api` : 'https://studenteramernbackend.onrender.com/api';
+const baseURL = process.env.REACT_APP_API_URL
+  ? process.env.REACT_APP_API_URL.replace(/\/$/, '') + '/api'
+  : 'https://studenteramernbackend.onrender.com/api';
 
 // Create axios instance with base URL
 const api = axios.create({
