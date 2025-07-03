@@ -17,7 +17,10 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
     // Company details top right
     const companyDetailsX = doc.page.width - 320;
     doc.fontSize(22).font('Helvetica-Bold').fillColor('#4f46e5').text(offerLetter.company || 'Company Name', companyDetailsX, headerY, { width: 290, align: 'right' });
-    doc.fontSize(11).font('Helvetica').fillColor('#444').text(offerLetter.companyAddress || 'Company Address', companyDetailsX, headerY + 28, { width: 290, align: 'right' });
+    doc.fontSize(11).font('Helvetica').fillColor('#444').text(
+      offerLetter.companyAddress || 'Patna, Bihar India, BR 800002 contact.studentera@gmail.com',
+      companyDetailsX, headerY + 28, { width: 290, align: 'right' }
+    );
     doc.fontSize(11).fillColor('#666').text((offerLetter.companyEmail ? offerLetter.companyEmail + ' | ' : '') + (offerLetter.companyWebsite || ''), companyDetailsX, headerY + 46, { width: 290, align: 'right' });
 
     // Accent line below header
