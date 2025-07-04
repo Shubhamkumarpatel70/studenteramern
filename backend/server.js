@@ -36,6 +36,25 @@ app.use(cors({
   credentials: true
 }));
 
+// Log CORS errors for debugging
+app.use((err, req, res, next) => {
+  if (err && err instanceof Error && err.message.includes('CORS')) {
+    console.error('CORS error:', err.message);
+    res.status(500).json({ message: 'CORS error', error: err.message });
+  } else {
+    next(err);
+  }
+});
+
+// Handle preflight requests
+app.options('*', cors({
+  origin: [
+    'https://studenteramernfrontend.onrender.com',
+    'https://studentera.live'
+  ],
+  credentials: true
+}));
+
 // Set static folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/images/users', express.static(path.join(__dirname, 'images/users')));
