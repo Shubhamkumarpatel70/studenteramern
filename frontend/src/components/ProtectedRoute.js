@@ -15,7 +15,12 @@ const ProtectedRoute = ({ roles }) => {
 
     // If roles are specified, check if the user has one of the required roles
     if (roles && roles.length > 0 && !roles.includes(user.role)) {
-        return <Navigate to="/dashboard" replace />; // Or to an unauthorized page
+        // Redirect to a role-appropriate dashboard
+        if (user.role === 'co-admin') return <Navigate to="/coadmin" replace />;
+        if (user.role === 'admin') return <Navigate to="/admin-dashboard" replace />;
+        if (user.role === 'user') return <Navigate to="/dashboard" replace />;
+        // Default fallback
+        return <Navigate to="/" replace />;
     }
 
     return <Outlet />;

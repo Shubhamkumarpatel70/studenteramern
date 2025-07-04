@@ -177,7 +177,7 @@ const AppContent = () => {
           
           {/* Protected Co-Admin Dashboard */}
           <Route element={<ProtectedRoute roles={['co-admin']} />}>
-            <Route path="/co-admin-dashboard" element={<CoAdminDashboard />}>
+            <Route path="/coadmin/*" element={<CoAdminDashboard />}>
               <Route index element={<CoAdminHome />} />
               <Route path="students" element={<ManageStudents />} />
               <Route path="meetings" element={<ViewMeetings />} />

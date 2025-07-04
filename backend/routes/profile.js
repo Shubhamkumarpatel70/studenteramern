@@ -10,13 +10,19 @@ router.put('/', protect, updateProfile);
 
 router.put('/picture', protect, uploadProfileImage, uploadProfileImageController);
 
+// @route   GET /api/profile
+// @desc    Get current user's profile
+// @access  Private
 router.get('/', protect, async (req, res) => {
     try {
         const user = await require('../models/User').findById(req.user.id).select('-password');
-        if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
         res.json({ success: true, data: user });
     } catch (err) {
-        res.status(500).json({ success: false, message: 'Server Error' });
+        console.error('Error fetching profile:', err);
+        res.status(500).json({ success: false, message: 'Server Error. Please try again later.' });
     }
 });
 
