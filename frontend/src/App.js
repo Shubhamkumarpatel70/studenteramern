@@ -68,6 +68,8 @@ import NotFound from './pages/NotFound';
 import NoInternet from './pages/NoInternet';
 import ServerError from './pages/ServerError';
 
+import AccountantDashboard from "./pages/AccountantDashboard";
+
 // A wrapper component to access context
 const AppContent = () => {
   const { showProfileModal } = useContext(AuthContext);
@@ -182,6 +184,11 @@ const AppContent = () => {
               <Route path="students" element={<ManageStudents />} />
               <Route path="meetings" element={<ViewMeetings />} />
             </Route>
+          </Route>
+
+          {/* Protected Accountant Dashboard */}
+          <Route element={<ProtectedRoute roles={['accountant']} />}> 
+            <Route path="/accountant/*" element={<AccountantDashboard />} />
           </Route>
 
           {/* Not Found Route */}
