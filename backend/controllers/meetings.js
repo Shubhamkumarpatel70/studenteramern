@@ -52,11 +52,13 @@ exports.getMeetings = async (req, res, next) => {
 exports.createMeeting = async (req, res, next) => {
     req.body.user = req.user.id;
     try {
-        // Validate that if target type is 'internship', an internship ID is provided
-        if (req.body.target && req.body.target.type === 'internship' && !req.body.target.internship) {
+        // Validation for meeting targeting
+        if (req.body.targetType === 'users' && (!req.body.selectedUsers || req.body.selectedUsers.length === 0)) {
+            return res.status(400).json({ success: false, message: 'Please select at least one user for targeted meetings.' });
+        }
+        if (req.body.targetType === 'internship' && !req.body.selectedInternship) {
             return res.status(400).json({ success: false, message: 'Please select an internship for targeted meetings.' });
         }
-        
         const meeting = await Meeting.create(req.body);
         res.status(201).json({ success: true, data: meeting });
     } catch (err) {
@@ -74,6 +76,14 @@ exports.updateMeeting = async (req, res, next) => {
 
         if (!meeting) {
             return res.status(404).json({ success: false, message: 'Meeting not found' });
+        }
+
+        // Validation for meeting targeting
+        if (req.body.targetType === 'users' && (!req.body.selectedUsers || req.body.selectedUsers.length === 0)) {
+            return res.status(400).json({ success: false, message: 'Please select at least one user for targeted meetings.' });
+        }
+        if (req.body.targetType === 'internship' && !req.body.selectedInternship) {
+            return res.status(400).json({ success: false, message: 'Please select an internship for targeted meetings.' });
         }
 
         meeting = await Meeting.findByIdAndUpdate(req.params.id, req.body, {

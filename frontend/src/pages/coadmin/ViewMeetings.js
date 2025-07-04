@@ -9,13 +9,18 @@ const ViewMeetings = () => {
         title: '',
         date: '',
         link: '',
-        expireAfterMinutes: 60
+        expireAfterMinutes: 60,
+        targetType: 'all', // all, users, internship
+        selectedUsers: [],
+        selectedInternship: ''
     });
     const [editMode, setEditMode] = useState(false);
     const [selectedMeetingId, setSelectedMeetingId] = useState(null);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
+    const [users, setUsers] = useState([]);
+    const [internships, setInternships] = useState([]);
 
     const apiConfig = () => ({
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
@@ -30,12 +35,32 @@ const ViewMeetings = () => {
         }
     };
 
+    const fetchUsers = async () => {
+        try {
+            const res = await api.get('/users', apiConfig());
+            setUsers(res.data.data);
+        } catch (err) {
+            setError('Failed to fetch users');
+        }
+    };
+
+    const fetchInternships = async () => {
+        try {
+            const res = await api.get('/internships/public');
+            setInternships(res.data.data);
+        } catch (err) {
+            setError('Failed to fetch internships');
+        }
+    };
+
     useEffect(() => {
         fetchMeetings();
+        fetchUsers();
+        fetchInternships();
     }, []);
 
     const resetForm = () => {
-        setFormData({ title: '', date: '', link: '', expireAfterMinutes: 60 });
+        setFormData({ title: '', date: '', link: '', expireAfterMinutes: 60, targetType: 'all', selectedUsers: [], selectedInternship: '' });
         setEditMode(false);
         setSelectedMeetingId(null);
     };
@@ -47,7 +72,10 @@ const ViewMeetings = () => {
             title: meeting.title,
             date: new Date(meeting.date).toISOString().slice(0, 16),
             link: meeting.link,
-            expireAfterMinutes: meeting.expireAfterMinutes || 60
+            expireAfterMinutes: meeting.expireAfterMinutes || 60,
+            targetType: meeting.targetType || 'all',
+            selectedUsers: meeting.selectedUsers || [],
+            selectedInternship: meeting.selectedInternship || ''
         });
         window.scrollTo(0, 0);
     };
@@ -72,7 +100,10 @@ const ViewMeetings = () => {
             title: formData.title,
             date: formData.date,
             link: formData.link,
-            expireAfterMinutes: formData.expireAfterMinutes
+            expireAfterMinutes: formData.expireAfterMinutes,
+            targetType: formData.targetType,
+            selectedUsers: formData.targetType === 'users' ? formData.selectedUsers : [],
+            selectedInternship: formData.targetType === 'internship' ? formData.selectedInternship : ''
         };
         try {
             if (editMode) {
@@ -92,6 +123,11 @@ const ViewMeetings = () => {
     };
 
     const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+    const handleUserSelect = e => {
+        const options = Array.from(e.target.selectedOptions, option => option.value);
+        setFormData({ ...formData, selectedUsers: options });
+    };
 
     return (
         <div className="bg-white p-6 rounded-lg shadow-lg">
@@ -116,6 +152,35 @@ const ViewMeetings = () => {
                         <label className="block text-sm font-medium">Meeting Expiration (minutes after start)</label>
                         <input type="number" name="expireAfterMinutes" min="1" value={formData.expireAfterMinutes} onChange={onChange} required className="mt-1 block w-full" />
                     </div>
+                    <div>
+                        <label className="block text-sm font-medium">Target Audience</label>
+                        <select name="targetType" value={formData.targetType} onChange={onChange} className="mt-1 block w-full">
+                            <option value="all">All Users</option>
+                            <option value="users">Selected Users</option>
+                            <option value="internship">Selected Internship</option>
+                        </select>
+                    </div>
+                    {formData.targetType === 'users' && (
+                        <div>
+                            <label className="block text-sm font-medium">Select Users</label>
+                            <select multiple value={formData.selectedUsers} onChange={handleUserSelect} className="mt-1 block w-full">
+                                {users.map(user => (
+                                    <option key={user._id} value={user._id}>{user.name} ({user.email})</option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+                    {formData.targetType === 'internship' && (
+                        <div>
+                            <label className="block text-sm font-medium">Select Internship</label>
+                            <select name="selectedInternship" value={formData.selectedInternship} onChange={onChange} className="mt-1 block w-full">
+                                <option value="">Select Internship</option>
+                                {internships.map(internship => (
+                                    <option key={internship._id} value={internship._id}>{internship.title}</option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
                     {error && <div className="text-red-500 text-sm">{error}</div>}
                     {success && <div className="text-green-500 text-sm">{success}</div>}
                     <div>

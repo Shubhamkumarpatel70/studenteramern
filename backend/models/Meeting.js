@@ -19,16 +19,20 @@ const MeetingSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please add a meeting link']
     },
-    target: {
-        type: {
-            type: String,
-            enum: ['all', 'co-admins', 'internship'],
-            required: true
-        },
-        internship: {
-            type: mongoose.Schema.ObjectId,
-            ref: 'Internship'
-        }
+    targetType: {
+        type: String,
+        enum: ['all', 'users', 'internship'],
+        default: 'all',
+        required: true
+    },
+    selectedUsers: [{
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
+    }],
+    selectedInternship: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Internship',
+        default: null
     },
     createdAt: {
         type: Date,
