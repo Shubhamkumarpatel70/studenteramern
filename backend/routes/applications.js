@@ -19,8 +19,8 @@ router.route('/my-applications').get(protect, getMyApplications);
 router.route('/:id').get(protect, getApplicationById);
 
 // Admin routes
-router.route('/').get(protect, authorize('admin'), getAllApplications);
-router.route('/:id/status').put(protect, authorize('admin'), updateApplicationStatus);
+router.route('/').get(protect, authorize('admin', 'accountant'), getAllApplications);
+router.route('/:id/status').put(protect, authorize('admin', 'accountant'), updateApplicationStatus);
 
 router.post('/upload-payment-screenshot', protect, uploadPaymentScreenshot, uploadPaymentScreenshotController);
 
