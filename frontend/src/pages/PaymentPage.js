@@ -106,7 +106,7 @@ const PaymentPage = () => {
                     },
                 }
             );
-            setScreenshotUrl(res.data.screenshot); // Save backend path
+            setScreenshotUrl(res.data.url); // Save backend path
         } catch (err) {
             setScreenshotUrl('');
             alert('Failed to upload screenshot. Please try again.');
