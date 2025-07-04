@@ -5,7 +5,7 @@ import AccountantHome from './AccountantHome';
 import AccountantManageTransactions from './AccountantManageTransactions';
 import AccountantMeetings from './AccountantMeetings';
 import AccountantNotifications from './AccountantNotifications';
-import { AuthContext } from '../context/AuthContext';
+import AuthContext from '../context/AuthContext';
 
 const AccountantProtectedRoute = ({ children }) => {
     const { user } = useContext(AuthContext);
