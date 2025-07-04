@@ -65,7 +65,7 @@ const PaymentPage = () => {
             setError('Please enter the UTR/Transaction ID after payment.');
             return;
         }
-        if (!screenshotUrl) {
+        if (!screenshot) {
             setError('Please upload a payment screenshot.');
             return;
         }
@@ -74,13 +74,25 @@ const PaymentPage = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
+            // 1. Create application (without screenshot)
+            const appRes = await api.post('/applications', {
+                internshipId,
+                duration,
+                certificateName,
+                utr,
+                paymentScreenshot: ''
+            }, config);
+            const applicationId = appRes.data.data._id;
+            // 2. Upload screenshot with applicationId
             const formData = new FormData();
-            formData.append('internshipId', internshipId);
-            formData.append('duration', duration);
-            formData.append('certificateName', certificateName);
-            formData.append('utr', utr);
-            formData.append('paymentScreenshot', screenshotUrl); // Send Cloudinary URL
-            await api.post('/applications', formData, config);
+            formData.append('paymentScreenshot', screenshot);
+            formData.append('applicationId', applicationId);
+            await api.post('/applications/upload-payment-screenshot', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             setSuccess(true);
         } catch (err) {
             setError(err.response?.data?.message || 'Could not submit application.');
@@ -91,27 +103,8 @@ const PaymentPage = () => {
     const handleScreenshotChange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        setUploading(true);
-        const formData = new FormData();
-        formData.append('paymentScreenshot', file);
-        try {
-            const token = localStorage.getItem('token');
-            const res = await api.post(
-                '/applications/upload-payment-screenshot',
-                formData,
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-            setScreenshotUrl(res.data.url); // Save backend path
-        } catch (err) {
-            setScreenshotUrl('');
-            alert('Failed to upload screenshot. Please try again.');
-        }
-        setUploading(false);
+        setScreenshot(file);
+        setScreenshotUrl(URL.createObjectURL(file));
     };
 
     console.log("PaymentPage rendered", { internshipId, loading, error, internship });
