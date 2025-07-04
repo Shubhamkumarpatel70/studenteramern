@@ -20,10 +20,11 @@ exports.getDashboardStats = async (req, res, next) => {
             const totalUsers = await User.countDocuments();
             const totalInternships = await Internship.countDocuments();
             const totalMeetings = await Meeting.countDocuments();
-            // Count applications with status 'approved', 'pending', or 'cancel' as transactions
-            const transactionStatuses = ['approved', 'pending', 'cancel'];
-            const totalTransactions = await Application.countDocuments({ status: { $in: transactionStatuses } });
-            const totalTransactionAmount = totalTransactions * 129;
+            // Count only approved applications as transactions
+            const totalTransactions = await Application.countDocuments({ status: 'Approved' });
+            // Sum the amount field for all approved applications
+            const approvedApplications = await Application.find({ status: 'Approved' });
+            const totalTransactionAmount = approvedApplications.reduce((sum, app) => sum + (app.amount || 129), 0);
             const totalRegistrations = await Application.countDocuments();
             stats = {
                 totalUsers,

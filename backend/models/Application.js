@@ -42,6 +42,10 @@ const ApplicationSchema = new mongoose.Schema({
     paymentScreenshot: {
         type: String,
         required: false
+    },
+    amount: {
+        type: Number,
+        default: 129
     }
 });
 
