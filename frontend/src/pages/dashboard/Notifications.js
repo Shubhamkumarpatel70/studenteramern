@@ -44,22 +44,22 @@ const Notifications = () => {
     };
 
     if (loading) {
-        return <div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin text-indigo-600" /></div>;
+        return <div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
     }
 
     if (error) {
-        return <div className="text-center text-red-500 bg-red-100 p-4 rounded-md">{error}</div>;
+        return <div className="text-center text-error bg-error/10 p-4 rounded-md">{error}</div>;
     }
 
     return (
-        <div className="p-2 sm:p-4 md:p-8 bg-gray-50 min-h-full font-sans font-medium">
+        <div className="p-2 sm:p-4 md:p-8 bg-gradient-to-br from-primary-light via-background to-accent-light min-h-full font-sans font-medium">
             <div className="max-w-lg mx-auto">
                 <div className="flex items-center gap-2 mb-6">
-                    <Bell className="h-7 w-7 text-indigo-600" />
-                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">My Notifications</h1>
+                    <Bell className="h-7 w-7 text-primary" />
+                    <h1 className="text-2xl sm:text-3xl font-extrabold text-primary-dark font-sans">My Notifications</h1>
                     <span className="ml-auto flex items-center gap-2">
-                        <span className="bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full text-xs font-semibold">{notifications.filter(n => !n.read).length} unread</span>
-                        <button onClick={fetchNotifications} className="ml-2 px-3 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition text-xs sm:text-sm flex items-center gap-1" disabled={loading}>
+                        <span className="bg-primary-light text-primary-dark px-2 py-1 rounded-full text-xs font-semibold">{notifications.filter(n => !n.read).length} unread</span>
+                        <button onClick={fetchNotifications} className="ml-2 px-3 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg shadow transition text-xs sm:text-sm flex items-center gap-1" disabled={loading}>
                             <RefreshCw className={loading ? 'animate-spin' : ''} size={16} /> Refresh
                         </button>
                     </span>
@@ -67,27 +67,27 @@ const Notifications = () => {
                 {loading ? (
                     <div className="text-center py-8">Loading notifications...</div>
                 ) : notifications.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">No notifications yet.</div>
+                    <div className="text-center py-8 text-primary-dark/70 bg-card rounded-2xl shadow-lg">No notifications yet.</div>
                 ) : (
                     <div className="space-y-4 font-sans font-medium">
                         {/* Local notifications (login/registration) */}
                         {localNotifications.map(notification => (
-                            <div key={notification._id} className="bg-white rounded-lg shadow p-4 flex flex-col sm:flex-row sm:items-center gap-2">
+                            <div key={notification._id} className="bg-card rounded-2xl shadow p-4 flex flex-col sm:flex-row sm:items-center gap-2 border border-primary-light/30">
                                 <div className="flex-1">
-                                    <div className="font-semibold text-gray-800">{notification.message}</div>
-                                    <div className="text-xs text-gray-500 mt-1">{new Date(notification.createdAt).toLocaleString()}</div>
+                                    <div className="font-semibold text-primary-dark">{notification.message}</div>
+                                    <div className="text-xs text-primary-dark/60 mt-1">{new Date(notification.createdAt).toLocaleString()}</div>
                                 </div>
                             </div>
                         ))}
                         {/* Backend notifications */}
                         {notifications.map(notification => (
-                            <div key={notification._id} className="bg-white rounded-lg shadow p-4 flex flex-col sm:flex-row sm:items-center gap-2">
+                            <div key={notification._id} className={`bg-card rounded-2xl shadow p-4 flex flex-col sm:flex-row sm:items-center gap-2 border border-primary-light/30 transition-shadow duration-200 ${!notification.read ? 'hover:shadow-2xl' : ''}` }>
                                 <div className="flex-1">
-                                    <div className="font-semibold text-gray-800">{notification.message}</div>
-                                    <div className="text-xs text-gray-500 mt-1">{new Date(notification.createdAt).toLocaleString()}</div>
+                                    <div className="font-semibold text-primary-dark">{notification.message}</div>
+                                    <div className="text-xs text-primary-dark/60 mt-1">{new Date(notification.createdAt).toLocaleString()}</div>
                                 </div>
                                 {!notification.read && (
-                                    <button onClick={() => handleMarkAsRead(notification._id)} className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold hover:bg-green-200 transition">Mark as Read</button>
+                                    <button onClick={() => handleMarkAsRead(notification._id)} className="bg-success/10 text-success px-3 py-1 rounded-full text-xs font-semibold hover:bg-success/20 transition">Mark as Read</button>
                                 )}
                             </div>
                         ))}

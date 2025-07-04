@@ -58,34 +58,35 @@ const MyTasks = () => {
     if (loading) {
         return (
             <div className="flex justify-center items-center h-64">
-                <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="text-center text-red-500 bg-red-100 p-4 rounded-md">
+            <div className="text-center text-error bg-error/10 p-4 rounded-md">
                 {error}
             </div>
         );
     }
 
     return (
-        <div className="p-2 sm:p-4 md:p-8 bg-gray-50 min-h-screen font-sans font-medium">
-            <div className="max-w-lg mx-auto font-sans font-medium">
-                <h1 className="text-3xl font-bold mb-6 text-gray-800">My Tasks</h1>
+        <div className="p-2 sm:p-4 md:p-8 bg-gradient-to-br from-primary-light via-background to-accent-light min-h-screen font-sans font-medium">
+            <div className="w-full max-w-2xl mx-auto font-sans font-medium">
+                <h1 className="text-3xl font-extrabold mb-6 text-primary-dark font-sans">My Tasks</h1>
                 {loading ? (
                     <div className="text-center py-8">Loading tasks...</div>
                 ) : tasks.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500 bg-white rounded-lg shadow">You have no tasks assigned.</div>
+                    <div className="text-center py-8 text-primary-dark/70 bg-card rounded-2xl shadow-lg">You have no tasks assigned.</div>
                 ) : (
                     <div className="space-y-4">
                         {tasks.map(task => (
-                            <div key={task._id} className="bg-white rounded-lg shadow p-4 flex flex-col gap-2">
-                                <div className="font-semibold text-gray-800">{task.title}</div>
-                                <div className="text-xs text-gray-500">Due: {new Date(task.dueDate).toLocaleDateString()}</div>
-                                <div className="text-sm text-gray-600">{task.description}</div>
+                            <div key={task._id} className="bg-card rounded-2xl shadow p-4 flex flex-col gap-2 border border-primary-light/30 hover:shadow-2xl transition-shadow duration-200">
+                                <div className="font-bold text-primary-dark text-lg flex items-center gap-2">{task.title}</div>
+                                <div className="text-xs text-primary-dark/60">Due: {new Date(task.dueDate).toLocaleDateString()}</div>
+                                <div className="text-sm text-primary-dark/80">{task.description}</div>
+                                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold border mt-2 ${getStatusColor(task.status)}`}>{getStatusIcon(task.status)} {getStatusText(task.status)}</div>
                             </div>
                         ))}
                     </div>

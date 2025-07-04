@@ -95,22 +95,22 @@ const Help = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="bg-white p-8 rounded shadow text-center">
-          <h2 className="text-2xl font-bold mb-2">Please log in to use Help Chat</h2>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-light via-background to-accent-light">
+        <div className="bg-card p-8 rounded-2xl shadow-2xl text-center">
+          <h2 className="text-2xl font-extrabold mb-2 text-primary-dark font-sans">Please log in to use Help Chat</h2>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex flex-col items-center justify-center px-2">
-      <div className="bg-white bg-opacity-90 p-2 sm:p-6 rounded-xl shadow-2xl max-w-lg w-full mt-8 mb-8 flex flex-col mx-auto font-sans font-medium">
+    <div className="min-h-screen bg-gradient-to-br from-primary-light via-background to-accent-light flex flex-col items-center justify-center px-2">
+      <div className="bg-card bg-opacity-95 p-2 sm:p-6 rounded-2xl shadow-2xl max-w-lg w-full mt-8 mb-8 flex flex-col mx-auto font-sans font-medium border border-primary-light/30">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-3xl font-bold text-indigo-700 text-center flex-1">Help & Support Chat</h1>
+          <h1 className="text-3xl font-extrabold text-primary-dark text-center flex-1 font-sans">Help & Support Chat</h1>
           <button
             onClick={fetchQuery}
-            className="flex items-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition disabled:opacity-50 ml-4"
+            className="flex items-center gap-2 px-3 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg shadow transition disabled:opacity-50 ml-4"
             title="Refresh chat"
             disabled={loading}
           >
@@ -119,59 +119,59 @@ const Help = () => {
           </button>
         </div>
         <div className="flex justify-between mb-2">
-          <span className="text-sm bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full font-semibold">{allQueries.length} queries</span>
-          <span className="text-sm bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-semibold">{messages.length} messages</span>
+          <span className="text-sm bg-primary-light text-primary-dark px-2 py-1 rounded-full font-semibold">{allQueries.length} queries</span>
+          <span className="text-sm bg-accent-light text-primary-dark px-2 py-1 rounded-full font-semibold">{messages.length} messages</span>
         </div>
         {loading ? (
           <div className="text-center py-8">Loading chat...</div>
         ) : error ? (
-          <div className="text-center text-red-500 py-4">{error}</div>
+          <div className="text-center text-error py-4">{error}</div>
         ) : (
           <>
-            <div className="flex-1 overflow-y-auto mb-4 max-h-96 border rounded-lg bg-gray-50 p-4">
+            <div className="flex-1 overflow-y-auto mb-4 max-h-96 border rounded-2xl bg-background p-4">
               {messages.length === 0 && (
-                <div className="text-gray-400 text-center">No messages yet. Start the conversation!</div>
+                <div className="text-primary-dark/40 text-center">No messages yet. Start the conversation!</div>
               )}
               {messages.map((msg, i) => (
                 <div key={i} className={`mb-2 flex ${msg.from === "user" ? "justify-end" : "justify-start"}`}>
-                  <div className={`px-4 py-2 rounded-lg max-w-xs ${msg.from === "user" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-800"}`}>
+                  <div className={`px-4 py-2 rounded-2xl max-w-xs shadow ${msg.from === "user" ? "bg-primary text-white animate-fade-in-right" : "bg-card text-primary-dark animate-fade-in-left"}`}>
                     {msg.text}
                   </div>
                 </div>
               ))}
               <div ref={chatEndRef} />
             </div>
-            <form onSubmit={sendMessage} className="flex gap-2">
+            <form onSubmit={sendMessage} className="flex gap-2 mt-2">
               <input
                 type="text"
                 value={input}
                 onChange={e => setInput(e.target.value)}
-                className="flex-1 p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg"
+                className="flex-1 p-3 rounded-lg border border-primary-light focus:outline-none focus:ring-2 focus:ring-primary text-lg font-sans"
                 placeholder="Type your message..."
                 required
                 disabled={loading}
               />
-              <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition" disabled={loading}>Send</button>
+              <button type="submit" className="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg font-semibold shadow transition-colors duration-200" disabled={loading}>Send</button>
             </form>
             {resolvedQueries.length > 0 && (
               <div className="mt-8">
-                <h2 className="text-xl font-bold mb-2 text-indigo-700">Resolved Queries</h2>
+                <h2 className="text-xl font-bold mb-2 text-primary-dark">Resolved Queries</h2>
                 <div className="space-y-3">
                   {resolvedQueries.map(q => (
-                    <div key={q._id} className="border rounded-lg bg-gray-50">
+                    <div key={q._id} className="border rounded-2xl bg-background">
                       <button
                         className="w-full text-left px-4 py-2 font-semibold flex justify-between items-center focus:outline-none"
                         onClick={() => setExpanded(exp => ({ ...exp, [q._id]: !exp[q._id] }))}
                       >
                         <span>Resolved on {new Date(q.updatedAt).toLocaleString()}</span>
-                        <span className="text-xs text-green-600">{expanded[q._id] ? 'Hide' : 'View'}</span>
+                        <span className="text-xs text-success">{expanded[q._id] ? 'Hide' : 'View'}</span>
                       </button>
                       {expanded[q._id] && (
                         <div className="px-4 pb-3">
-                          {q.messages.length === 0 && <div className="text-gray-400">No messages in this query.</div>}
+                          {q.messages.length === 0 && <div className="text-primary-dark/40">No messages in this query.</div>}
                           {q.messages.map((msg, i) => (
                             <div key={i} className={`mb-2 flex ${msg.from === "user" ? "justify-end" : "justify-start"}`}>
-                              <div className={`px-3 py-2 rounded-lg max-w-xs text-sm ${msg.from === "user" ? "bg-blue-200 text-blue-900" : "bg-gray-200 text-gray-800"}`}>
+                              <div className={`px-3 py-2 rounded-2xl max-w-xs text-sm shadow ${msg.from === "user" ? "bg-primary-light text-primary-dark animate-fade-in-right" : "bg-card text-primary-dark animate-fade-in-left"}`}>
                                 {msg.text}
                               </div>
                             </div>

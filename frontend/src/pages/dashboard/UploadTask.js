@@ -146,49 +146,47 @@ const UploadTask = () => {
         }
     };
 
-    if (loading) return <div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin" /></div>;
+    if (loading) return <div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
 
     return (
-        <div className="p-2 sm:p-4 md:p-8 bg-gray-50 min-h-screen font-sans font-medium">
-            <div className="max-w-lg mx-auto font-sans font-medium">
-                <div className="bg-white rounded-lg shadow-lg p-4 sm:p-8 mb-8 font-sans font-medium">
-                    <h1 className="text-3xl font-bold mb-6 text-gray-800">Upload Task Submission</h1>
+        <div className="p-2 sm:p-4 md:p-8 bg-gradient-to-br from-primary-light via-background to-accent-light min-h-screen font-sans font-medium">
+            <div className="w-full max-w-2xl mx-auto font-sans font-medium">
+                <div className="bg-card rounded-2xl shadow-lg p-4 sm:p-8 mb-8 font-sans font-medium border border-primary-light/30">
+                    <h1 className="text-3xl font-extrabold mb-6 text-primary-dark font-sans">Upload Task Submission</h1>
                     {assignedTasks.length === 0 ? (
-                        <div className="text-center text-gray-600">
+                        <div className="text-center text-primary-dark/70">
                             <p>You have no active tasks to submit.</p>
                         </div>
                     ) : (
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div>
-                                <label htmlFor="task" className="block text-sm font-medium text-gray-700">Select Task to Submit For</label>
-                                <select id="task" value={formData.assignedTask} onChange={handleTaskSelection} required className="mt-1 block w-full">
+                                <label htmlFor="task" className="block text-sm font-medium text-primary-dark">Select Task to Submit For</label>
+                                <select id="task" value={formData.assignedTask} onChange={handleTaskSelection} required className="mt-1 block w-full rounded-lg border border-primary-light focus:ring-primary focus:border-primary">
                                     <option value="">-- Choose an assigned task --</option>
                                     {assignedTasks.map(task => (
                                         <option key={task._id} value={task._id}>{task.title} ({task.internship.title})</option>
                                     ))}
                                 </select>
                             </div>
-                            
                             {/* File Links */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">File/Work Links (e.g., GitHub, Google Drive)</label>
+                                <label className="block text-sm font-medium text-primary-dark">File/Work Links (e.g., GitHub, Google Drive)</label>
                                  {fileLinks.map((link, index) => (
                                     <div key={index} className="flex items-center gap-2 mt-2">
-                                        <input type="url" value={link} onChange={(e) => handleLinkChange(index, e.target.value)} className="block w-full" placeholder="https://..."/>
-                                        {fileLinks.length > 1 && <XCircle onClick={() => removeLinkField(index)} className="cursor-pointer text-red-500"/>}
+                                        <input type="url" value={link} onChange={(e) => handleLinkChange(index, e.target.value)} className="block w-full rounded-lg border border-primary-light focus:ring-primary focus:border-primary" placeholder="https://..."/>
+                                        {fileLinks.length > 1 && <XCircle onClick={() => removeLinkField(index)} className="cursor-pointer text-error"/>}
                                     </div>
                                 ))}
-                                {fileLinks.length < 5 && <button type="button" onClick={addLinkField} className="mt-2 text-sm text-blue-600 flex items-center gap-1"><PlusCircle size={16}/> Add another link</button>}
+                                {fileLinks.length < 5 && <button type="button" onClick={addLinkField} className="mt-2 text-sm text-primary flex items-center gap-1"><PlusCircle size={16}/> Add another link</button>}
                             </div>
-
                             {/* Project Folder Upload */}
                             <div>
-                                 <label className="block text-sm font-medium text-gray-700">Project File (as .zip, .rar, .7z)</label>
+                                 <label className="block text-sm font-medium text-primary-dark">Project File (as .zip, .rar, .7z)</label>
                                  <div className="mt-2 flex items-center justify-center w-full">
-                                    <label className="flex flex-col w-full h-32 border-4 border-dashed hover:bg-gray-100 hover:border-gray-300">
+                                    <label className="flex flex-col w-full h-32 border-4 border-dashed hover:bg-primary-light/10 hover:border-primary-light/50 rounded-lg transition">
                                         <div className="flex flex-col items-center justify-center pt-7">
-                                            <File className="w-8 h-8 text-gray-400"/>
-                                            <p className="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
+                                            <File className="w-8 h-8 text-primary-dark/30"/>
+                                            <p className="pt-1 text-sm tracking-wider text-primary-dark/40 group-hover:text-primary-dark">
                                                 {projectFile ? projectFile.name : 'Select a file'}
                                             </p>
                                         </div>
@@ -196,14 +194,9 @@ const UploadTask = () => {
                                     </label>
                                  </div>
                             </div>
-
-                            {error && <div className="text-red-500 text-center p-2 bg-red-50 rounded-md">{error}</div>}
-                            {success && <div className="text-green-500 text-center p-2 bg-green-50 rounded-md">{success}</div>}
-
-                            <button type="submit" disabled={submitting} className="w-full flex justify-center items-center gap-2 py-3 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-indigo-400">
-                                {submitting ? <Loader2 className="animate-spin" /> : <Upload />}
-                                {submitting ? 'Submitting...' : 'Submit Task'}
-                            </button>
+                            {error && <div className="text-error text-center p-2 bg-error/10 rounded-md">{error}</div>}
+                            {success && <div className="text-success text-center p-2 bg-success/10 rounded-md">{success}</div>}
+                            <button type="submit" className="w-full py-3 px-4 bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg shadow transition-colors duration-200 disabled:opacity-60" disabled={submitting}>{submitting ? 'Submitting...' : 'Submit Task'}</button>
                         </form>
                     )}
                 </div>

@@ -133,21 +133,21 @@ const Profile = () => {
     };
 
     return (
-      <div className="p-2 sm:p-4 md:p-8 bg-gray-50 min-h-screen flex flex-col items-center font-sans font-medium">
-        <div className="relative bg-white p-4 sm:p-8 rounded-2xl shadow-2xl border border-blue-100 flex flex-col items-center max-w-lg w-full mx-auto">
+      <div className="p-2 sm:p-4 md:p-8 bg-gradient-to-br from-primary-light via-background to-accent-light min-h-screen flex flex-col items-center font-sans font-medium">
+        <div className="relative bg-card p-4 sm:p-8 rounded-2xl shadow-2xl border border-primary-light/30 flex flex-col items-center max-w-lg w-full mx-auto">
           <div className="absolute top-4 right-4">
             {localUser.profileCompleteness < 100 ? (
-              <button onClick={() => setShowEdit(true)} className="flex items-center gap-1 px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-lg text-sm font-semibold shadow transition animate-bounce">
+              <button onClick={() => setShowEdit(true)} className="flex items-center gap-1 px-4 py-2 bg-accent hover:bg-primary text-white rounded-lg text-sm font-semibold shadow transition animate-bounce">
                 <Edit2 size={16} /> Complete Profile
               </button>
             ) : (
-              <button onClick={() => setShowEdit(true)} className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-sm font-semibold shadow transition">
+              <button onClick={() => setShowEdit(true)} className="flex items-center gap-1 px-3 py-1.5 bg-primary-light hover:bg-primary text-primary-dark hover:text-white rounded-lg text-sm font-semibold shadow transition">
                 <Edit2 size={16} /> Edit Profile
               </button>
             )}
           </div>
           <div className="relative mb-2">
-            <img src={avatar} alt="Avatar" className="w-32 h-32 rounded-full border-4 border-indigo-200 shadow-lg object-cover transition-transform duration-200 hover:scale-105" />
+            <img src={avatar} alt="Avatar" className="w-32 h-32 rounded-full border-4 border-primary-light shadow-lg object-cover transition-transform duration-200 hover:scale-105" />
             <input
               type="file"
               accept="image/*"
@@ -157,14 +157,14 @@ const Profile = () => {
               disabled={uploading}
             />
             <div
-              className="absolute bottom-2 right-2 bg-white rounded-full p-1 shadow cursor-pointer hover:bg-blue-100 transition"
+              className="absolute bottom-2 right-2 bg-background rounded-full p-1 shadow cursor-pointer hover:bg-primary-light transition"
               title="Change profile picture"
               onClick={handleCameraClick}
             >
               {uploading ? (
-                <svg className="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
+                <svg className="animate-spin h-5 w-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
               ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536M9 13h6m2 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536M9 13h6m2 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               )}
             </div>
           </div>
@@ -172,29 +172,29 @@ const Profile = () => {
           {socialLinks.length > 0 && (
             <div className="flex gap-4 mb-2">
               {socialLinks.map((link, idx) => (
-                <a key={idx} href={link.url} target="_blank" rel="noopener noreferrer" title={link.label} className="text-blue-500 hover:text-pink-500 hover:scale-110 transition transform duration-150" data-tooltip-id={`social-${idx}`}> 
+                <a key={idx} href={link.url} target="_blank" rel="noopener noreferrer" title={link.label} className="text-primary hover:text-accent hover:scale-110 transition transform duration-150" data-tooltip-id={`social-${idx}`}> 
                   {link.icon}
                   <span className="sr-only">{link.label}</span>
                 </a>
               ))}
             </div>
           )}
-          <h2 className="text-4xl font-extrabold text-gray-900 mb-1 flex items-center gap-2">{localUser.name}</h2>
-          <p className="text-gray-600 mb-1 flex items-center gap-2 text-lg"><Mail size={18} /> {localUser.email}</p>
-          {localUser.internId && <p className="text-sm text-indigo-700 mb-2 flex items-center gap-2 font-semibold"><Award size={16} /> Intern ID: <span className="underline cursor-pointer">{localUser.internId}</span></p>}
-          <p className="text-gray-500 italic mb-4 text-base">{localUser.tagline || 'No tagline provided.'}</p>
+          <h2 className="text-4xl font-extrabold text-primary-dark mb-1 flex items-center gap-2 font-sans">{localUser.name}</h2>
+          <p className="text-primary-dark/80 mb-1 flex items-center gap-2 text-lg font-sans"><Mail size={18} /> {localUser.email}</p>
+          {localUser.internId && <p className="text-sm text-accent mb-2 flex items-center gap-2 font-semibold"><Award size={16} /> Intern ID: <span className="underline cursor-pointer">{localUser.internId}</span></p>}
+          <p className="text-primary-dark/60 italic mb-4 text-base font-sans">{localUser.tagline || 'No tagline provided.'}</p>
           {/* Level badge - prominent and above progress */}
           <div className={`flex flex-col items-center mb-2`}>
-            <span className={`inline-flex items-center gap-2 px-5 py-2 rounded-full text-base font-bold shadow border-2 ${levelBadge.color} mb-1`} title={levelBadge.desc}>
+            <span className={`inline-flex items-center gap-2 px-5 py-2 rounded-full text-base font-bold shadow border-2 bg-background border-primary-light text-primary-dark mb-1`} title={levelBadge.desc}>
               {levelBadge.icon} {levelBadge.label}
             </span>
-            <span className="text-xs text-gray-400">{levelBadge.desc}</span>
+            <span className="text-xs text-primary-dark/40">{levelBadge.desc}</span>
           </div>
           {/* Badges - only Profile Complete if applicable */}
           {badges.length > 0 && (
             <div className="flex gap-2 mb-4 animate-fade-in">
               {badges.filter(b => b.label === 'Profile Complete').map((badge, idx) => (
-                <span key={idx} className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-700 rounded-full text-xs font-semibold border border-green-200 shadow-sm animate-bounce-in">
+                <span key={idx} className="inline-flex items-center gap-1 px-2 py-0.5 bg-success/10 text-success rounded-full text-xs font-semibold border border-success/30 shadow-sm animate-bounce-in">
                   {badge.icon} {badge.label}
                 </span>
               ))}

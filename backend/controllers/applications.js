@@ -158,7 +158,7 @@ exports.updateApplicationStatus = async (req, res, next) => {
 
         // Only set transactionId if approved
         if (status === 'Approved') {
-            application.transactionId = `txn_${Date.now()}`; // Mock a real transaction ID
+            application.transactionId = `SE_txn_${Date.now()}`; // Mock a real transaction ID
         }
         await application.save();
 

@@ -17,8 +17,8 @@ import {
 const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
     const location = useLocation();
     const commonClasses = 'flex items-center px-4 py-2.5 rounded-lg transition-colors duration-200';
-    const activeClass = 'bg-blue-600 text-white shadow';
-    const inactiveClass = 'text-gray-600 hover:bg-blue-50';
+    const activeClass = 'bg-primary text-white shadow font-bold';
+    const inactiveClass = 'text-primary-dark hover:bg-primary-light/30';
 
     const navItems = [
         { href: '/dashboard/overview', icon: <LayoutDashboard />, label: 'Overview' },
@@ -55,14 +55,14 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
                 />
             )}
             <aside
-                className={`fixed inset-y-0 left-0 bg-white shadow-xl w-64 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:relative md:translate-x-0 z-[100] flex flex-col font-sans font-medium`}
+                className={`fixed inset-y-0 left-0 bg-gradient-to-br from-primary-light via-background to-accent-light shadow-xl w-64 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:relative md:translate-x-0 z-[100] flex flex-col font-sans font-medium`}
                 aria-label="User dashboard sidebar"
             >
-                <div className="p-4 flex items-center justify-between border-b border-gray-100">
-                    <h1 className="text-2xl font-bold text-blue-600 tracking-tight">Dashboard</h1>
+                <div className="p-4 flex items-center justify-between border-b border-primary-light/30">
+                    <h1 className="text-2xl font-extrabold text-primary tracking-tight font-sans">Dashboard</h1>
                     <button
                         onClick={() => setSidebarOpen(false)}
-                        className="md:hidden text-gray-600 text-3xl focus:outline-none"
+                        className="md:hidden text-primary-dark text-3xl focus:outline-none"
                         aria-label="Close sidebar"
                     >
                         &times;

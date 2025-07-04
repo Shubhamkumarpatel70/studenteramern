@@ -114,7 +114,7 @@ const InternshipRegistrations = () => {
                         <p><strong>Internship:</strong> {selectedApp.internship ? selectedApp.internship.title : 'Internship not available'}</p>
                         <p><strong>Duration:</strong> {selectedApp.duration}</p>
                         <p><strong>Status:</strong> {selectedApp.status}</p>
-                        <p><strong>Transaction ID:</strong> {selectedApp.transactionId}</p>
+                        <p><strong>Transaction ID/UTR:</strong> {selectedApp.transactionId}</p>
                         <p><strong>Applied On:</strong> {new Date(selectedApp.dateApplied).toLocaleString()}</p>
                         {selectedApp.status === 'Rejected' && <p><strong>Rejection Reason:</strong> {selectedApp.rejectionReason}</p>}
                         {selectedApp.paymentScreenshot && (
