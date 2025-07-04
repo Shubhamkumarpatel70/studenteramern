@@ -8,7 +8,7 @@ const cloudinary = require('../config/cloudinary');
 // @access  Private
 exports.createApplication = async (req, res, next) => {
     try {
-        const { internshipId, duration, certificateName, utr } = req.body;
+        const { internshipId, duration, certificateName, utr, paymentScreenshot } = req.body;
         const userId = req.user.id;
 
         // 1. Fetch the internship to get authorative data (e.g., price logic)
@@ -33,7 +33,12 @@ exports.createApplication = async (req, res, next) => {
         // 3. Calculate amount on the backend
         const amount = parseInt(duration, 10) * 500; // Example fee logic
 
-        // 4. Create the application
+        // 4. Require paymentScreenshot
+        if (!paymentScreenshot || paymentScreenshot.trim() === '') {
+            return res.status(400).json({ success: false, message: 'Payment screenshot is required.' });
+        }
+
+        // 5. Create the application
         const applicationData = {
             user: userId,
             internship: internshipId,
@@ -43,7 +48,7 @@ exports.createApplication = async (req, res, next) => {
             status: 'Applied', // Use valid enum value
             certificateName,
             utr,
-            paymentScreenshot: req.body.paymentScreenshot // Cloudinary URL
+            paymentScreenshot // Cloudinary URL
         };
 
         const application = await Application.create(applicationData);
@@ -164,16 +169,38 @@ exports.updateApplicationStatus = async (req, res, next) => {
 
 exports.uploadPaymentScreenshot = async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+    console.log('Received uploadPaymentScreenshot request:', {
+      applicationId: req.body.applicationId,
+      file: req.file ? req.file.originalname : null
+    });
+    if (!req.file) {
+      console.error('No file uploaded');
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
     cloudinary.uploader.upload_stream(
       { folder: 'transaction_screenshots', resource_type: 'image' },
       async (error, result) => {
-        if (error) return res.status(500).json({ message: 'Cloudinary error' });
-        await Application.findByIdAndUpdate(req.body.applicationId, { paymentScreenshot: result.secure_url });
+        if (error) {
+          console.error('Cloudinary error:', error);
+          return res.status(500).json({ message: 'Cloudinary error' });
+        }
+        if (req.body.applicationId) {
+          // Update application if ID is provided
+          const application = await Application.findById(req.body.applicationId);
+          if (!application) {
+            console.error('Application not found for ID:', req.body.applicationId);
+            return res.status(404).json({ message: 'Application not found' });
+          }
+          application.paymentScreenshot = result.secure_url;
+          await application.save();
+          console.log('Payment screenshot uploaded and application updated:', result.secure_url);
+        }
+        // Always return the Cloudinary URL
         res.json({ url: result.secure_url });
       }
     ).end(req.file.buffer);
   } catch (err) {
+    console.error('Upload failed:', err);
     res.status(500).json({ message: 'Upload failed' });
   }
 }; 

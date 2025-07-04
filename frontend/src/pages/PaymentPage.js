@@ -74,25 +74,24 @@ const PaymentPage = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            // 1. Create application (without screenshot)
-            const appRes = await api.post('/applications', {
-                internshipId,
-                duration,
-                certificateName,
-                utr,
-                paymentScreenshot: ''
-            }, config);
-            const applicationId = appRes.data.data._id;
-            // 2. Upload screenshot with applicationId
+            // 1. Upload screenshot and get URL
             const formData = new FormData();
             formData.append('paymentScreenshot', screenshot);
-            formData.append('applicationId', applicationId);
-            await api.post('/applications/upload-payment-screenshot', formData, {
+            const uploadRes = await api.post('/applications/upload-payment-screenshot', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${token}`,
                 },
             });
+            const screenshotUrl = uploadRes.data.url;
+            // 2. Create application with screenshot URL
+            await api.post('/applications', {
+                internshipId,
+                duration,
+                certificateName,
+                utr,
+                paymentScreenshot: screenshotUrl,
+            }, config);
             setSuccess(true);
         } catch (err) {
             setError(err.response?.data?.message || 'Could not submit application.');

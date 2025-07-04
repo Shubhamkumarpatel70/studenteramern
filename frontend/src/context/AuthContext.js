@@ -93,11 +93,12 @@ export const AuthProvider = ({ children }) => {
         const body = JSON.stringify({ email, password });
         try {
             const res = await api.post('/auth/login', body, config);
+            if (!res || !res.data) throw new Error('No response from server');
             dispatch({ type: 'LOGIN_SUCCESS', payload: res.data });
             // Removed notification for login
             return res.data.user;
         } catch (err) {
-            console.error(err.response.data.message);
+            console.error(err?.response?.data?.message || err.message);
             return null;
         }
     };
