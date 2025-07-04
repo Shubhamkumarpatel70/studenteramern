@@ -98,7 +98,7 @@ const PaymentPage = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 flex justify-center items-center">
+            <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex justify-center items-center font-sans">
                 <Loader2 className="h-12 w-12 animate-spin text-indigo-600" />
             </div>
         );
@@ -106,14 +106,12 @@ const PaymentPage = () => {
 
     if (error) {
         return (
-            <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center text-center p-6">
-                <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full">
+            <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex flex-col justify-center items-center text-center p-6 font-sans">
+                <div className="bg-white/80 dark:bg-gray-900/80 p-8 rounded-2xl shadow-2xl max-w-sm w-full backdrop-blur-md border border-indigo-100">
                     <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
                     <h2 className="text-2xl font-bold text-gray-800 mb-2">Error</h2>
                     <p className="text-gray-600 mb-6">{error}</p>
-                    <Link to="/internships" className="w-full inline-flex justify-center items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 font-semibold">
-                        Browse Internships
-                    </Link>
+                    <Link to="/internships" className="w-full inline-flex justify-center items-center px-4 py-2 bg-gradient-to-r from-indigo-500 to-pink-500 text-white rounded-md hover:from-indigo-600 hover:to-pink-600 font-semibold transition-all">Browse Internships</Link>
                 </div>
             </div>
         );
@@ -121,14 +119,12 @@ const PaymentPage = () => {
 
     if (success) {
         return (
-            <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center text-center p-6">
-                <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full">
+            <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex flex-col justify-center items-center text-center p-6 font-sans">
+                <div className="bg-white/80 dark:bg-gray-900/80 p-8 rounded-2xl shadow-2xl max-w-sm w-full backdrop-blur-md border border-green-200 animate-fade-in">
                     <BadgeCheck className="h-12 w-12 text-green-500 mx-auto mb-4" />
                     <h2 className="text-2xl font-bold text-gray-800 mb-2">Application Submitted!</h2>
                     <p className="text-gray-600 mb-6">Your application and payment details have been submitted successfully.</p>
-                    <Link to="/dashboard/applied-internships" className="w-full inline-flex justify-center items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 font-semibold">
-                        Go to My Applications
-                    </Link>
+                    <Link to="/dashboard/applied-internships" className="w-full inline-flex justify-center items-center px-4 py-2 bg-gradient-to-r from-green-500 to-indigo-500 text-white rounded-md hover:from-green-600 hover:to-indigo-600 font-semibold transition-all">Go to My Applications</Link>
                 </div>
             </div>
         );
@@ -136,21 +132,19 @@ const PaymentPage = () => {
 
     if (!loading && !error && !internship) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <div className="bg-white p-8 rounded shadow text-center">
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 font-sans">
+                <div className="bg-white/80 dark:bg-gray-900/80 p-8 rounded-2xl shadow-2xl text-center backdrop-blur-md border border-indigo-100">
                     <p className="text-lg text-gray-700">No internship data found. Please try again later.</p>
-                    <Link to="/internships" className="mt-4 inline-block px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Browse Internships</Link>
+                    <Link to="/internships" className="mt-4 inline-block px-4 py-2 bg-gradient-to-r from-indigo-500 to-pink-500 text-white rounded hover:from-indigo-600 hover:to-pink-600 transition-all">Browse Internships</Link>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 px-2">
+        <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 px-2 font-sans">
             <div className="sm:mx-auto sm:w-full sm:max-w-lg">
-                <h2 className="mt-6 text-center text-3xl font-extrabold text-indigo-700">
-                    Apply for {internship?.title}
-                </h2>
+                <h2 className="mt-6 text-center text-3xl font-extrabold text-indigo-700 drop-shadow">Apply for {internship?.title}</h2>
                 <div className="mt-2 text-center text-base text-gray-700">
                     <span className="font-semibold">Company:</span> {internship?.company}<br/>
                     <span className="font-semibold">Location:</span> {internship?.location}<br/>
@@ -158,13 +152,13 @@ const PaymentPage = () => {
                     <span className="font-semibold">Duration:</span> {internship?.duration}<br/>
                     <span className="font-semibold">Technologies:</span> {internship?.technologies?.join(', ')}
                 </div>
-                <div className="mt-4 text-gray-700 text-justify bg-white rounded-lg p-4 shadow">
+                <div className="mt-4 text-gray-700 text-justify bg-white/80 dark:bg-gray-900/80 rounded-2xl p-4 shadow-xl backdrop-blur-md border border-indigo-100">
                     <span className="font-semibold">Description:</span> <br/>
                     {internship?.description}
                 </div>
             </div>
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-lg">
-                <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+                <div className="bg-white/80 dark:bg-gray-900/80 py-8 px-4 shadow-2xl rounded-2xl sm:px-10 backdrop-blur-md border border-indigo-100 animate-fade-in">
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Full Name</label>
@@ -177,10 +171,9 @@ const PaymentPage = () => {
                         <div>
                             <label htmlFor="duration" className="block text-sm font-medium text-gray-700">Select Duration</label>
                             <select id="duration" name="duration" value={duration} onChange={e => setDuration(e.target.value)} className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                                {[4, 8, 12, 16].map(w => <option key={w} value={w}>{w} Weeks</option>)}
-                            </select>
+                                {[4, 8, 12, 16].map(w => <option key={w} value={w}>{w} Weeks</option>)}</select>
                         </div>
-                        <div className="bg-indigo-50 p-4 rounded-md text-center">
+                        <div className="bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 p-4 rounded-xl text-center border border-indigo-100">
                             <p className="font-semibold text-lg text-indigo-800 mb-2">Application Fee: <span className="font-bold">₹{APPLICATION_FEE}</span></p>
                             <p className="text-sm text-indigo-600 mb-2">(for a {duration}-week internship)</p>
                             {paymentOptions.length > 1 && (
@@ -196,7 +189,7 @@ const PaymentPage = () => {
                             {selectedOption && (
                                 <div className="flex flex-col items-center gap-2">
                                     {selectedOption.qrCodeUrl ? (
-                                        <img src={selectedOption.qrCodeUrl} alt="Scan & Pay QR" className="w-40 h-40 object-contain mx-auto rounded-lg border" />
+                                        <img src={selectedOption.qrCodeUrl} alt="Scan & Pay QR" className="w-40 h-40 object-contain mx-auto rounded-lg border shadow" />
                                     ) : (
                                         <QRCodeSVG value={`upi://pay?pa=${selectedOption.upiId}&pn=${encodeURIComponent(selectedOption.displayName)}&am=${APPLICATION_FEE}&tn=Internship%20Application%20Fee`} size={160} />
                                     )}
@@ -218,9 +211,9 @@ const PaymentPage = () => {
                                 onChange={handleScreenshotChange}
                                 className="mt-1 block w-full px-3 py-2 border rounded-md bg-white"
                             />
-                            {uploading && <div className="text-sm text-indigo-600 mt-1">Uploading screenshot...</div>}
+                            {uploading && <div className="text-sm text-indigo-600 mt-1 animate-pulse">Uploading screenshot...</div>}
                             {error && <div className="text-red-600 text-xs mt-1">{error}</div>}
-                            {screenshotUrl && <div className="text-green-600 text-xs mt-1">Screenshot uploaded!</div>}
+                            {screenshotUrl && <div className="text-green-600 text-xs mt-1 animate-fade-in">Screenshot uploaded!</div>}
                         </div>
                         <div>
                             <div className="flex items-start">
@@ -233,7 +226,7 @@ const PaymentPage = () => {
                             </div>
                         </div>
                         <div>
-                            <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400" disabled={!agreed || loading || isSubmitting || uploading}>
+                            <button type="submit" className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-indigo-500 to-pink-500 hover:from-indigo-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 transition-all duration-200" disabled={!agreed || loading || isSubmitting || uploading}>
                                 {isSubmitting || uploading ? 'Processing...' : 'Submit Application'}
                             </button>
                         </div>

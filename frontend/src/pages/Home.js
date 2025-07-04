@@ -186,18 +186,18 @@ const AnnouncementBar = () => {
 };
 
 const HeroSection = () => (
-    <div className="text-center py-20 px-4 sm:px-6 lg:px-8 bg-indigo-600 text-white">
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
+    <div className="text-center py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white font-sans shadow-2xl rounded-b-3xl">
+        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight drop-shadow-lg">
             Launch Your Tech Career with <span className="block text-indigo-200">Student-Era</span>
         </h1>
-        <p className="mt-4 max-w-2xl mx-auto text-lg sm:text-xl text-indigo-100">
+        <p className="mt-6 max-w-2xl mx-auto text-2xl sm:text-2xl text-indigo-100 font-medium drop-shadow">
             Gain real-world experience with our virtual internships. Work on live projects, get mentored by experts, and build a portfolio that stands out.
         </p>
-        <div className="mt-8 flex justify-center gap-4">
-            <Link to="/internships" className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50">
+        <div className="mt-10 flex justify-center gap-4">
+            <Link to="/internships" className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl text-indigo-600 bg-white hover:bg-indigo-50 shadow-lg transition-all duration-200">
                 Browse Internships
             </Link>
-            <Link to="/register" className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-500 hover:bg-indigo-400">
+            <Link to="/register" className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl text-white bg-gradient-to-r from-pink-500 to-indigo-500 hover:from-pink-600 hover:to-indigo-600 shadow-lg transition-all duration-200">
                 Sign Up Now
             </Link>
         </div>
@@ -227,10 +227,10 @@ const Feature = ({ icon, title, description }) => (
 );
 
 const FeaturesSection = () => (
-    <div className="py-16 bg-gray-50">
+    <div className="py-16 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md font-sans">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-                <h2 className="text-3xl font-extrabold text-gray-900">Why Choose Us?</h2>
+                <h2 className="text-3xl font-extrabold text-indigo-700 drop-shadow">Why Choose Us?</h2>
                 <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-500">
                     We provide a structured path from learning to earning in the tech world.
                 </p>
@@ -257,11 +257,11 @@ const FeaturesSection = () => (
 );
 
 const InternshipCard = ({ internship }) => (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 flex flex-col">
-        {internship.image && <img src={internship.image} alt={internship.title} className="h-40 w-full object-cover" />}
+    <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden transform hover:-translate-y-2 hover:scale-105 transition-all duration-300 border border-indigo-100 dark:border-gray-800 group flex flex-col">
+        {internship.image && <img src={internship.image} alt={internship.title} className="h-40 w-full object-cover group-hover:scale-105 transition-transform duration-300" />}
         <div className="p-6 flex-1 flex flex-col">
-            <h3 className="text-xl font-bold text-gray-800 mb-2">{internship.title}</h3>
-            <p className="text-gray-600 mb-4 h-24 overflow-hidden flex-1">{internship.shortDescription}</p>
+            <h3 className="text-2xl font-extrabold text-indigo-700 mb-2 font-sans">{internship.title}</h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-4 h-24 overflow-hidden flex-1 font-sans">{internship.shortDescription}</p>
             <div className="flex flex-wrap gap-2 mb-4">
                 {Array.isArray(internship.technologies) && internship.technologies.slice(0, 4).map(tech => (
                     <span key={tech} className="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">{tech}</span>
@@ -295,10 +295,10 @@ const LatestInternships = () => {
     }, []);
     
     return (
-        <div className="py-16 bg-white">
+        <div className="py-16 bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 font-sans">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-extrabold text-gray-900">Latest Internships</h2>
+                    <h2 className="text-3xl font-extrabold text-indigo-700 drop-shadow">Latest Internships</h2>
                     <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-500">
                         Apply now for our latest virtual internship programs.
                     </p>
@@ -342,23 +342,23 @@ const TestimonialsSection = () => {
     const displayTestimonials = loading || testimonials.length === 0 ? staticTestimonials : testimonials;
 
     return (
-        <div className="py-16 bg-gray-50">
+        <div className="py-16 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md font-sans">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-extrabold text-gray-900">What Our Interns Say</h2>
+                    <h2 className="text-3xl font-extrabold text-indigo-700 drop-shadow">What Our Interns Say</h2>
                     <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-500">
                         Real stories from students who have launched their careers with us.
                     </p>
                 </div>
                 <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-3">
                     {displayTestimonials.map((testimonial, index) => (
-                        <div key={index} className="bg-white rounded-lg shadow-md p-8">
-                            <p className="text-gray-600 mb-6">"{testimonial.quote}"</p>
+                        <div key={index} className="bg-white/90 dark:bg-gray-900/90 rounded-2xl shadow-xl p-8 group transition-transform duration-300 hover:scale-105 border border-indigo-100 dark:border-gray-800">
+                            <p className="text-gray-600 dark:text-gray-300 mb-6 font-sans">"{testimonial.quote}"</p>
                             <div className="flex items-center">
                                 <img className="w-12 h-12 rounded-full mr-4" src={testimonial.avatar || 'https://i.pravatar.cc/150'} alt={testimonial.name} />
                                 <div>
-                                    <p className="font-semibold text-gray-900">{testimonial.name}</p>
-                                    <p className="text-indigo-600 text-sm">{testimonial.role}</p>
+                                    <p className="font-semibold text-indigo-700 font-sans">{testimonial.name}</p>
+                                    <p className="text-indigo-600 text-sm font-sans">{testimonial.role}</p>
                                 </div>
                             </div>
                         </div>
@@ -371,7 +371,7 @@ const TestimonialsSection = () => {
 
 const Home = () => {
     return (
-        <div className="bg-white">
+        <div className="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 font-sans">
             <AnnouncementBar />
             <HeroSection />
             <CertifiedSection />

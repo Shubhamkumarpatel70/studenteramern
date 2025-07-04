@@ -51,24 +51,23 @@ const Navbar = () => {
     );
 
     return (
-        <nav className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg sticky top-0 z-50">
+        <nav className="backdrop-blur-md bg-white/60 dark:bg-gray-900/60 shadow-lg sticky top-0 z-50 transition-all duration-300">
             <div className="max-w-7xl mx-auto px-4">
-                <div className="flex justify-between items-center h-16">
+                <div className="flex justify-between items-center h-20">
                     {/* Logo */}
-                    <Link to="/" className="font-bold text-xl md:text-2xl flex items-center gap-3 hover:opacity-90 transition-opacity duration-200">
-                        <span>Student Era</span>
+                    <Link to="/" className="flex items-center gap-3 group">
+                        <img src="/logo192.png" alt="Student Era Logo" className="w-12 h-12 rounded-full bg-white shadow-md group-hover:scale-105 transition-transform duration-200" />
+                        <span className="font-extrabold text-2xl md:text-3xl text-indigo-700 tracking-tight font-sans drop-shadow">Student Era</span>
                     </Link>
-
                     {/* Desktop Menu */}
-                    <div className="hidden md:flex items-center space-x-4">
+                    <div className="hidden md:flex items-center space-x-6 text-lg font-medium font-sans">
                         {navLinks}
                         {authLinks}
                     </div>
-
                     {/* Hamburger Button */}
                     <div className="md:hidden flex items-center">
-                        <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle Menu" className="p-2 hover:bg-indigo-700 rounded-md transition-colors duration-200">
-                            <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle Menu" className="p-2 hover:bg-indigo-100 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                            <svg className={`h-7 w-7 transition-transform duration-300 ${menuOpen ? 'rotate-90' : ''}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 {menuOpen ? (
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                 ) : (
@@ -79,17 +78,14 @@ const Navbar = () => {
                     </div>
                 </div>
             </div>
-
             {/* Mobile Menu */}
-            {menuOpen && (
-                <div className="md:hidden pb-4 bg-gradient-to-b from-indigo-600 to-purple-600">
-                    <div className="flex flex-col items-center space-y-2">
-                        {navLinks}
-                        <div className="w-full border-t border-indigo-400 my-2"></div>
-                        {authLinks}
-                    </div>
+            <div className={`md:hidden transition-all duration-300 ${menuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}> 
+                <div className="flex flex-col items-center space-y-2 py-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-md rounded-b-xl">
+                    {navLinks}
+                    <div className="w-full border-t border-indigo-200 my-2"></div>
+                    {authLinks}
                 </div>
-            )}
+            </div>
         </nav>
     );
 };

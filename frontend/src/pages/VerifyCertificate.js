@@ -68,9 +68,9 @@ const VerifyCertificate = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex flex-col items-center justify-center px-2">
-      <div className="bg-white bg-opacity-90 p-8 rounded-xl shadow-2xl max-w-xl w-full mt-8 mb-8">
-        <h1 className="text-4xl font-extrabold mb-2 text-center text-indigo-700 tracking-tight">Certificate Verification</h1>
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex flex-col items-center justify-center px-2 font-sans">
+      <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md p-8 rounded-2xl shadow-2xl max-w-xl w-full mt-8 mb-8 border border-indigo-100">
+        <h1 className="text-4xl font-extrabold mb-2 text-center text-indigo-700 tracking-tight drop-shadow">Certificate Verification</h1>
         <p className="text-center text-gray-600 mb-6">Enter your Certificate ID to verify its authenticity. For help, <a href='/contact' className='text-blue-600 underline'>contact us</a>.</p>
         <form onSubmit={handleVerify} className="flex flex-col gap-4">
           <input
@@ -78,7 +78,7 @@ const VerifyCertificate = () => {
             placeholder="Enter Certificate ID"
             value={certificateId}
             onChange={(e) => setCertificateId(e.target.value)}
-            className="p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg"
+            className="p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg bg-white/90"
             required
           />
           <button type="submit" className="px-6 py-3 bg-gradient-to-r from-blue-600 to-pink-500 text-white rounded-lg shadow-lg font-semibold hover:scale-105 transition text-lg" disabled={loading || waiting}>
@@ -102,7 +102,7 @@ const VerifyCertificate = () => {
         )}
         {showModal && (
           <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-40">
-            <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full text-center relative">
+            <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md rounded-2xl shadow-2xl p-8 max-w-md w-full text-center relative border border-indigo-100 animate-fade-in">
               <button onClick={() => setShowModal(false)} className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
               {error ? (
                 <>

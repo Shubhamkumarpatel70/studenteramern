@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../config/api';
-import { Loader2, Calendar, Clock, CheckCircle, AlertCircle, PlayCircle, User, Briefcase } from 'lucide-react';
+import { Loader2, Calendar, Clock, CheckCircle, AlertCircle, PlayCircle, User, Briefcase, Globe } from 'lucide-react';
 
 const MyTasks = () => {
     const [tasks, setTasks] = useState([]);
@@ -84,8 +84,14 @@ const MyTasks = () => {
                         {tasks.map(task => (
                             <div key={task._id} className="bg-card rounded-2xl shadow p-4 flex flex-col gap-2 border border-primary-light/30 hover:shadow-2xl transition-shadow duration-200">
                                 <div className="font-bold text-primary-dark text-lg flex items-center gap-2">{task.title}</div>
-                                <div className="text-xs text-primary-dark/60">Due: {new Date(task.dueDate).toLocaleDateString()}</div>
-                                <div className="text-sm text-primary-dark/80">{task.description}</div>
+                                <div className="flex flex-wrap gap-4 text-xs text-primary-dark/60 mb-1">
+                                    <span className="flex items-center gap-1"><Calendar className="h-4 w-4" /> Due: {new Date(task.dueDate).toLocaleDateString()}</span>
+                                    {task.assignedDate && <span className="flex items-center gap-1"><Clock className="h-4 w-4" /> Assigned: {new Date(task.assignedDate).toLocaleDateString()}</span>}
+                                    {task.domain && <span className="flex items-center gap-1"><Globe className="h-4 w-4" /> {task.domain}</span>}
+                                    {task.internship && (task.internship.title || task.internship.name) && <span className="flex items-center gap-1"><Briefcase className="h-4 w-4" /> {task.internship.title || task.internship.name}</span>}
+                                    {task.assignedBy && (task.assignedBy.name || task.assignedBy.email) && <span className="flex items-center gap-1"><User className="h-4 w-4" /> {task.assignedBy.name || task.assignedBy.email}</span>}
+                                </div>
+                                <div className="text-sm text-primary-dark/80 mb-1">{task.description}</div>
                                 <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold border mt-2 ${getStatusColor(task.status)}`}>{getStatusIcon(task.status)} {getStatusText(task.status)}</div>
                             </div>
                         ))}
