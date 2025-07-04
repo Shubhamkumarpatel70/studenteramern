@@ -49,28 +49,9 @@ if (!fs.existsSync(paymentScreenshotDir)) {
     fs.mkdirSync(paymentScreenshotDir, { recursive: true });
 }
 
-const paymentScreenshotStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, paymentScreenshotDir);
-    },
-    filename: (req, file, cb) => {
-        cb(null, `paymentScreenshot-${Date.now()}${path.extname(file.originalname)}`);
-    }
-});
-
-function checkImageFileType(file, cb) {
-    const filetypes = /jpeg|jpg|png|webp/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = filetypes.test(file.mimetype);
-    if (mimetype && extname) {
-        return cb(null, true);
-    } else {
-        cb('Error: Images only! (jpeg, jpg, png, webp)');
-    }
-}
-
+// Change to memoryStorage for Cloudinary compatibility
 const uploadPaymentScreenshot = multer({
-    storage: paymentScreenshotStorage,
+    storage: multer.memoryStorage(), // Use memory storage for Cloudinary
     limits: { fileSize: 2 * 1024 * 1024 }, // 2MB limit
     fileFilter: (req, file, cb) => {
         checkImageFileType(file, cb);
