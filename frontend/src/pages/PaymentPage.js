@@ -26,7 +26,7 @@ const PaymentPage = () => {
     const [screenshotUrl, setScreenshotUrl] = useState('');
     const [uploading, setUploading] = useState(false);
 
-    const APPLICATION_FEE = 129;
+    const APPLICATION_FEE = 149;
 
     useEffect(() => {
         if (!internshipId) {

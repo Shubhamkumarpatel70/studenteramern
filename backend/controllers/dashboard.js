@@ -24,7 +24,7 @@ exports.getDashboardStats = async (req, res, next) => {
             const totalTransactions = await Application.countDocuments({ status: 'Approved' });
             // Sum the amount field for all approved applications
             const approvedApplications = await Application.find({ status: 'Approved' });
-            const totalTransactionAmount = approvedApplications.reduce((sum, app) => sum + (app.amount || 129), 0);
+            const totalTransactionAmount = approvedApplications.reduce((sum, app) => sum + (app.amount || 149), 0);
             const totalRegistrations = await Application.countDocuments();
             stats = {
                 totalUsers,

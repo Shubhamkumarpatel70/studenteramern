@@ -21,7 +21,7 @@ const Apply = () => {
     const [paymentOptions, setPaymentOptions] = useState([]);
     const [selectedOption, setSelectedOption] = useState(null);
 
-    const APPLICATION_FEE = 129;
+    const APPLICATION_FEE = 149;
     const upiId = 'studentera@pnb';
     const upiPayUrl = `upi://pay?pa=${upiId}&pn=Internship%20Payment&am=${APPLICATION_FEE}&tn=Internship%20Application%20Fee`;
 

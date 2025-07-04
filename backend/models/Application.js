@@ -45,7 +45,7 @@ const ApplicationSchema = new mongoose.Schema({
     },
     amount: {
         type: Number,
-        default: 129
+        default: 149
     }
 });
 
