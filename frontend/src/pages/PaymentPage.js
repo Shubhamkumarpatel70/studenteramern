@@ -53,27 +53,11 @@ const PaymentPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!agreed) {
-            setError('You must agree to the terms and conditions.');
-            return;
-        }
-        if (!certificateName.trim()) {
-            setError('Please enter the certificate name.');
-            return;
-        }
-        if (!utr.trim()) {
-            setError('Please enter the UTR/Transaction ID after payment.');
-            return;
-        }
-        if (!screenshot) {
-            setError('Please upload a payment screenshot.');
-            return;
-        }
         setIsSubmitting(true);
         setError('');
+        setUploading(true);
         try {
             const token = localStorage.getItem('token');
-            const config = { headers: { Authorization: `Bearer ${token}` } };
             // 1. Upload screenshot and get URL
             const formData = new FormData();
             formData.append('paymentScreenshot', screenshot);
@@ -84,6 +68,7 @@ const PaymentPage = () => {
                 },
             });
             const screenshotUrl = uploadRes.data.url;
+            setUploading(false);
             // 2. Create application with screenshot URL
             await api.post('/applications', {
                 internshipId,
@@ -91,10 +76,13 @@ const PaymentPage = () => {
                 certificateName,
                 utr,
                 paymentScreenshot: screenshotUrl,
-            }, config);
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             setSuccess(true);
         } catch (err) {
             setError(err.response?.data?.message || 'Could not submit application.');
+            setUploading(false);
         }
         setIsSubmitting(false);
     };
@@ -231,6 +219,7 @@ const PaymentPage = () => {
                                 className="mt-1 block w-full px-3 py-2 border rounded-md bg-white"
                             />
                             {uploading && <div className="text-sm text-indigo-600 mt-1">Uploading screenshot...</div>}
+                            {error && <div className="text-red-600 text-xs mt-1">{error}</div>}
                             {screenshotUrl && <div className="text-green-600 text-xs mt-1">Screenshot uploaded!</div>}
                         </div>
                         <div>
@@ -244,8 +233,8 @@ const PaymentPage = () => {
                             </div>
                         </div>
                         <div>
-                            <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400" disabled={!agreed || loading || isSubmitting}>
-                                {isSubmitting ? 'Processing...' : 'Submit Application'}
+                            <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400" disabled={!agreed || loading || isSubmitting || uploading}>
+                                {isSubmitting || uploading ? 'Processing...' : 'Submit Application'}
                             </button>
                         </div>
                     </form>
