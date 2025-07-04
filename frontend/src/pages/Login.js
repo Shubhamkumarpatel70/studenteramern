@@ -26,7 +26,7 @@ const Login = () => {
                         navigate('/admin-dashboard', { replace: true });
                         break;
                     case 'co-admin':
-                        navigate('/co-admin-dashboard', { replace: true });
+                        navigate('/coadmin', { replace: true });
                         break;
                     default:
                         navigate('/dashboard', { replace: true });
