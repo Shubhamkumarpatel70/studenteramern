@@ -91,10 +91,8 @@ const AppContent = () => {
         if (!error.response) {
           // Network error (server is down, CORS, etc.)
           setServerError(true);
-        } else if (error.response.status >= 500) {
-          // Server-side error (500, 502, 503, etc.)
-          setServerError(true);
         }
+        // Do NOT set serverError for 5xx errors; let pages handle them locally
         return Promise.reject(error);
       }
     );

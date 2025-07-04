@@ -11,6 +11,8 @@ exports.createApplication = async (req, res, next) => {
         const { internshipId, duration, certificateName, utr, paymentScreenshot } = req.body;
         const userId = req.user.id;
 
+        console.log('Creating application with paymentScreenshot:', paymentScreenshot);
+
         // 1. Fetch the internship to get authorative data (e.g., price logic)
         const internship = await Internship.findById(internshipId);
         if (!internship) {
