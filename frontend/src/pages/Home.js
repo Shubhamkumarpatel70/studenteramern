@@ -227,27 +227,25 @@ const Feature = ({ icon, title, description }) => (
 );
 
 const FeaturesSection = () => (
-    <div className="py-16 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md font-sans">
+    <div className="py-20 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md font-sans">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-                <h2 className="text-3xl font-extrabold text-indigo-700 drop-shadow">Why Choose Us?</h2>
-                <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-500">
-                    We provide a structured path from learning to earning in the tech world.
-                </p>
+            <div className="text-center mb-12">
+                <h2 className="text-4xl font-extrabold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-transparent bg-clip-text drop-shadow-lg mb-2">Why Choose Us?</h2>
+                <p className="mt-2 max-w-2xl mx-auto text-xl text-gray-700 font-medium">We provide a structured path from learning to earning in the tech world.</p>
             </div>
-            <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-14 grid gap-12 md:grid-cols-2 lg:grid-cols-3">
                 <Feature
-                    icon={<Briefcase size={32} />}
+                    icon={<div className="bg-gradient-to-br from-indigo-500 to-pink-500 p-4 rounded-full shadow-lg"><Briefcase size={40} className="text-white" /></div>}
                     title="Real-World Projects"
                     description="Work on industry-standard projects and gain hands-on experience that employers are looking for."
                 />
                 <Feature
-                    icon={<Server size={32} />}
+                    icon={<div className="bg-gradient-to-br from-indigo-500 to-pink-500 p-4 rounded-full shadow-lg"><Server size={40} className="text-white" /></div>}
                     title="Live Project Hosting"
                     description="We provide the hosting, so you can focus on building and showcasing your work to the world."
                 />
                 <Feature
-                    icon={<ShieldCheck size={32} />}
+                    icon={<div className="bg-gradient-to-br from-indigo-500 to-pink-500 p-4 rounded-full shadow-lg"><ShieldCheck size={40} className="text-white" /></div>}
                     title="Verified Certificates"
                     description="Receive a verifiable certificate upon completion to boost your resume and LinkedIn profile."
                 />

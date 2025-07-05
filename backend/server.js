@@ -88,7 +88,17 @@ app.get('/', (req, res) => {
     });
 });
 
-// Handle 404 for undefined routes
+// Serve frontend
+if (process.env.NODE_ENV === 'production') {
+    const frontendPath = path.join(__dirname, '../../frontend/build');
+    app.use(express.static(frontendPath));
+    // Serve index.html for any unknown route (except API and uploads)
+    app.get(/^\/(?!api|uploads).*/, (req, res) => {
+        res.sendFile(path.join(frontendPath, 'index.html'));
+    });
+}
+
+// Handle 404 for undefined routes (should be last)
 app.use('*', (req, res) => {
     res.status(404).json({ 
         success: false, 
@@ -109,16 +119,6 @@ process.on('unhandledRejection', (err, promise) => {
     // Close server & exit process
     server.close(() => process.exit(1));
 });
-
-// Serve frontend
-if (process.env.NODE_ENV === 'production') {
-    const frontendPath = path.join(__dirname, '../../frontend/build');
-    app.use(express.static(frontendPath));
-    // Serve index.html for any unknown route (except API and uploads)
-    app.get(/^\/(?!api|uploads).*/, (req, res) => {
-        res.sendFile(path.join(frontendPath, 'index.html'));
-    });
-}
 
 // After DB connect, ensure default payment option
 mongoose.connection.once('open', async () => {
