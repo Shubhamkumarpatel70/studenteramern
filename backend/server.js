@@ -23,11 +23,7 @@ connectDB();
 
 const app = express();
 
-// Body parser
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Enable CORS
+// Enable CORS (move to very top)
 app.use(cors({
   origin: [
     'https://studenteramernfrontend.onrender.com',
@@ -35,16 +31,6 @@ app.use(cors({
   ],
   credentials: true
 }));
-
-// Log CORS errors for debugging
-app.use((err, req, res, next) => {
-  if (err && err instanceof Error && err.message.includes('CORS')) {
-    console.error('CORS error:', err.message);
-    res.status(500).json({ message: 'CORS error', error: err.message });
-  } else {
-    next(err);
-  }
-});
 
 // Handle preflight requests
 app.options('*', cors({
@@ -54,6 +40,15 @@ app.options('*', cors({
   ],
   credentials: true
 }));
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
+// Body parser
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Set static folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -104,6 +99,16 @@ app.use('*', (req, res) => {
         success: false, 
         message: `Route ${req.originalUrl} not found` 
     });
+});
+
+// Global error handler (should be last)
+app.use((err, req, res, next) => {
+  console.error('Global error handler:', err);
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || 'Server Error',
+    error: process.env.NODE_ENV === 'production' ? undefined : err.stack
+  });
 });
 
 const PORT = process.env.PORT || 5000;
