@@ -14,7 +14,9 @@ const router = express.Router();
 // Public routes
 router.get('/public', getPublicInternships);
 router.get('/public/:id', getPublicInternshipById);
-router.get('/:id', require('../controllers/internships').getInternshipById);
+
+// Protect this route: only logged-in users can access
+router.get('/:id', protect, require('../controllers/internships').getInternshipById);
 
 // Admin routes
 router

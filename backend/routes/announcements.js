@@ -9,7 +9,7 @@ const {
 } = require('../controllers/announcements');
 const { protect, authorize } = require('../middleware/auth');
 
-// Public routes
+// Public routes (no login required)
 router.get('/latest', getLatestAnnouncement);
 router.get('/', getAnnouncements);
 
