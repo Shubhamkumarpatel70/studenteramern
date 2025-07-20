@@ -48,6 +48,7 @@ import PostAnnouncement from './pages/admin/PostAnnouncement';
 import ManageTasks from './pages/admin/ManageTasks';
 import AssignTasks from './pages/admin/AssignTasks';
 import Queries from "./pages/admin/Queries";
+import DeletionRequests from './pages/admin/DeletionRequests';
 
 
 // Co-Admin Pages
@@ -172,6 +173,7 @@ const AppContent = () => {
               <Route path="generate-offer-letter" element={<GenerateOfferLetter />} />
               <Route path="queries" element={<Queries />} />
               <Route path="help-queries" element={<HelpQueries />} />
+              <Route path="deletion-requests" element={<DeletionRequests />} />
             </Route>
           </Route>
           
@@ -181,6 +183,7 @@ const AppContent = () => {
               <Route index element={<CoAdminHome />} />
               <Route path="students" element={<ManageStudents />} />
               <Route path="meetings" element={<ViewMeetings />} />
+              <Route path="deletion-requests" element={<DeletionRequests />} />
             </Route>
           </Route>
 

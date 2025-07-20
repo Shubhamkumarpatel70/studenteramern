@@ -1,5 +1,5 @@
 const express = require('express');
-const { updateProfile, uploadProfileImage: uploadProfileImageController } = require('../controllers/profile');
+const { updateProfile, uploadProfileImage: uploadProfileImageController, requestAccountDeletion } = require('../controllers/profile');
 const { uploadProfileImage } = require('../middleware/upload');
 
 const router = express.Router();
@@ -9,6 +9,8 @@ const { protect } = require('../middleware/auth');
 router.put('/', protect, updateProfile);
 
 router.put('/picture', protect, uploadProfileImage, uploadProfileImageController);
+
+router.post('/request-deletion', protect, requestAccountDeletion);
 
 // @route   GET /api/profile
 // @desc    Get current user's profile

@@ -5,7 +5,9 @@ const {
     createUser,
     updateUser,
     deleteUser,
-    updateUserRole
+    updateUserRole,
+    getDeletionRequests,
+    permanentlyDeleteUser
 } = require('../controllers/users');
 
 const router = express.Router();
@@ -24,5 +26,7 @@ router
     .delete(protect, authorize('admin'), deleteUser);
 
 router.put('/:id/role', protect, authorize('admin'), updateUserRole);
+router.get('/deletion-requests', protect, authorize('admin', 'co-admin'), getDeletionRequests);
+router.delete('/:id/permanent', protect, authorize('admin', 'co-admin'), permanentlyDeleteUser);
 
 module.exports = router; 

@@ -15,6 +15,10 @@ exports.register = async (req, res, next) => {
             return res.status(400).json({ success: false, message: 'User already exists and is verified.' });
         }
 
+        if (user && user.deletionRequested) {
+            return res.status(400).json({ success: false, message: 'This email is associated with a pending account deletion. Please register with a different email or contact support.' });
+        }
+
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const hashedOtp = crypto.createHash('sha256').update(otp).digest('hex');
         const otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
@@ -138,6 +142,10 @@ exports.login = async (req, res, next) => {
 
     // Check for user
     const user = await User.findOne({ email }).select('+password');
+
+    if (user && user.deletionRequested) {
+        return res.status(403).json({ success: false, message: 'Your account is pending deletion and cannot be accessed. Please contact support if this is a mistake.' });
+    }
 
     if (!user) {
         return res.status(401).json({ success: false, message: 'Invalid credentials' });

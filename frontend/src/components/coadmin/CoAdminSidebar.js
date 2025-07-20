@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { Trash2 } from 'lucide-react';
 
 const CoAdminSidebar = ({ isSidebarOpen, setSidebarOpen }) => {
     const commonClasses = 'flex items-center px-4 py-2.5 rounded-lg transition-colors duration-200';
@@ -18,6 +19,7 @@ const CoAdminSidebar = ({ isSidebarOpen, setSidebarOpen }) => {
                 <NavLink to="/coadmin" end className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}>Home</NavLink>
                 <NavLink to="/coadmin/students" className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}>Manage Students</NavLink>
                 <NavLink to="/coadmin/meetings" className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}>Meetings</NavLink>
+                <NavLink to="/coadmin/deletion-requests" className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}><Trash2 className="mr-2" size={18}/>Deletion Requests</NavLink>
                 <div className="pt-4 border-t border-gray-200">
                     <NavLink to="/logout" className={`${commonClasses} ${inactiveClass}`}>Logout</NavLink>
                 </div>

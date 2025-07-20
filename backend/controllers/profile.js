@@ -56,3 +56,25 @@ exports.uploadProfileImage = async (req, res) => {
     res.status(500).json({ message: 'Upload failed' });
   }
 }; 
+
+// @desc    Request account deletion
+// @route   POST /api/profile/request-deletion
+// @access  Private
+exports.requestAccountDeletion = async (req, res) => {
+    try {
+        const { reason } = req.body;
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+        if (user.deletionRequested) {
+            return res.status(400).json({ success: false, message: 'Account deletion already requested.' });
+        }
+        user.deletionRequested = true;
+        user.deletionReason = reason || '';
+        await user.save();
+        res.status(200).json({ success: true, message: 'Account deletion requested. Status: Pending.' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+}; 

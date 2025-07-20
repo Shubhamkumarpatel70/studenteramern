@@ -89,4 +89,20 @@ exports.updateUserRole = async (req, res, next) => {
     } catch (err) {
         res.status(400).json({ success: false, message: 'Failed to update role' });
     }
+};
+
+// @desc    Permanently delete a user (admin action)
+// @route   DELETE /api/users/:id/permanent
+// @access  Private/Admin
+exports.permanentlyDeleteUser = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+        await user.deleteOne();
+        res.status(200).json({ success: true, message: 'User permanently deleted.' });
+    } catch (err) {
+        res.status(400).json({ success: false, message: 'Failed to delete user.' });
+    }
 }; 

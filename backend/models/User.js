@@ -81,7 +81,15 @@ const UserSchema = new mongoose.Schema({
         default: 'Beginner'
     },
     resetPasswordToken: String,
-    resetPasswordExpire: Date
+    resetPasswordExpire: Date,
+    deletionRequested: {
+        type: Boolean,
+        default: false
+    },
+    deletionReason: {
+        type: String,
+        default: ''
+    }
 });
 
 // Encrypt password using bcrypt

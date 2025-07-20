@@ -11,7 +11,8 @@ import {
     LogOut,
     Upload,
     ListChecks,
-    MessageSquare
+    MessageSquare,
+    Trash2
 } from 'lucide-react';
 
 const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
@@ -35,6 +36,7 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
 
     const bottomNavItems = [
         { href: '/dashboard/profile', icon: <User />, label: 'Profile' },
+        { href: '/dashboard/delete-account', icon: <Trash2 />, label: 'Delete Account' },
         { href: '/logout', icon: <LogOut />, label: 'Logout' },
     ];
 
