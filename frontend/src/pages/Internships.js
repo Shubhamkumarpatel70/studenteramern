@@ -58,9 +58,9 @@ const Internships = () => {
     );
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-12 font-sans transition-all duration-300">
+        <div className="min-h-screen bg-[#1C1C1E] font-[Inter,sans-serif]">
             <div className="container mx-auto px-4">
-                <h1 className="text-4xl md:text-5xl font-extrabold text-center mb-8 text-indigo-700 drop-shadow font-sans">Available Internships</h1>
+                <h1 className="text-4xl font-extrabold text-[#0A84FF] mb-8">Internships</h1>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {[...internships].reverse().map(internship => (
                         <InternshipCard key={internship._id} internship={internship} />

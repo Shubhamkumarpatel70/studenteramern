@@ -17,11 +17,9 @@ const Register = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-            <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                    Create your account
-                </h2>
+        <div className="min-h-screen flex items-center justify-center bg-[#1C1C1E] font-[Inter,sans-serif]">
+            <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full border border-[#0A84FF]">
+                <h1 className="text-3xl font-extrabold text-[#0A84FF] mb-6 text-center">Register</h1>
                 <p className="mt-2 text-center text-sm text-gray-600">
                     Already have an account?{' '}
                     <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">

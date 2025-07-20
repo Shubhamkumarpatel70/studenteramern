@@ -78,9 +78,18 @@ const Profile = () => {
       localUser.website && { icon: <Globe size={20} />, url: localUser.website, label: 'Website' },
     ].filter(Boolean);
 
+    // Calculate profile completeness: require profile picture and at least one social link for 100%
+    const hasProfilePicture = localUser.profilePicture && localUser.profilePicture !== 'dafaultava.jpg';
+    const hasSocialLink = Boolean(localUser.linkedin || localUser.github || localUser.website);
+    let completeness = localUser.profileCompleteness || 0;
+    if ((!hasProfilePicture || !hasSocialLink) && completeness === 100) {
+      completeness = 80; // or whatever max percent you want without both
+    }
+    const isProfileComplete = completeness === 100 && hasProfilePicture && hasSocialLink;
+
     // Example badges (replace with real logic as needed)
     const badges = [
-      localUser.profileCompleteness === 100 && { icon: <CheckCircle className="text-green-500" size={18} />, label: 'Profile Complete' },
+      isProfileComplete && { icon: <CheckCircle className="text-green-500" size={18} />, label: 'Profile Complete' },
     ].filter(Boolean);
 
     // Level badge logic (improved)
@@ -136,7 +145,7 @@ const Profile = () => {
       <div className="p-2 sm:p-4 md:p-8 bg-gradient-to-br from-primary-light via-background to-accent-light min-h-screen flex flex-col items-center font-sans font-medium">
         <div className="relative bg-card p-4 sm:p-8 rounded-2xl shadow-2xl border border-primary-light/30 flex flex-col items-center max-w-lg w-full mx-auto">
           <div className="absolute top-4 right-4">
-            {localUser.profileCompleteness < 100 ? (
+            {completeness < 100 ? (
               <button onClick={() => setShowEdit(true)} className="flex items-center gap-1 px-4 py-2 bg-accent hover:bg-primary text-white rounded-lg text-sm font-semibold shadow transition animate-bounce">
                 <Edit2 size={16} /> Complete Profile
               </button>
@@ -204,8 +213,8 @@ const Profile = () => {
             <div className="flex flex-col items-center">
               <div className="w-24 h-24 animate-progress">
                 <CircularProgressbar
-                  value={localUser.profileCompleteness || 0}
-                  text={`${localUser.profileCompleteness || 0}%`}
+                  value={completeness}
+                  text={`${completeness}%`}
                   styles={buildStyles({
                     textSize: '18px',
                     pathColor: '#4f46e5',
@@ -215,7 +224,7 @@ const Profile = () => {
                   })}
                 />
               </div>
-              <span className="text-xs text-gray-500 mt-1 flex items-center gap-1">Profile Completeness {localUser.profileCompleteness === 100 && <CheckCircle className="text-green-500" size={14} />}</span>
+              <span className="text-xs text-gray-500 mt-1 flex items-center gap-1">Profile Completeness {isProfileComplete && <CheckCircle size={14} className="text-green-500" />} {!isProfileComplete && '(Incomplete: Add profile picture and at least one social link)'}</span>
             </div>
             <div className="flex flex-col items-center">
               <School size={22} className="text-blue-400 mb-1" />

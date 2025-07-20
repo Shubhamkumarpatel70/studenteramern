@@ -21,7 +21,7 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
     const inactiveClass = 'text-primary-dark hover:bg-primary-light/30';
 
     const navItems = [
-        { href: '/dashboard/overview', icon: <LayoutDashboard />, label: 'Overview' },
+        { href: '/dashboard/overview', icon: <LayoutDashboard />, label: 'Dashboard' },
         { href: '/dashboard/transactions', icon: <FileText />, label: 'Transactions' },
         { href: '/dashboard/certificates', icon: <Award />, label: 'Certificates' },
         { href: '/dashboard/applied-internships', icon: <Briefcase />, label: 'Applied Internships' },

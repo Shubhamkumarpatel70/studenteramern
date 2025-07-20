@@ -12,7 +12,6 @@ const ProfileCompletionModal = () => {
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
         name: '',
-        profilePicture: '',
         tagline: '',
         skills: '',
         college: ''
@@ -39,7 +38,7 @@ const ProfileCompletionModal = () => {
         // Prepare data for API (e.g., convert skills string to array)
         const profileData = { ...formData, skills: formData.skills.split(',').map(s => s.trim()) };
         await updateUserProfile(profileData);
-        if (step < 5) {
+        if (step < 4) {
             nextStep();
         } else {
             // Last step
@@ -68,24 +67,17 @@ const ProfileCompletionModal = () => {
                     )}
                     {step === 2 && (
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Profile Picture</label>
-                            <p className="text-xs text-gray-500 mb-2">For now, just select an image. Upload functionality is simulated.</p>
-                            <input type="file" name="profilePicture" onChange={handleFileChange} className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
-                        </div>
-                    )}
-                    {step === 3 && (
-                        <div>
                             <label className="block text-sm font-medium text-gray-700">Tagline or Headline</label>
                             <input type="text" name="tagline" placeholder="e.g., Aspiring Web Developer" value={formData.tagline} onChange={onChange} className="mt-1 block w-full px-3 py-2 border rounded-md" />
                         </div>
                     )}
-                    {step === 4 && (
+                    {step === 3 && (
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Skills (comma-separated)</label>
                             <input type="text" name="skills" placeholder="e.g., React, Node.js, Python" value={formData.skills} onChange={onChange} className="mt-1 block w-full px-3 py-2 border rounded-md" />
                         </div>
                     )}
-                    {step === 5 && (
+                    {step === 4 && (
                         <div>
                             <label className="block text-sm font-medium text-gray-700">College or University</label>
                             <input type="text" name="college" value={formData.college} onChange={onChange} className="mt-1 block w-full px-3 py-2 border rounded-md" />
@@ -95,7 +87,7 @@ const ProfileCompletionModal = () => {
                     <div className="mt-6 flex justify-between">
                         {step > 1 && <button type="button" onClick={prevStep} className="px-4 py-2 bg-gray-300 rounded-md">Back</button>}
                         <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md ml-auto">
-                            {step === 5 ? 'Done' : 'Next'}
+                            {step === 4 ? 'Done' : 'Next'}
                         </button>
                     </div>
                 </form>

@@ -186,22 +186,22 @@ const AnnouncementBar = () => {
 };
 
 const HeroSection = () => (
-    <div className="text-center py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white font-sans shadow-2xl rounded-b-3xl">
-        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight drop-shadow-lg">
-            Launch Your Tech Career with <span className="block text-indigo-200">Student-Era</span>
-        </h1>
-        <p className="mt-6 max-w-2xl mx-auto text-2xl sm:text-2xl text-indigo-100 font-medium drop-shadow">
-            Gain real-world experience with our virtual internships. Work on live projects, get mentored by experts, and build a portfolio that stands out.
-        </p>
-        <div className="mt-10 flex justify-center gap-4">
-            <Link to="/internships" className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl text-indigo-600 bg-white hover:bg-indigo-50 shadow-lg transition-all duration-200">
-                Browse Internships
-            </Link>
-            <Link to="/register" className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl text-white bg-gradient-to-r from-pink-500 to-indigo-500 hover:from-pink-600 hover:to-indigo-600 shadow-lg transition-all duration-200">
-                Sign Up Now
-            </Link>
-        </div>
+  <div className="text-center py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#0A84FF] via-[#30D158] to-[#FF9F0A] text-white font-[Inter,sans-serif] shadow-2xl rounded-b-3xl">
+    <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight drop-shadow-lg">
+      Launch Your Tech Career with <span className="block text-[#1C1C1E]">Student-Era</span>
+    </h1>
+    <p className="mt-6 max-w-2xl mx-auto text-2xl sm:text-2xl text-[#F2F2F7] font-medium drop-shadow">
+      Gain real-world experience with our virtual internships. Work on live projects, get mentored by experts, and build a portfolio that stands out.
+    </p>
+    <div className="mt-10 flex justify-center gap-4">
+      <Link to="/internships" className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl text-white bg-[#0A84FF] hover:bg-[#30D158] shadow-lg transition-all duration-200">
+        Browse Internships
+      </Link>
+      <Link to="/register" className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl text-white bg-[#FF9F0A] hover:bg-[#0A84FF] shadow-lg transition-all duration-200">
+        Sign Up Now
+      </Link>
     </div>
+  </div>
 );
 
 const CertifiedSection = () => (
