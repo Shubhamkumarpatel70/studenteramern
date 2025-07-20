@@ -1,5 +1,5 @@
 import React from "react";
-import { FaWhatsapp, FaLinkedin, FaInstagram, FaTelegram } from 'react-icons/fa';
+import { FaWhatsapp, FaLinkedin, FaInstagram } from 'react-icons/fa';
 
 const Footer = () => (
   <footer className="bg-gradient-to-r from-[#181A20] to-[#23272F] text-white pt-12 pb-4 px-4 md:px-16 font-[Inter,sans-serif] font-semibold transition-all duration-300">
@@ -27,10 +27,9 @@ const Footer = () => (
         <h3 className="font-bold text-xl mb-4 text-indigo-400">Connect with Us</h3>
         <p className="mb-4 text-gray-300">Follow us on social media for updates and news.</p>
         <div className="flex space-x-4 text-2xl">
-          <a href="#" aria-label="WhatsApp" className="hover:text-green-400 transition-transform duration-200 hover:scale-110"><FaWhatsapp /></a>
-          <a href="#" aria-label="LinkedIn" className="hover:text-blue-400 transition-transform duration-200 hover:scale-110"><FaLinkedin /></a>
-          <a href="#" aria-label="Instagram" className="hover:text-pink-400 transition-transform duration-200 hover:scale-110"><FaInstagram /></a>
-          <a href="#" aria-label="Telegram" className="hover:text-blue-300 transition-transform duration-200 hover:scale-110"><FaTelegram /></a>
+          <a href="https://chat.whatsapp.com/HJbdKI2DTGX36SI36Iwb1Y?mode=r_t" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="hover:text-[#25D366] transition-transform duration-200 hover:scale-110"><FaWhatsapp /></a>
+          <a href="https://www.linkedin.com/in/studentera?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="hover:text-[#0A66C2] transition-transform duration-200 hover:scale-110"><FaLinkedin /></a>
+          <a href="https://www.instagram.com/officialstudentera" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-[#E4405F] transition-transform duration-200 hover:scale-110"><FaInstagram /></a>
         </div>
       </div>
       {/* Contact Us */}

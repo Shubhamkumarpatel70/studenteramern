@@ -65,12 +65,24 @@ exports.register = async (req, res, next) => {
 };
 
 async function sendEmailToUser(user, otp) {
-    const message = `Your OTP for verification is: ${otp}\nIt will expire in 10 minutes.`;
+    const message = `
+    <div style="font-family: Inter, Arial, sans-serif; color: #222; background: #f8f9fa; padding: 24px; border-radius: 10px; max-width: 480px; margin: 0 auto;">
+      <h2 style="color: #0A84FF; margin-bottom: 16px;">Student Era - Email Verification</h2>
+      <p style="font-size: 16px; margin-bottom: 12px;">Hello <b>${user.name}</b>,</p>
+      <p style="font-size: 16px; margin-bottom: 12px;">Your OTP for verification is:</p>
+      <div style="font-size: 32px; font-weight: bold; color: #30D158; letter-spacing: 4px; margin-bottom: 16px;">${otp}</div>
+      <p style="font-size: 15px; color: #555; margin-bottom: 12px;">This OTP will expire in <b>10 minutes</b>.</p>
+      <p style="font-size: 14px; color: #8E8E93;">If you did not request this, please ignore this email.<br>Never share your OTP with anyone.</p>
+      <hr style="margin: 24px 0; border: none; border-top: 1px solid #eee;" />
+      <p style="font-size: 14px; color: #888;">Best regards,<br><b>Student Era Team</b></p>
+    </div>
+    `;
     try {
         await sendEmail({
             email: user.email,
-            subject: 'Student Era - Email Verification OTP',
-            message
+            subject: 'Student Era - Account Verification OTP',
+            message,
+            isHtml: true
         });
     } catch (emailError) {
         console.error("Failed to send OTP email:", emailError);
