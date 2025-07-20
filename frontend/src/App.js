@@ -70,6 +70,7 @@ import NoInternet from './pages/NoInternet';
 import ServerError from './pages/ServerError';
 
 import AccountantDashboard from "./pages/AccountantDashboard";
+import DeleteAccount from './pages/dashboard/DeleteAccount';
 
 // A wrapper component to access context
 const AppContent = () => {
@@ -153,6 +154,7 @@ const AppContent = () => {
               <Route path="upload-task" element={<UploadTask />} />
               <Route path="my-tasks" element={<MyTasks />} />
               <Route path="help" element={<Help />} />
+              <Route path="delete-account" element={<DeleteAccount />} />
             </Route>
           </Route>
           
