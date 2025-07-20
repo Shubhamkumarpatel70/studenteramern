@@ -105,4 +105,16 @@ exports.permanentlyDeleteUser = async (req, res) => {
     } catch (err) {
         res.status(400).json({ success: false, message: 'Failed to delete user.' });
     }
+};
+
+// @desc    Get all users with pending deletion
+// @route   GET /api/users/deletion-requests
+// @access  Private/Admin
+exports.getDeletionRequests = async (req, res) => {
+    try {
+        const users = await User.find({ deletionRequested: true });
+        res.status(200).json({ success: true, count: users.length, data: users });
+    } catch (err) {
+        res.status(400).json({ success: false });
+    }
 }; 
