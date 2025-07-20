@@ -112,9 +112,12 @@ exports.permanentlyDeleteUser = async (req, res) => {
 // @access  Private/Admin
 exports.getDeletionRequests = async (req, res) => {
     try {
+        console.log('getDeletionRequests called by user:', req.user);
         const users = await User.find({ deletionRequested: true });
+        console.log('Found deletion requests:', users.length);
         res.status(200).json({ success: true, count: users.length, data: users });
     } catch (err) {
-        res.status(400).json({ success: false });
+        console.error('Error in getDeletionRequests:', err);
+        res.status(400).json({ success: false, error: err.message });
     }
 }; 
