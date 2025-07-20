@@ -2,7 +2,7 @@ import React from "react";
 import Footer from "../components/Footer";
 
 const About = () => (
-  <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex flex-col font-sans">
+  <div className="min-h-screen bg-gradient-to-br from-[#181A20] to-[#23272F] flex flex-col font-[Inter,sans-serif]">
     {/* Hero Section */}
     <div className="max-w-6xl mx-auto w-full px-4 py-12">
       <div className="flex flex-col md:flex-row items-center gap-8">
@@ -21,9 +21,9 @@ const About = () => (
         {/* Right: Mission and Core Values */}
         <div className="flex-1">
           <div className="bg-white/90 dark:bg-gray-900/90 rounded-2xl shadow-2xl p-10 backdrop-blur-md border border-indigo-200 transition-transform duration-300 hover:scale-105">
-            <h2 className="text-3xl font-extrabold text-blue-700 mb-4 flex items-center gap-2 drop-shadow">Our Mission</h2>
+            <h2 className="text-3xl font-extrabold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 text-transparent bg-clip-text mb-4 flex items-center gap-2 drop-shadow">Our Mission</h2>
             <p className="mb-6 text-gray-700 text-lg">To bridge the gap between education and industry by equipping students with cutting-edge knowledge, practical skills, and real-world experience through innovative programs and expert mentorship.</p>
-            <h3 className="text-2xl font-bold text-purple-700 mb-2 mt-6">Core Values</h3>
+            <h3 className="text-2xl font-bold text-purple-400 mb-2 mt-6">Core Values</h3>
             <ul className="space-y-3 text-lg">
               <li className="flex items-center gap-3"><span className="text-blue-500 text-2xl">💡</span> <span><b>Innovation</b>: Pioneering creative solutions and future-ready approaches to education.</span></li>
               <li className="flex items-center gap-3"><span className="text-purple-500 text-2xl">🛡️</span> <span><b>Integrity</b>: Upholding trust, transparency and ethical practices in all we do.</span></li>
@@ -36,16 +36,16 @@ const About = () => (
       {/* Empowering Section */}
       <div className="text-center mt-16">
         <span className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-base font-semibold mb-2">About STUDENT ERA</span>
-        <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-purple-600 to-pink-500 mb-4 drop-shadow-lg">Empowering Future Leaders</h1>
-        <p className="text-2xl text-gray-800 max-w-2xl mx-auto font-medium">We create transformative learning experiences that bridge academia and industry, preparing students to excel in tomorrow's world.</p>
+        <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 mb-4 drop-shadow-lg">Empowering Future Leaders</h1>
+        <p className="text-2xl text-gray-200 max-w-2xl mx-auto font-medium">We create transformative learning experiences that bridge academia and industry, preparing students to excel in tomorrow's world.</p>
       </div>
       {/* Approach to Learning */}
       <div className="mt-20">
-        <h2 className="text-3xl font-extrabold text-center mb-10 text-indigo-700 drop-shadow">Our Approach to Learning</h2>
+        <h2 className="text-3xl font-extrabold text-center mb-10 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 text-transparent bg-clip-text drop-shadow">Our Approach to Learning</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           <div className="bg-white/90 dark:bg-gray-900/90 rounded-2xl shadow-xl p-8 flex flex-col items-center backdrop-blur-md border border-indigo-200 group transition-transform duration-300 hover:scale-105">
             <img src="https://img.icons8.com/ios-filled/100/000000/idea.png" alt="Innovative Learning" className="w-20 h-20 mb-4" />
-            <h3 className="font-bold text-xl mb-2 text-indigo-700">Innovative Learning</h3>
+            <h3 className="font-bold text-xl mb-2 text-indigo-400">Innovative Learning</h3>
             <p className="text-gray-700 text-center text-lg">Our programs foster creativity and critical thinking through project-based learning, preparing students to lead with innovative solutions.</p>
           </div>
           <div className="bg-white/90 dark:bg-gray-900/90 rounded-2xl shadow-xl p-8 flex flex-col items-center backdrop-blur-md border border-indigo-200 group transition-transform duration-300 hover:scale-105">

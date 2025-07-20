@@ -51,36 +51,34 @@ const Navbar = () => {
     );
 
     return (
-        <nav className="backdrop-blur-md bg-white/60 dark:bg-gray-900/60 shadow-lg sticky top-0 z-50 transition-all duration-300">
+        <nav className="bg-gradient-to-r from-[#181A20] to-[#23272F] shadow-lg sticky top-0 z-50 transition-all duration-300 font-bold font-[Inter,sans-serif]">
             <div className="max-w-7xl mx-auto px-4">
                 <div className="flex justify-between items-center h-20">
                     {/* Logo */}
                     <Link to="/" className="flex items-center gap-3 group">
                         <img src="/logo192.png" alt="Student Era Logo" className="w-12 h-12 rounded-full bg-white shadow-md group-hover:scale-105 transition-transform duration-200" />
-                        <span className="font-extrabold text-2xl md:text-3xl text-indigo-700 tracking-tight font-sans drop-shadow">Student Era</span>
+                        <span className="font-extrabold text-2xl md:text-3xl text-indigo-400 tracking-tight font-sans drop-shadow">Student Era</span>
                     </Link>
                     {/* Desktop Menu */}
-                    <div className="hidden md:flex items-center space-x-6 text-lg font-medium font-sans">
+                    <div className="hidden md:flex items-center space-x-6 text-lg font-bold font-[Inter,sans-serif]">
                         {navLinks}
                         {authLinks}
                     </div>
                     {/* Hamburger Button */}
-                    <div className="md:hidden flex items-center">
-                        <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle Menu" className="p-2 hover:bg-indigo-100 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400">
-                            <svg className={`h-7 w-7 transition-transform duration-300 ${menuOpen ? 'rotate-90' : ''}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                {menuOpen ? (
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                ) : (
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                                )}
-                            </svg>
-                        </button>
-                    </div>
+                    <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle Menu" className="p-2 hover:bg-indigo-100 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                        <svg className={`h-7 w-7 transition-transform duration-300 ${menuOpen ? 'rotate-90' : ''}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            {menuOpen ? (
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            ) : (
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                            )}
+                        </svg>
+                    </button>
                 </div>
             </div>
             {/* Mobile Menu */}
             <div className={`md:hidden transition-all duration-300 ${menuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}> 
-                <div className="flex flex-col items-center space-y-2 py-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-md rounded-b-xl">
+                <div className="flex flex-col items-center space-y-2 py-4 bg-gradient-to-r from-[#181A20] to-[#23272F] backdrop-blur-md shadow-md rounded-b-xl">
                     {navLinks}
                     <div className="w-full border-t border-indigo-200 my-2"></div>
                     {authLinks}

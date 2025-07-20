@@ -68,20 +68,20 @@ const VerifyCertificate = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex flex-col items-center justify-center px-2 font-sans">
-      <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md p-8 rounded-2xl shadow-2xl max-w-xl w-full mt-8 mb-8 border border-indigo-100">
-        <h1 className="text-4xl font-extrabold mb-2 text-center text-indigo-700 tracking-tight drop-shadow">Certificate Verification</h1>
-        <p className="text-center text-gray-600 mb-6">Enter your Certificate ID to verify its authenticity. For help, <a href='/contact' className='text-blue-600 underline'>contact us</a>.</p>
+    <div className="min-h-screen bg-gradient-to-br from-[#181A20] to-[#23272F] flex flex-col items-center justify-center px-2 font-[Inter,sans-serif]">
+      <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl max-w-xl w-full mt-8 mb-8 border border-indigo-200">
+        <h1 className="text-4xl font-extrabold mb-2 text-center bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 text-transparent bg-clip-text tracking-tight drop-shadow">Certificate Verification</h1>
+        <p className="text-center text-gray-400 mb-6 font-semibold">Enter your Certificate ID to verify its authenticity. For help, <a href='/contact' className='text-blue-400 underline'>contact us</a>.</p>
         <form onSubmit={handleVerify} className="flex flex-col gap-4">
           <input
             type="text"
             placeholder="Enter Certificate ID"
             value={certificateId}
             onChange={(e) => setCertificateId(e.target.value)}
-            className="p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg bg-white/90"
+            className="p-3 rounded border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg bg-white/90 font-semibold"
             required
           />
-          <button type="submit" className="px-6 py-3 bg-gradient-to-r from-blue-600 to-pink-500 text-white rounded-lg shadow-lg font-semibold hover:scale-105 transition text-lg" disabled={loading || waiting}>
+          <button type="submit" className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-pink-500 text-white rounded-lg shadow-lg font-bold hover:scale-105 transition text-lg" disabled={loading || waiting}>
             {loading || waiting ? "Verifying..." : "Verify Certificate"}
           </button>
         </form>
