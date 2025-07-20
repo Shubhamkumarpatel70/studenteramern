@@ -65,7 +65,7 @@ exports.register = async (req, res, next) => {
 };
 
 async function sendEmailToUser(user, otp) {
-    const message = `
+    const html = `
     <div style="font-family: Inter, Arial, sans-serif; color: #222; background: #f8f9fa; padding: 24px; border-radius: 10px; max-width: 480px; margin: 0 auto;">
       <h2 style="color: #0A84FF; margin-bottom: 16px;">Student Era - Email Verification</h2>
       <p style="font-size: 16px; margin-bottom: 12px;">Hello <b>${user.name}</b>,</p>
@@ -77,16 +77,16 @@ async function sendEmailToUser(user, otp) {
       <p style="font-size: 14px; color: #888;">Best regards,<br><b>Student Era Team</b></p>
     </div>
     `;
+    const text = `Your OTP for verification is: ${otp}\nIt will expire in 10 minutes.\nNever share your OTP with anyone.`;
     try {
         await sendEmail({
             email: user.email,
             subject: 'Student Era - Account Verification OTP',
-            message,
-            isHtml: true
+            message: text,
+            html: html
         });
     } catch (emailError) {
         console.error("Failed to send OTP email:", emailError);
-        // This part is crucial for debugging email issues but won't crash the registration
     }
 }
 
