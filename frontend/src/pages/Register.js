@@ -1,11 +1,12 @@
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { UserPlus, User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { UserPlus, User, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import AuthContext from '../context/AuthContext';
 
 const Register = () => {
     const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'user' });
     const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState('');
     const { register } = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -14,8 +15,20 @@ const Register = () => {
 
     const onSubmit = async e => {
         e.preventDefault();
-        await register({ name, email, password, role });
-        navigate('/otp-verify', { state: { email } });
+        setError('');
+        try {
+            await register({ name, email, password, role });
+            navigate('/otp-verify', { state: { email } });
+        } catch (err) {
+            const message = err.response?.data?.message || 'Registration failed. Please try again.';
+            setError(message);
+            // If user already exists, redirect to login
+            if (message.includes('already exists')) {
+                setTimeout(() => {
+                    navigate('/login');
+                }, 3000);
+            }
+        }
     };
 
     return (
@@ -30,6 +43,17 @@ const Register = () => {
                             Sign in
                         </Link>
                     </p>
+                    {error && (
+                        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                            <div className="flex items-center gap-2">
+                                <AlertCircle className="w-5 h-5 text-red-500" />
+                                <p className="text-red-700 text-sm">{error}</p>
+                            </div>
+                            {error.includes('already exists') && (
+                                <p className="text-red-600 text-xs mt-1">Redirecting to login page...</p>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 <form className="space-y-6" onSubmit={onSubmit}>

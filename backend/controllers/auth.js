@@ -12,7 +12,7 @@ exports.register = async (req, res, next) => {
         let user = await User.findOne({ email });
 
         if (user && user.isVerified) {
-            return res.status(400).json({ success: false, message: 'User already exists and is verified.' });
+            return res.status(400).json({ success: false, message: 'User already exists and is verified. Please login instead.' });
         }
 
         if (user && user.deletionRequested) {
@@ -43,7 +43,7 @@ exports.register = async (req, res, next) => {
                 otpExpires: otpExpires
             });
         }
-        
+
         // Send OTP email
         try {
             await sendEmailToUser(user, otp);
@@ -51,8 +51,8 @@ exports.register = async (req, res, next) => {
         } catch (emailError) {
             console.error("Failed to send OTP email:", emailError);
             // Still save the user but inform about email issue
-            res.status(200).json({ 
-                success: true, 
+            res.status(200).json({
+                success: true,
                 message: `Registration successful but OTP email failed. Please contact support.`,
                 emailError: true
             });
@@ -62,7 +62,7 @@ exports.register = async (req, res, next) => {
         console.error('Registration error:', err);
         // Check for duplicate key error
         if (err.code === 11000) {
-            return res.status(400).json({ success: false, message: 'An account with this email already exists.' });
+            return res.status(400).json({ success: false, message: 'An account with this email already exists. Please login instead.' });
         }
         res.status(400).json({ success: false, message: 'Failed to register user.' });
     }

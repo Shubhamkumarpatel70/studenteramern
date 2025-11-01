@@ -1,7 +1,6 @@
 import React, { createContext, useReducer, useEffect } from 'react';
 import api from '../config/api';
 import setAuthToken from '../utils/setAuthToken';
-import { toast } from 'react-toastify';
 
 const initialState = {
     isAuthenticated: false,
@@ -112,6 +111,10 @@ export const AuthProvider = ({ children }) => {
             return res.data;
         } catch (err) {
             console.error('Registration failed:', err.response.data.message);
+            // If user already exists, throw error to be handled by component
+            if (err.response?.data?.message?.includes('already exists')) {
+                throw err;
+            }
         }
     };
 
