@@ -58,7 +58,7 @@ const VerifyCertificate = () => {
       }
     } catch (err) {
       setResult(null);
-      setError("An error occurred. Please try again.");
+      setError("Details not match. Please try again.");
     }
     setLoading(false);
     setTimeout(() => {
