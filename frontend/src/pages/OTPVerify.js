@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Shield, Mail, RefreshCw } from 'lucide-react';
 import api from '../config/api';
 
 const OTPVerify = () => {
@@ -34,32 +35,36 @@ const OTPVerify = () => {
 
     if (!email) {
         return (
-            <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center py-12 sm:px-6 lg:px-8">
-                <p className="text-red-500">No email found. Please register first.</p>
+            <div className="min-h-screen bg-[#FFFFFF] flex flex-col justify-center items-center py-12 sm:px-6 lg:px-8 font-[Inter,sans-serif]">
+                <p className="text-[#DC3545]">No email found. Please register first.</p>
             </div>
         );
     }
-    
+
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-[#FFFFFF] flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-[Inter,sans-serif] px-4">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                    Verify your account
-                </h2>
-                <p className="mt-2 text-center text-sm text-gray-600">
-                    We've sent a 6-digit code to {email}.
-                </p>
+                <div className="text-center mb-6">
+                    <Shield className="w-16 h-16 text-[#0A2463] mx-auto mb-4" />
+                    <h2 className="text-3xl font-extrabold text-[#0A2463]">
+                        Verify your account
+                    </h2>
+                    <p className="mt-2 text-sm text-[#212529]">
+                        We've sent a 6-digit code to {email}.
+                    </p>
+                </div>
             </div>
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-                <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-                    {error && <div className="mb-4 text-red-600 text-center font-semibold">{error}</div>}
+                <div className="bg-[#F8F9FA] py-8 px-4 shadow-2xl sm:rounded-2xl sm:px-10 border border-[#0A2463]">
+                    {error && <div className="mb-4 text-[#DC3545] text-center font-semibold">{error}</div>}
                     <form className="space-y-6" onSubmit={onVerify}>
                         <div>
-                            <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
+                            <label htmlFor="otp" className="block text-sm font-medium text-[#212529] mb-2">
                                 OTP Code
                             </label>
-                            <div className="mt-1">
+                            <div className="relative">
+                                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#0A2463] w-5 h-5" />
                                 <input
                                     id="otp"
                                     name="otp"
@@ -68,7 +73,8 @@ const OTPVerify = () => {
                                     required
                                     value={otp}
                                     onChange={(e) => setOtp(e.target.value)}
-                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    className="appearance-none block w-full pl-10 pr-4 py-3 border border-[#0A2463] rounded-lg shadow-sm placeholder-[#6C757D] focus:outline-none focus:ring-2 focus:ring-[#28A745] focus:border-[#28A745] sm:text-sm bg-[#FFFFFF]"
+                                    placeholder="Enter 6-digit code"
                                 />
                             </div>
                         </div>
@@ -76,15 +82,16 @@ const OTPVerify = () => {
                         <div>
                             <button
                                 type="submit"
-                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-[#FFFFFF] bg-[#0A2463] hover:bg-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#28A745] transition duration-200"
                             >
                                 Verify Account
                             </button>
                         </div>
                     </form>
-                    
+
                     <div className="mt-6 text-center">
-                        <button onClick={onResend} className="font-medium text-indigo-600 hover:text-indigo-500">
+                        <button onClick={onResend} className="font-medium text-[#28A745] hover:text-[#218838] underline flex items-center justify-center gap-2">
+                            <RefreshCw className="w-4 h-4" />
                             Didn't receive a code? Resend
                         </button>
                     </div>
@@ -94,4 +101,4 @@ const OTPVerify = () => {
     );
 };
 
-export default OTPVerify; 
+export default OTPVerify;

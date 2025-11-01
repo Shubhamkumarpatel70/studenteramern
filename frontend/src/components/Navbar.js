@@ -28,10 +28,10 @@ const Navbar = () => {
     
     const navLinks = (
         <>
-            <Link to="/" className="block py-2 px-3 hover:text-[#0A84FF] transition-colors duration-200" onClick={() => setMenuOpen(false)}>Home</Link>
-            <Link to="/internships" className="block py-2 px-3 hover:text-[#0A84FF] transition-colors duration-200" onClick={() => setMenuOpen(false)}>Internships</Link>
-            <Link to="/about" className="block py-2 px-3 hover:text-[#0A84FF] transition-colors duration-200" onClick={() => setMenuOpen(false)}>About Us</Link>
-            <Link to="/verify-certificate" className="block py-2 px-3 hover:text-[#0A84FF] transition-colors duration-200" onClick={() => setMenuOpen(false)}>Verify Certificate</Link>
+            <Link to="/" className="block py-2 px-3 text-white hover:text-[#28A745] transition-colors duration-200" onClick={() => setMenuOpen(false)}>Home</Link>
+            <Link to="/internships" className="block py-2 px-3 text-white hover:text-[#28A745] transition-colors duration-200" onClick={() => setMenuOpen(false)}>Internships</Link>
+            <Link to="/about" className="block py-2 px-3 text-white hover:text-[#28A745] transition-colors duration-200" onClick={() => setMenuOpen(false)}>About Us</Link>
+            <Link to="/verify-certificate" className="block py-2 px-3 text-white hover:text-[#28A745] transition-colors duration-200" onClick={() => setMenuOpen(false)}>Verify Certificate</Link>
         </>
     );
 
@@ -51,7 +51,7 @@ const Navbar = () => {
     );
 
     return (
-        <nav className="bg-[#1C1C1E] shadow-lg sticky top-0 z-50 font-bold font-[Inter,sans-serif]">
+        <nav className="bg-[#0A2463] shadow-lg sticky top-0 z-50 font-bold font-[Inter,sans-serif]">
             <div className="max-w-7xl mx-auto px-4">
                 <div className="flex justify-between items-center h-20">
                     {/* Logo */}
@@ -78,7 +78,7 @@ const Navbar = () => {
             </div>
             {/* Mobile Menu */}
             <div className={`md:hidden transition-all duration-300 ${menuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}> 
-                <div className="flex flex-col items-center space-y-2 py-4 bg-[#1C1C1E] backdrop-blur-md shadow-md rounded-b-xl">
+                <div className="flex flex-col items-center space-y-2 py-4 bg-[#0A2463] backdrop-blur-md shadow-md rounded-b-xl">
                     {navLinks}
                     <div className="w-full border-t border-[#8E8E93] my-2"></div>
                     {authLinks}

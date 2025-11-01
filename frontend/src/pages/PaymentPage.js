@@ -1,13 +1,12 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { useSearchParams, useNavigate, Link } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import api from '../config/api';
 import AuthContext from '../context/AuthContext';
-import { AlertTriangle, BadgeCheck, CreditCard, Loader2 } from 'lucide-react';
+import { AlertTriangle, BadgeCheck, Loader2 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 
 const PaymentPage = () => {
     const [searchParams] = useSearchParams();
-    const navigate = useNavigate();
     const { user } = useContext(AuthContext);
     const internshipId = searchParams.get('internshipId');
 
@@ -142,19 +141,42 @@ const PaymentPage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 px-2 font-sans">
-            <div className="sm:mx-auto sm:w-full sm:max-w-lg">
-                <h2 className="mt-6 text-center text-3xl font-extrabold text-indigo-700 drop-shadow">Apply for {internship?.title}</h2>
-                <div className="mt-2 text-center text-base text-gray-700">
-                    <span className="font-semibold">Company:</span> {internship?.company}<br/>
-                    <span className="font-semibold">Location:</span> {internship?.location}<br/>
-                    <span className="font-semibold">Stipend:</span> ₹{internship?.stipend} <br/>
-                    <span className="font-semibold">Duration:</span> {internship?.duration}<br/>
-                    <span className="font-semibold">Technologies:</span> {internship?.technologies?.join(', ')}
-                </div>
-                <div className="mt-4 text-gray-700 text-justify bg-white/80 dark:bg-gray-900/80 rounded-2xl p-4 shadow-xl backdrop-blur-md border border-indigo-100">
-                    <span className="font-semibold">Description:</span> <br/>
-                    {internship?.description}
+        <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 px-4 font-sans">
+            <div className="sm:mx-auto sm:w-full sm:max-w-4xl">
+                <div className="bg-white bg-opacity-95 p-8 rounded-2xl shadow-2xl mb-8">
+                    <h2 className="text-center text-5xl font-extrabold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-6">
+                        Apply for {internship?.title}
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-lg">
+                        <div className="space-y-3">
+                            <div className="flex items-center space-x-3">
+                                <span className="font-bold text-indigo-800">Company:</span>
+                                <span className="text-gray-700">{internship?.company}</span>
+                            </div>
+                            <div className="flex items-center space-x-3">
+                                <span className="font-bold text-indigo-800">Location:</span>
+                                <span className="text-gray-700">{internship?.location}</span>
+                            </div>
+                            <div className="flex items-center space-x-3">
+                                <span className="font-bold text-indigo-800">Stipend:</span>
+                                <span className="text-gray-700">₹{internship?.stipend}</span>
+                            </div>
+                        </div>
+                        <div className="space-y-3">
+                            <div className="flex items-center space-x-3">
+                                <span className="font-bold text-indigo-800">Duration:</span>
+                                <span className="text-gray-700">{internship?.duration}</span>
+                            </div>
+                            <div className="flex items-center space-x-3">
+                                <span className="font-bold text-indigo-800">Technologies:</span>
+                                <span className="text-gray-700">{internship?.technologies?.join(', ')}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="mt-6 p-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-100">
+                        <span className="font-bold text-indigo-800 text-xl">Description:</span>
+                        <p className="text-gray-700 text-lg leading-relaxed mt-2">{internship?.description}</p>
+                    </div>
                 </div>
             </div>
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-lg">

@@ -143,7 +143,7 @@ const AnnouncementBar = () => {
       i === 0
         ? (
             <span key={i} className="mr-8">
-              <span className="bg-pink-500 text-white text-xs font-bold px-2 py-0.5 rounded-full mr-2 align-middle">NEW</span>
+              <span className="bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full mr-2 align-middle">NEW</span>
               {parseMessageWithLinks(a.message)}
             </span>
           )
@@ -155,7 +155,7 @@ const AnnouncementBar = () => {
     );
 
     return (
-        <div className="bg-gradient-to-r from-indigo-700 via-purple-600 to-indigo-700 shadow-lg">
+        <div className="bg-[#0A2463] shadow-lg">
             <div className="max-w-7xl mx-auto py-2 px-3 sm:px-6 lg:px-8 relative">
                 <div className="flex items-center justify-between flex-wrap">
                     <div className="w-0 flex-1 flex items-center overflow-hidden">
@@ -186,30 +186,47 @@ const AnnouncementBar = () => {
 };
 
 const HeroSection = () => (
-  <div className="text-center py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#0A84FF] via-[#30D158] to-[#FF9F0A] text-white font-[Inter,sans-serif] shadow-2xl rounded-b-3xl">
-    <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight drop-shadow-lg">
-      Launch Your Tech Career with <span className="block text-[#1C1C1E]">Student-Era</span>
-    </h1>
-    <p className="mt-6 max-w-2xl mx-auto text-2xl sm:text-2xl text-[#F2F2F7] font-medium drop-shadow">
-      Gain real-world experience with our virtual internships. Work on live projects, get mentored by experts, and build a portfolio that stands out.
-    </p>
-    <div className="mt-10 flex justify-center gap-4">
-      <Link to="/internships" className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl text-white bg-[#0A84FF] hover:bg-[#30D158] shadow-lg transition-all duration-200">
-        Browse Internships
-      </Link>
-      <Link to="/register" className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl text-white bg-[#FF9F0A] hover:bg-[#0A84FF] shadow-lg transition-all duration-200">
-        Sign Up Now
-      </Link>
+  <div className="text-center py-24 px-4 sm:px-6 lg:px-8 bg-[#0A2463] text-white font-[Inter,sans-serif] shadow-2xl rounded-b-3xl relative overflow-hidden">
+    <div className="absolute inset-0 bg-gradient-to-r from-[#0A2463] via-[#1C1C1E] to-[#0A2463] opacity-50"></div>
+    <div className="relative z-10">
+      <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight mb-4">
+        Launch Your Tech Career with <span className="block text-[#28A745]">Student-Era</span>
+      </h1>
+      <p className="mt-6 max-w-3xl mx-auto text-xl sm:text-2xl text-[#F8F9FA] font-medium leading-relaxed">
+        Gain real-world experience with our virtual internships. Work on live projects, get mentored by experts, and build a portfolio that stands out.
+      </p>
+      <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+        <Link to="/internships" className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl text-[#212529] bg-[#28A745] hover:bg-[#218838] shadow-lg transition-all duration-200 transform hover:scale-105">
+          Browse Internships
+        </Link>
+        <Link to="/register" className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl text-[#212529] bg-[#FD7E14] hover:bg-[#E8680F] shadow-lg transition-all duration-200 transform hover:scale-105">
+          Sign Up Now
+        </Link>
+      </div>
+      <div className="mt-12 flex justify-center items-center space-x-8 text-sm text-[#F8F9FA]">
+        <div className="flex items-center">
+          <CheckCircle2 className="w-5 h-5 text-[#28A745] mr-2" />
+          <span>Verified Certificates</span>
+        </div>
+        <div className="flex items-center">
+          <Briefcase className="w-5 h-5 text-[#FD7E14] mr-2" />
+          <span>Live Projects</span>
+        </div>
+        <div className="flex items-center">
+          <ShieldCheck className="w-5 h-5 text-[#0A84FF] mr-2" />
+          <span>Expert Mentorship</span>
+        </div>
+      </div>
     </div>
   </div>
 );
 
 const CertifiedSection = () => (
-  <div className="bg-green-50 py-10 px-4 sm:px-6 lg:px-8 flex justify-center">
+  <div className="bg-[#FFFFFF] py-10 px-4 sm:px-6 lg:px-8 flex justify-center">
     <div className="max-w-3xl w-full flex flex-col items-center text-center">
-      <CheckCircle2 size={48} className="text-green-600 mb-2" />
-      <h2 className="text-2xl sm:text-3xl font-bold text-green-800 mb-2">Officially Certified & Recognized</h2>
-      <p className="text-gray-700 text-lg max-w-2xl">
+      <CheckCircle2 size={48} className="text-[#28A745] mb-2" />
+      <h2 className="text-2xl sm:text-3xl font-bold text-[#212529] mb-2">Officially Certified & Recognized</h2>
+      <p className="text-[#212529] text-lg max-w-2xl">
         Our accreditations reflect our commitment to quality education and compliance with national standards.
       </p>
     </div>
@@ -227,27 +244,27 @@ const Feature = ({ icon, title, description }) => (
 );
 
 const FeaturesSection = () => (
-  <div className="py-20 bg-gradient-to-br from-[#181A20] to-[#23272F] font-[Inter,sans-serif]">
+  <div className="py-20 bg-[#F8F9FA] font-[Inter,sans-serif]">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12">
-        <h2 className="text-4xl font-extrabold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 text-transparent bg-clip-text drop-shadow-lg mb-2">Why Choose Us?</h2>
-        <p className="mt-2 max-w-2xl mx-auto text-xl text-gray-300 font-semibold">We provide a structured path from learning to earning in the tech world.</p>
+        <h2 className="text-4xl font-extrabold text-[#0A2463] mb-2">Why Choose Us?</h2>
+        <p className="mt-2 max-w-2xl mx-auto text-xl text-[#212529] font-semibold">We provide a structured path from learning to earning in the tech world.</p>
       </div>
       <div className="mt-14 grid gap-12 md:grid-cols-2 lg:grid-cols-3">
         <Feature
-          icon={<div className="bg-gradient-to-br from-indigo-500 to-pink-500 p-4 rounded-full shadow-lg"><Briefcase size={40} className="text-white" /></div>}
-          title={<span className="font-bold text-white">Real-World Projects</span>}
-          description={<span className="text-gray-300">Work on industry-standard projects and gain hands-on experience that employers are looking for.</span>}
+          icon={<div className="bg-[#0A2463] p-4 rounded-full shadow-lg"><Briefcase size={40} className="text-[#FFFFFF]" /></div>}
+          title={<span className="font-bold text-[#212529]">Real-World Projects</span>}
+          description={<span className="text-[#212529]">Work on industry-standard projects and gain hands-on experience that employers are looking for.</span>}
         />
         <Feature
-          icon={<div className="bg-gradient-to-br from-indigo-500 to-pink-500 p-4 rounded-full shadow-lg"><Server size={40} className="text-white" /></div>}
-          title={<span className="font-bold text-white">Live Project Hosting</span>}
-          description={<span className="text-gray-300">We provide the hosting, so you can focus on building and showcasing your work to the world.</span>}
+          icon={<div className="bg-[#0A2463] p-4 rounded-full shadow-lg"><Server size={40} className="text-[#FFFFFF]" /></div>}
+          title={<span className="font-bold text-[#212529]">Live Project Hosting</span>}
+          description={<span className="text-[#212529]">We provide the hosting, so you can focus on building and showcasing your work to the world.</span>}
         />
         <Feature
-          icon={<div className="bg-gradient-to-br from-indigo-500 to-pink-500 p-4 rounded-full shadow-lg"><ShieldCheck size={40} className="text-white" /></div>}
-          title={<span className="font-bold text-white">Verified Certificates</span>}
-          description={<span className="text-gray-300">Receive a verifiable certificate upon completion to boost your resume and LinkedIn profile.</span>}
+          icon={<div className="bg-[#0A2463] p-4 rounded-full shadow-lg"><ShieldCheck size={40} className="text-[#FFFFFF]" /></div>}
+          title={<span className="font-bold text-[#212529]">Verified Certificates</span>}
+          description={<span className="text-[#212529]">Receive a verifiable certificate upon completion to boost your resume and LinkedIn profile.</span>}
         />
       </div>
     </div>
@@ -255,17 +272,17 @@ const FeaturesSection = () => (
 );
 
 const InternshipCard = ({ internship }) => (
-    <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden transform hover:-translate-y-2 hover:scale-105 transition-all duration-300 border border-indigo-100 dark:border-gray-800 group flex flex-col">
+    <div className="bg-[#F8F9FA] rounded-2xl shadow-xl overflow-hidden transform hover:-translate-y-2 hover:scale-105 transition-all duration-300 border border-[#0A2463] group flex flex-col">
         {internship.image && <img src={internship.image} alt={internship.title} className="h-40 w-full object-cover group-hover:scale-105 transition-transform duration-300" />}
         <div className="p-6 flex-1 flex flex-col">
-            <h3 className="text-2xl font-extrabold text-indigo-700 mb-2 font-sans">{internship.title}</h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-4 h-24 overflow-hidden flex-1 font-sans">{internship.shortDescription}</p>
+            <h3 className="text-2xl font-extrabold text-[#0A2463] mb-2 font-sans">{internship.title}</h3>
+            <p className="text-[#212529] mb-4 h-24 overflow-hidden flex-1 font-sans">{internship.shortDescription}</p>
             <div className="flex flex-wrap gap-2 mb-4">
                 {Array.isArray(internship.technologies) && internship.technologies.slice(0, 4).map(tech => (
-                    <span key={tech} className="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">{tech}</span>
+                    <span key={tech} className="bg-[#0A2463] text-[#FFFFFF] text-xs font-semibold px-2.5 py-0.5 rounded-full">{tech}</span>
                 ))}
             </div>
-             <Link to={`/internships/${internship._id}`} className="font-semibold text-indigo-600 hover:text-indigo-500 flex items-center mt-auto">
+             <Link to={`/internships/${internship._id}`} className="font-semibold text-[#0A2463] hover:text-[#28A745] flex items-center mt-auto">
                 View Details <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
         </div>
@@ -291,20 +308,20 @@ const LatestInternships = () => {
         };
         fetchInternships();
     }, []);
-    
+
     return (
-        <div className="py-16 bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 font-sans">
+        <div className="py-16 bg-[#FFFFFF] font-sans">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-extrabold text-indigo-700 drop-shadow">Latest Internships</h2>
-                    <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-500">
+                    <h2 className="text-3xl font-extrabold text-[#0A2463]">Latest Internships</h2>
+                    <p className="mt-4 max-w-2xl mx-auto text-lg text-[#212529]">
                         Apply now for our latest virtual internship programs.
                     </p>
                 </div>
 
-                {loading && <p className="text-center">Loading internships...</p>}
+                {loading && <p className="text-center text-[#212529]">Loading internships...</p>}
                 {error && <p className="text-center text-red-500">{error}</p>}
-                
+
                 {!loading && !error && (
                     <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                         {internships.length > 0 ? (
@@ -312,7 +329,7 @@ const LatestInternships = () => {
                                 <InternshipCard key={internship._id} internship={internship} />
                             ))
                         ) : (
-                            <p className="text-center col-span-full">No open internships at the moment. Please check back later!</p>
+                            <p className="text-center col-span-full text-[#212529]">No open internships at the moment. Please check back later!</p>
                         )}
                     </div>
                 )}
@@ -340,23 +357,23 @@ const TestimonialsSection = () => {
     const displayTestimonials = loading || testimonials.length === 0 ? staticTestimonials : testimonials;
 
     return (
-        <div className="py-16 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md font-sans">
+        <div className="py-16 bg-[#F8F9FA] font-sans">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-extrabold text-indigo-700 drop-shadow">What Our Interns Say</h2>
-                    <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-500">
+                    <h2 className="text-3xl font-extrabold text-[#0A2463]">What Our Interns Say</h2>
+                    <p className="mt-4 max-w-2xl mx-auto text-lg text-[#212529]">
                         Real stories from students who have launched their careers with us.
                     </p>
                 </div>
                 <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-3">
                     {displayTestimonials.map((testimonial, index) => (
-                        <div key={index} className="bg-white/90 dark:bg-gray-900/90 rounded-2xl shadow-xl p-8 group transition-transform duration-300 hover:scale-105 border border-indigo-100 dark:border-gray-800">
-                            <p className="text-gray-600 dark:text-gray-300 mb-6 font-sans">"{testimonial.quote}"</p>
+                        <div key={index} className="bg-[#FFFFFF] rounded-2xl shadow-xl p-8 group transition-transform duration-300 hover:scale-105 border border-[#0A2463]">
+                            <p className="text-[#212529] mb-6 font-sans">"{testimonial.quote}"</p>
                             <div className="flex items-center">
                                 <img className="w-12 h-12 rounded-full mr-4" src={testimonial.avatar || 'https://i.pravatar.cc/150'} alt={testimonial.name} />
                                 <div>
-                                    <p className="font-semibold text-indigo-700 font-sans">{testimonial.name}</p>
-                                    <p className="text-indigo-600 text-sm font-sans">{testimonial.role}</p>
+                                    <p className="font-semibold text-[#0A2463] font-sans">{testimonial.name}</p>
+                                    <p className="text-[#212529] text-sm font-sans">{testimonial.role}</p>
                                 </div>
                             </div>
                         </div>
@@ -369,7 +386,7 @@ const TestimonialsSection = () => {
 
 const Home = () => {
     return (
-        <div className="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 font-sans">
+        <div className="bg-[#FFFFFF] font-sans">
             <AnnouncementBar />
             <HeroSection />
             <CertifiedSection />
