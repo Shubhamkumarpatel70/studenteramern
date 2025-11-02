@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../config/api';
 import { Link } from 'react-router-dom';
-import { Loader2, Calendar, Clock, Video } from 'lucide-react';
+import { Loader2, Calendar, Clock, Video, RefreshCw } from 'lucide-react';
 
 const JoinMeetingButton = ({ meetingDate, meetingLink, expireAfterMinutes = 60 }) => {
     const [timeLeft, setTimeLeft] = useState('');
@@ -68,20 +68,22 @@ const Meetings = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    useEffect(() => {
-        const fetchMeetings = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                const config = { headers: { Authorization: `Bearer ${token}` } };
-                const { data } = await api.get('/meetings', config);
-                setMeetings(data.data);
-            } catch (err) {
-                setError('Could not fetch meetings.');
-            } finally {
-                setLoading(false);
-            }
-        };
+    const fetchMeetings = async () => {
+        setLoading(true);
+        setError('');
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            const { data } = await api.get('/meetings', config);
+            setMeetings(data.data);
+        } catch (err) {
+            setError('Could not fetch meetings.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchMeetings();
     }, []);
 
@@ -91,7 +93,18 @@ const Meetings = () => {
     return (
         <div className="p-2 sm:p-4 md:p-8 bg-gray-50 min-h-screen font-sans font-medium">
             <div className="max-w-lg mx-auto font-sans font-medium">
-                <h1 className="text-3xl font-bold mb-6 text-gray-800">My Meetings</h1>
+                <div className="flex items-center justify-between mb-6">
+                    <h1 className="text-3xl font-bold text-gray-800">My Meetings</h1>
+                    <button
+                        onClick={fetchMeetings}
+                        className="flex items-center gap-2 px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow transition disabled:opacity-50"
+                        title="Refresh meetings"
+                        disabled={loading}
+                    >
+                        <RefreshCw className={loading ? 'animate-spin' : ''} size={18} />
+                        Refresh
+                    </button>
+                </div>
                 {loading ? (
                     <div className="text-center py-8">Loading meetings...</div>
                 ) : meetings.length === 0 ? (
