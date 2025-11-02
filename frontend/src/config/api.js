@@ -1,17 +1,28 @@
 import axios from 'axios';
 
 // Set base URL for axios
-const baseURL = process.env.REACT_APP_API_URL
-  ? process.env.REACT_APP_API_URL.replace(/\/$/, '') + '/api'
-  : process.env.NODE_ENV === 'development'
-  ? 'http://localhost:5000/api'
-  : 'https://studenteramernbackend.onrender.com/api';
+// If REACT_APP_API_URL includes '/api' already, don't append another '/api'
+let baseURL;
+if (process.env.REACT_APP_API_URL) {
+  const cleaned = process.env.REACT_APP_API_URL.replace(/\/$/, '');
+  baseURL = cleaned.endsWith('/api') ? cleaned : `${cleaned}/api`;
+} else if (process.env.NODE_ENV === 'development') {
+  baseURL = 'http://localhost:5000/api';
+} else {
+  baseURL = 'https://studenteramernbackend.onrender.com/api';
+}
+
+// Log the baseURL for easier debugging in dev
+if (process.env.NODE_ENV !== 'production') {
+  // eslint-disable-next-line no-console
+  console.info('API baseURL:', baseURL);
+}
 
 // Create axios instance with base URL
 const api = axios.create({
   baseURL: baseURL,
   // Increase timeout to allow for slower network/email send operations during registration
-  timeout: 30000,
+  timeout: 60000,
   headers: {
     'Content-Type': 'application/json',
   },
