@@ -17,9 +17,9 @@ import {
 
 const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
     const location = useLocation();
-    const commonClasses = 'flex items-center px-4 py-2.5 rounded-lg transition-colors duration-200';
-    const activeClass = 'bg-primary text-white shadow font-bold';
-    const inactiveClass = 'text-primary-dark hover:bg-primary-light/30';
+    const commonClasses = 'flex items-center px-4 py-2.5 rounded-lg transition-all duration-200 hover:scale-105';
+    const activeClass = 'bg-white/20 text-white shadow-lg font-bold backdrop-blur-sm border border-white/30';
+    const inactiveClass = 'text-white/90 hover:bg-white/10 hover:text-white';
 
     const navItems = [
         { href: '/dashboard/overview', icon: <LayoutDashboard />, label: 'Dashboard' },
@@ -57,14 +57,14 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
                 />
             )}
             <aside
-                className={`fixed inset-y-0 left-0 bg-gradient-to-br from-primary-light via-background to-accent-light shadow-xl w-64 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:relative md:translate-x-0 z-[100] flex flex-col font-sans font-medium`}
+                className={`fixed inset-y-0 left-0 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 shadow-2xl w-64 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:relative md:translate-x-0 z-[100] flex flex-col font-sans font-medium backdrop-blur-sm border-r border-white/20`}
                 aria-label="User dashboard sidebar"
             >
-                <div className="p-4 flex items-center justify-between border-b border-primary-light/30">
-                    <h1 className="text-2xl font-extrabold text-primary tracking-tight font-sans">Dashboard</h1>
+                <div className="p-4 flex items-center justify-between border-b border-white/30">
+                    <h1 className="text-2xl font-extrabold text-white tracking-tight font-sans">Dashboard</h1>
                     <button
                         onClick={() => setSidebarOpen(false)}
-                        className="md:hidden text-primary-dark text-3xl focus:outline-none"
+                        className="md:hidden text-white text-3xl focus:outline-none hover:text-blue-200 transition-colors"
                         aria-label="Close sidebar"
                     >
                         &times;
@@ -84,7 +84,7 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
                             <span className="ml-2">{item.label}</span>
                         </NavLink>
                     ))}
-                    <div className="pt-4 border-t border-gray-200">
+                    <div className="pt-4 border-t border-white/30">
                         {bottomNavItems.map((item) => (
                             <NavLink
                                 key={item.href}

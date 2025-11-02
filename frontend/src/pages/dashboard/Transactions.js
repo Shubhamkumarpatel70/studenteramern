@@ -35,31 +35,31 @@ const Transactions = () => {
     }, []);
 
     return (
-        <div className="p-2 sm:p-4 md:p-8 bg-gradient-to-br from-primary-light via-background to-accent-light min-h-screen font-sans font-medium">
+        <div className="p-2 sm:p-4 md:p-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen font-sans font-medium">
             <div className="w-full max-w-3xl mx-auto font-sans font-medium">
-                <h1 className="text-3xl font-extrabold mb-6 text-primary-dark font-sans">My Transactions</h1>
+                <h1 className="text-3xl font-extrabold mb-6 text-gray-800 font-sans">My Transactions</h1>
                 {loading ? (
                     <div className="text-center py-8">Loading transactions...</div>
                 ) : transactions.length === 0 ? (
-                    <div className="text-center py-8 text-primary-dark/70 bg-card rounded-2xl shadow-lg">You have no transaction history.</div>
+                    <div className="text-center py-8 text-gray-600 bg-white rounded-3xl shadow-xl border border-blue-100/50">You have no transaction history.</div>
                 ) : (
-                    <div className="bg-card rounded-2xl shadow-lg overflow-x-auto border border-primary-light/30">
-                        <table className="min-w-full divide-y divide-primary-light/30 text-sm sm:text-base">
-                            <thead className="bg-gradient-to-r from-primary-light/40 to-accent-light/40">
+                    <div className="bg-white rounded-3xl shadow-xl overflow-x-auto border border-blue-100/50">
+                        <table className="min-w-full divide-y divide-blue-100/30 text-sm sm:text-base">
+                            <thead className="bg-gradient-to-r from-blue-100 to-indigo-100">
                                 <tr>
-                                    <th className="px-2 sm:px-6 py-3 text-left text-xs font-bold text-primary-dark uppercase tracking-wider">Date</th>
-                                    <th className="px-2 sm:px-6 py-3 text-left text-xs font-bold text-primary-dark uppercase tracking-wider">Amount</th>
-                                    <th className="px-2 sm:px-6 py-3 text-left text-xs font-bold text-primary-dark uppercase tracking-wider">Status</th>
-                                    <th className="px-2 sm:px-6 py-3 text-left text-xs font-bold text-primary-dark uppercase tracking-wider">Transaction ID</th>
+                                    <th className="px-2 sm:px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Date</th>
+                                    <th className="px-2 sm:px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Amount</th>
+                                    <th className="px-2 sm:px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Status</th>
+                                    <th className="px-2 sm:px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Transaction ID</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-primary-light/20">
+                            <tbody className="divide-y divide-blue-50">
                                 {transactions.map(txn => (
-                                    <tr key={txn._id} className="hover:bg-primary-light/10 transition-colors duration-200">
-                                        <td className="px-2 sm:px-6 py-4 whitespace-nowrap">{new Date(txn.date).toLocaleDateString()}</td>
-                                        <td className="px-2 sm:px-6 py-4 whitespace-nowrap">₹{txn.amount}</td>
-                                        <td className="px-2 sm:px-6 py-4 whitespace-nowrap">{txn.status}</td>
-                                        <td className="px-2 sm:px-6 py-4 whitespace-nowrap">{txn.transactionId}</td>
+                                    <tr key={txn._id} className="hover:bg-blue-50/50 transition-colors duration-200">
+                                        <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-gray-800">{new Date(txn.date).toLocaleDateString()}</td>
+                                        <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-gray-800">₹{txn.amount}</td>
+                                        <td className="px-2 sm:px-6 py-4 whitespace-nowrap"><StatusBadge status={txn.status} /></td>
+                                        <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-gray-800">{txn.transactionId}</td>
                                     </tr>
                                 ))}
                             </tbody>
