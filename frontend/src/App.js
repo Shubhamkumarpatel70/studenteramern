@@ -213,7 +213,6 @@ const AppContent = () => {
               <Route index element={<CoAdminHome />} />
               <Route path="students" element={<ManageStudents />} />
               <Route path="meetings" element={<ViewMeetings />} />
-              <Route path="schedule-meeting" element={<ScheduleMeeting />} />
               <Route path="deletion-requests" element={<DeletionRequests />} />
             </Route>
           </Route>

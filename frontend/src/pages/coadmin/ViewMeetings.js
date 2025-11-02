@@ -198,7 +198,7 @@ const ViewMeetings = () => {
                     <div key={meeting._id} className="p-4 border rounded-lg flex justify-between items-center">
                         <div>
                             <h2 className="font-bold">{meeting.title}</h2>
-                            <p className="text-sm text-gray-500">{new Date(meeting.date).toLocaleString()}</p>
+                            <p className="text-sm text-gray-500">{new Date(meeting.date).toLocaleString('en-US', { timeZone: 'UTC' })}</p>
                             <a href={meeting.link} target="_blank" rel="noopener noreferrer" className="text-teal-600 underline">Join Meeting</a>
                         </div>
                         <div className="flex space-x-2">

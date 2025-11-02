@@ -181,7 +181,7 @@ const ManageMeetings = () => {
                             {meetings.map(meeting => (
                                 <tr key={meeting._id}>
                                     <td className="px-6 py-4 whitespace-nowrap">{meeting.title}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{new Date(meeting.date).toLocaleString()}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{new Date(meeting.date).toLocaleString('en-US', { timeZone: 'UTC' })}</td>
                                     <td className="px-6 py-4 whitespace-nowrap capitalize">{meeting.targetType}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         {meeting.user && (
