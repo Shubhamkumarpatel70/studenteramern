@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import api from "../../config/api";
 import AuthContext from "../../context/AuthContext";
+import { RefreshCw } from 'lucide-react';
 
 const HelpQueries = () => {
   const { isAuthenticated, user } = useContext(AuthContext);
@@ -12,22 +13,23 @@ const HelpQueries = () => {
   const [resolving, setResolving] = useState(false);
   const chatEndRef = useRef(null);
 
+  const fetchQueries = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await api.get("/help-queries");
+      setQueries(res.data.data);
+      if (res.data.data.length > 0) {
+        setSelectedQuery(res.data.data[0]);
+      }
+    } catch (err) {
+      setError("Failed to load help queries. Please try again later.");
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (!isAuthenticated) return;
-    const fetchQueries = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const res = await api.get("/help-queries");
-        setQueries(res.data.data);
-        if (res.data.data.length > 0) {
-          setSelectedQuery(res.data.data[0]);
-        }
-      } catch (err) {
-        setError("Failed to load help queries. Please try again later.");
-      }
-      setLoading(false);
-    };
     fetchQueries();
   }, [isAuthenticated]);
 
@@ -101,7 +103,18 @@ const HelpQueries = () => {
         )}
       </div>
       <div className="flex-1 flex flex-col p-4">
-        <h2 className="text-xl font-bold mb-4 text-indigo-700">{selectedQuery ? `Chat with ${selectedQuery.user?.name || "User"}` : "Select a query"}</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-indigo-700">{selectedQuery ? `Chat with ${selectedQuery.user?.name || "User"}` : "Select a query"}</h2>
+          <button
+            onClick={fetchQueries}
+            className="flex items-center gap-2 px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow transition disabled:opacity-50"
+            title="Refresh chat"
+            disabled={loading}
+          >
+            <RefreshCw className={loading ? 'animate-spin' : ''} size={18} />
+            Refresh
+          </button>
+        </div>
         <div className="flex-1 overflow-y-auto mb-4 max-h-96 border rounded-lg bg-gray-50 p-4">
           {selectedQuery && selectedQuery.messages.length === 0 && (
             <div className="text-gray-400 text-center">No messages yet.</div>
