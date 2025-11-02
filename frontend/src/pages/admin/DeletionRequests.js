@@ -14,7 +14,7 @@ const DeletionRequests = () => {
     setLoading(true);
     setError('');
     try {
-      const res = await api.get('/users/deletion-requests');
+      const res = await api.get('users/deletion-requests');
       setRequests(res.data.data);
     } catch (err) {
       setError('Failed to fetch deletion requests.');
@@ -30,7 +30,7 @@ const DeletionRequests = () => {
     setActionError('');
     setActionSuccess('');
     try {
-      await api.delete(`/users/${selectedUser._id}/permanent`);
+      await api.delete(`users/${selectedUser._id}/permanent`);
       setActionSuccess('User permanently deleted.');
       setModalOpen(false);
       fetchRequests();

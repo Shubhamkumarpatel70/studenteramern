@@ -76,6 +76,7 @@ const PaymentPage = () => {
                 certificateName,
                 utr,
                 paymentScreenshot: screenshotUrl,
+                paymentOptionId: selectedOption?._id,
             }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -119,12 +120,12 @@ const PaymentPage = () => {
 
     if (success) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex flex-col justify-center items-center text-center p-6 font-sans">
-                <div className="bg-white/80 dark:bg-gray-900/80 p-8 rounded-2xl shadow-2xl max-w-sm w-full backdrop-blur-md border border-green-200 animate-fade-in">
+            <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center text-center p-6 font-sans">
+                <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full border border-gray-200">
                     <BadgeCheck className="h-12 w-12 text-green-500 mx-auto mb-4" />
                     <h2 className="text-2xl font-bold text-gray-800 mb-2">Application Submitted!</h2>
                     <p className="text-gray-600 mb-6">Your application and payment details have been submitted successfully.</p>
-                    <Link to="/dashboard/applied-internships" className="w-full inline-flex justify-center items-center px-4 py-2 bg-gradient-to-r from-green-500 to-indigo-500 text-white rounded-md hover:from-green-600 hover:to-indigo-600 font-semibold transition-all">Go to My Applications</Link>
+                    <Link to="/dashboard/applied-internships" className="w-full inline-flex justify-center items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-semibold transition-all">Go to My Applications</Link>
                 </div>
             </div>
         );

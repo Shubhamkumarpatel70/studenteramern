@@ -59,8 +59,8 @@ const ManageMeetings = () => {
             title: meeting.title,
             date: new Date(meeting.date).toISOString().slice(0, 16),
             link: meeting.link,
-            targetType: meeting.target.type,
-            internshipId: meeting.target.internship || '',
+            targetType: meeting.targetType,
+            internshipId: meeting.selectedInternship || '',
             expireAfterMinutes: meeting.expireAfterMinutes || 60
         });
         window.scrollTo(0, 0); // Scroll to top to see the form
@@ -87,10 +87,8 @@ const ManageMeetings = () => {
             title: formData.title,
             date: formData.date,
             link: formData.link,
-            target: {
-                type: formData.targetType,
-                internship: formData.targetType === 'internship' ? formData.internshipId : undefined
-            },
+            targetType: formData.targetType,
+            selectedInternship: formData.targetType === 'internship' ? formData.internshipId : undefined,
             expireAfterMinutes: formData.expireAfterMinutes
         };
 
@@ -183,7 +181,7 @@ const ManageMeetings = () => {
                                 <tr key={meeting._id}>
                                     <td className="px-6 py-4 whitespace-nowrap">{meeting.title}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{new Date(meeting.date).toLocaleString()}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap capitalize">{meeting.target.type}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap capitalize">{meeting.targetType}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         {meeting.user && (
                                             <span>

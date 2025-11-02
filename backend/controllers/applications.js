@@ -50,7 +50,8 @@ exports.createApplication = async (req, res, next) => {
             status: 'Applied', // Use valid enum value
             certificateName,
             utr,
-            paymentScreenshot // Cloudinary URL
+            paymentScreenshot, // Cloudinary URL
+            paymentOptionId: req.body.paymentOptionId
         };
 
         const application = await Application.create(applicationData);
@@ -128,7 +129,8 @@ exports.getAllApplications = async (req, res, next) => {
     try {
         const applications = await Application.find()
             .populate('user', 'name email')
-            .populate('internship', 'title');
+            .populate('internship', 'title')
+            .populate('paymentOptionId', 'displayName upiId');
             
         res.status(200).json({ success: true, count: applications.length, data: applications });
     } catch (err) {

@@ -50,6 +50,10 @@ const ApplicationSchema = new mongoose.Schema({
     paymentReceived: {
         type: Boolean,
         default: false
+    },
+    paymentOptionId: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'PaymentOption'
     }
 });
 

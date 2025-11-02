@@ -130,6 +130,9 @@ const InternshipRegistrations = () => {
                         <p><strong>Transaction ID/UTR:</strong> {selectedApp.transactionId}</p>
                         <p><strong>Applied On:</strong> {new Date(selectedApp.dateApplied).toLocaleString()}</p>
                         <p><strong>Payment Received:</strong> {selectedApp.paymentReceived ? 'Yes' : 'No'}</p>
+                        {selectedApp.paymentOptionId && (
+                            <p><strong>Payment Method:</strong> {selectedApp.paymentOptionId.displayName} (UPI ID: {selectedApp.paymentOptionId.upiId})</p>
+                        )}
                         {selectedApp.status === 'Rejected' && <p><strong>Rejection Reason:</strong> {selectedApp.rejectionReason}</p>}
                         {selectedApp.paymentScreenshot && (
                             <button
