@@ -49,6 +49,30 @@ const AccountantManageTransactions = () => {
         }
     };
 
+    const handlePaymentApprove = async (id) => {
+        setActionLoading(id);
+        try {
+            await api.put(`/applications/${id}/payment-received`, { paymentReceived: true });
+            fetchApplications();
+        } catch (err) {
+            setError('Failed to approve payment');
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
+    const handlePaymentReject = async (id) => {
+        setActionLoading(id);
+        try {
+            await api.put(`/applications/${id}/payment-received`, { paymentReceived: false });
+            fetchApplications();
+        } catch (err) {
+            setError('Failed to reject payment');
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
     return (
         <div className="p-8 bg-gray-50 min-h-screen">
             <h1 className="text-3xl font-bold mb-6">Manage Transactions</h1>
@@ -95,8 +119,14 @@ const AccountantManageTransactions = () => {
                                                 <button onClick={() => handleApprove(app._id)} disabled={actionLoading === app._id} className="bg-green-500 text-white px-3 py-1 rounded mr-2">
                                                     {actionLoading === app._id ? 'Processing...' : 'Approve'}
                                                 </button>
-                                                <button onClick={() => handleReject(app._id)} disabled={actionLoading === app._id} className="bg-red-500 text-white px-3 py-1 rounded">
+                                                <button onClick={() => handleReject(app._id)} disabled={actionLoading === app._id} className="bg-red-500 text-white px-3 py-1 rounded mr-2">
                                                     {actionLoading === app._id ? 'Processing...' : 'Reject'}
+                                                </button>
+                                                <button onClick={() => handlePaymentApprove(app._id)} disabled={actionLoading === app._id} className="bg-blue-500 text-white px-3 py-1 rounded mr-2">
+                                                    {actionLoading === app._id ? 'Processing...' : 'Payment Approve'}
+                                                </button>
+                                                <button onClick={() => handlePaymentReject(app._id)} disabled={actionLoading === app._id} className="bg-orange-500 text-white px-3 py-1 rounded">
+                                                    {actionLoading === app._id ? 'Processing...' : 'Payment Reject'}
                                                 </button>
                                             </>
                                         )}

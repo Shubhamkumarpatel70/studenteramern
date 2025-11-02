@@ -46,6 +46,10 @@ const ApplicationSchema = new mongoose.Schema({
     amount: {
         type: Number,
         default: 149
+    },
+    paymentReceived: {
+        type: Boolean,
+        default: false
     }
 });
 

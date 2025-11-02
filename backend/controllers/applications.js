@@ -169,6 +169,31 @@ exports.updateApplicationStatus = async (req, res, next) => {
     }
 };
 
+// @desc    Update payment received status (Admin/Accountant)
+// @route   PUT /api/applications/:id/payment-received
+// @access  Private/Admin/Accountant
+exports.updatePaymentReceived = async (req, res, next) => {
+    try {
+        const { paymentReceived } = req.body;
+
+        const application = await Application.findByIdAndUpdate(req.params.id, {
+            paymentReceived
+        }, {
+            new: true,
+            runValidators: true
+        });
+
+        if (!application) {
+            return res.status(404).json({ success: false, message: 'Application not found' });
+        }
+
+        res.status(200).json({ success: true, data: application });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};
+
 exports.uploadPaymentScreenshot = async (req, res) => {
   try {
     console.log('Received uploadPaymentScreenshot request:', {
@@ -205,4 +230,4 @@ exports.uploadPaymentScreenshot = async (req, res) => {
     console.error('Upload failed:', err);
     res.status(500).json({ message: 'Upload failed' });
   }
-}; 
+};

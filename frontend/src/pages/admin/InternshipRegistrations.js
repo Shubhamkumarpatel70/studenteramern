@@ -57,6 +57,19 @@ const InternshipRegistrations = () => {
         setIsRejectModalOpen(true);
     };
 
+    const handlePaymentReceived = async (id) => {
+        try {
+            const token = localStorage.getItem('token');
+            await api.put(`/applications/${id}/payment-received`, { paymentReceived: true }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            fetchApplications(); // Refresh the list
+            setIsViewModalOpen(false);
+        } catch (err) {
+            setError('Failed to update payment status.');
+        }
+    };
+
     if (loading) return <div className="p-8"><p>Loading applications...</p></div>;
     if (error) return <div className="p-8"><p className="text-red-500">{error}</p></div>;
 
@@ -116,6 +129,7 @@ const InternshipRegistrations = () => {
                         <p><strong>Status:</strong> {selectedApp.status}</p>
                         <p><strong>Transaction ID/UTR:</strong> {selectedApp.transactionId}</p>
                         <p><strong>Applied On:</strong> {new Date(selectedApp.dateApplied).toLocaleString()}</p>
+                        <p><strong>Payment Received:</strong> {selectedApp.paymentReceived ? 'Yes' : 'No'}</p>
                         {selectedApp.status === 'Rejected' && <p><strong>Rejection Reason:</strong> {selectedApp.rejectionReason}</p>}
                         {selectedApp.paymentScreenshot && (
                             <button
@@ -123,6 +137,14 @@ const InternshipRegistrations = () => {
                                 className="mt-4 px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-700"
                             >
                                 View Screenshot
+                            </button>
+                        )}
+                        {!selectedApp.paymentReceived && (
+                            <button
+                                onClick={() => handlePaymentReceived(selectedApp._id)}
+                                className="mt-4 ml-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"
+                            >
+                                Mark Payment Received
                             </button>
                         )}
                         <button onClick={() => setIsViewModalOpen(false)} className="mt-4 ml-2 px-4 py-2 bg-indigo-600 text-white rounded">Close</button>
