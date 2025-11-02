@@ -67,6 +67,11 @@ exports.register = async (req, res, next) => {
         if (err.code === 11000) {
             return res.status(400).json({ success: false, message: 'An account with this email already exists. Please login instead.' });
         }
+        // Handle validation errors
+        if (err.name === 'ValidationError') {
+            const messages = Object.values(err.errors).map(val => val.message);
+            return res.status(400).json({ success: false, message: messages.join('. ') });
+        }
         res.status(400).json({ success: false, message: 'Failed to register user.' });
     }
 };
