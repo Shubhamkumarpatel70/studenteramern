@@ -1,11 +1,13 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { LogIn, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { LogIn, Mail, Lock, Eye, EyeOff, AlertCircle, X } from 'lucide-react';
 import AuthContext from '../context/AuthContext';
 
 const Login = () => {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [showPassword, setShowPassword] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [countdown, setCountdown] = useState(5);
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
@@ -37,9 +39,23 @@ const Login = () => {
                         navigate('/dashboard', { replace: true });
                 }
             }
+        } else {
+            // Show modal for unregistered user
+            setShowModal(true);
+            setCountdown(5);
         }
-        // If login fails, an error is logged in the context, and we stay on the login page.
     };
+
+    // Countdown timer for auto-redirect
+    useEffect(() => {
+        let timer;
+        if (showModal && countdown > 0) {
+            timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+        } else if (showModal && countdown === 0) {
+            navigate('/register');
+        }
+        return () => clearTimeout(timer);
+    }, [showModal, countdown, navigate]);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-[#FFFFFF] font-[Inter,sans-serif] px-4">
@@ -121,6 +137,45 @@ const Login = () => {
                     </div>
                 </form>
             </div>
+
+            {/* Modal for unregistered user */}
+            {showModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full mx-4 text-center">
+                        <div className="flex justify-between items-center mb-4">
+                            <AlertCircle className="w-8 h-8 text-[#FF3B30] mx-auto" />
+                            <button
+                                onClick={() => setShowModal(false)}
+                                className="text-gray-400 hover:text-gray-600"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+                        <h2 className="text-xl font-bold text-[#0A2463] mb-2">Account Not Found</h2>
+                        <p className="text-[#212529] mb-4">
+                            It looks like you are not registered yet. Would you like to create an account?
+                        </p>
+                        <p className="text-sm text-gray-600 mb-4">
+                            Redirecting to registration in {countdown} seconds...
+                        </p>
+                        <div className="flex gap-3 justify-center">
+                            <Link
+                                to="/register"
+                                className="px-4 py-2 bg-[#28A745] text-white rounded-lg font-semibold hover:bg-[#218838] transition"
+                                onClick={() => setShowModal(false)}
+                            >
+                                Register Now
+                            </Link>
+                            <button
+                                onClick={() => setShowModal(false)}
+                                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
