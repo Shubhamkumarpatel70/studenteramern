@@ -14,25 +14,25 @@ exports.getMeetings = async (req, res, next) => {
             meetings = await Meeting.find().populate('user', 'name email').sort({ date: 'asc' });
         } else {
             // Find meetings targeted at 'all'
-            const publicMeetings = Meeting.find({ 'target.type': 'all' });
-            
+            const publicMeetings = Meeting.find({ targetType: 'all' });
+
             // Find meetings for the user's role or specific internships
             let roleSpecificMeetings;
             if (user.role === 'co-admin') {
-                roleSpecificMeetings = Meeting.find({ 'target.type': 'co-admins' });
+                roleSpecificMeetings = Meeting.find({ targetType: 'co-admins' });
             } else if (user.role === 'accountant') {
-                roleSpecificMeetings = Meeting.find({ 'target.type': 'accountants' });
+                roleSpecificMeetings = Meeting.find({ targetType: 'accountants' });
             } else { // 'user'
                 // Find internships the user is approved for
                 const userApplications = await Application.find({ user: user.id, status: 'Approved' }).select('internship');
                 const userInternshipIds = userApplications.map(app => app.internship);
-                
+
                 roleSpecificMeetings = Meeting.find({
-                    'target.type': 'internship',
-                    'target.internship': { $in: userInternshipIds }
+                    targetType: 'internship',
+                    selectedInternship: { $in: userInternshipIds }
                 });
             }
-            
+
             const [publicArr, roleArr] = await Promise.all([publicMeetings, roleSpecificMeetings]);
             meetings = [...publicArr, ...roleArr];
             // Sort combined meetings by date
@@ -58,6 +58,9 @@ exports.createMeeting = async (req, res, next) => {
         }
         if (req.body.targetType === 'internship' && !req.body.selectedInternship) {
             return res.status(400).json({ success: false, message: 'Please select an internship for targeted meetings.' });
+        }
+        if (req.body.targetType === 'co-admins' || req.body.targetType === 'accountants') {
+            // No additional validation needed for role-based targeting
         }
         const meeting = await Meeting.create(req.body);
         res.status(201).json({ success: true, data: meeting });

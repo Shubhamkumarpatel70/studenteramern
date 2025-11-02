@@ -21,7 +21,7 @@ const MeetingSchema = new mongoose.Schema({
     },
     targetType: {
         type: String,
-        enum: ['all', 'users', 'internship'],
+        enum: ['all', 'users', 'co-admins', 'accountants', 'internship'],
         default: 'all',
         required: true
     },

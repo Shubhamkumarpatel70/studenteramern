@@ -134,6 +134,7 @@ const ManageMeetings = () => {
                             <option value="all">All Users</option>
                             <option value="co-admins">All Co-Admins</option>
                             <option value="accountants">All Accountants</option>
+                            <option value="users">Specific Users</option>
                             <option value="internship">Specific Internship</option>
                         </select>
                     </div>
