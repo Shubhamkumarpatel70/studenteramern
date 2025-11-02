@@ -98,7 +98,8 @@ export const AuthProvider = ({ children }) => {
             return res.data.user;
         } catch (err) {
             console.error(err?.response?.data?.message || err.message);
-            return null;
+            // Return error message for handling in component
+            return { error: err?.response?.data?.message || 'Login failed' };
         }
     };
 

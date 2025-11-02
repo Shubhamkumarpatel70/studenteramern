@@ -8,6 +8,7 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [countdown, setCountdown] = useState(5);
+    const [error, setError] = useState('');
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
@@ -19,13 +20,14 @@ const Login = () => {
 
     const onSubmit = async e => {
         e.preventDefault();
-        const user = await login(email, password);
-        if (user) {
+        setError('');
+        const result = await login(email, password);
+        if (result && !result.error) {
             // Redirect to the page the user was trying to access, or to a default based on role
             if (from !== '/') {
                 navigate(from, { replace: true });
             } else {
-                switch (user.role) {
+                switch (result.role) {
                     case 'admin':
                         navigate('/admin-dashboard', { replace: true });
                         break;
@@ -40,9 +42,18 @@ const Login = () => {
                 }
             }
         } else {
-            // Show modal for unregistered user
-            setShowModal(true);
-            setCountdown(5);
+            const errorMessage = result?.error || 'Login failed';
+            if (errorMessage === 'Invalid credentials') {
+                setError('Invalid email or password. Please check your credentials and try again.');
+            } else if (errorMessage === 'Please verify your email before logging in.') {
+                setError('Please verify your email before logging in. Check your email for the verification link.');
+            } else if (errorMessage === 'Your account is pending deletion and cannot be accessed. Please contact support if this is a mistake.') {
+                setError('Your account is pending deletion. Please contact support for assistance.');
+            } else {
+                // Show modal for unregistered user
+                setShowModal(true);
+                setCountdown(5);
+            }
         }
     };
 
@@ -126,6 +137,15 @@ const Login = () => {
                             </Link>
                         </div>
                     </div>
+
+                    {error && (
+                        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                            <div className="flex items-center">
+                                <AlertCircle className="w-5 h-5 text-red-500 mr-2" />
+                                <p className="text-sm text-red-700">{error}</p>
+                            </div>
+                        </div>
+                    )}
 
                     <div>
                         <button
