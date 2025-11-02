@@ -132,7 +132,42 @@ export const AuthProvider = ({ children }) => {
 
     const hideProfileCompletionModal = () => dispatch({ type: 'HIDE_PROFILE_MODAL' });
 
-    const logout = () => dispatch({ type: 'LOGOUT' });
+    const logout = (arg) => {
+        // Clear auth state
+        dispatch({ type: 'LOGOUT' });
+
+        // Legacy: if a function is passed, treat it as navigate and go to '/'
+        if (typeof arg === 'function') {
+            try {
+                arg('/');
+                return;
+            } catch (err) {
+                // fallback
+            }
+        }
+
+        // If an options object is passed, allow controlling redirect behavior
+        // Usage: logout({ navigate, redirectTo: '/login' }) or logout({ noRedirect: true })
+        if (arg && typeof arg === 'object') {
+            const { navigate, redirectTo, noRedirect } = arg;
+            if (noRedirect) return;
+            if (typeof navigate === 'function') {
+                try {
+                    navigate(redirectTo || '/');
+                    return;
+                } catch (err) {
+                    // fallback to location
+                }
+            }
+            if (redirectTo) {
+                window.location.href = redirectTo;
+                return;
+            }
+        }
+
+        // Default: do a full page redirect to home
+        window.location.href = '/';
+    };
 
     return (
         <AuthContext.Provider value={{ ...state, login, register, updateUserProfile, hideProfileCompletionModal, logout }}>

@@ -86,6 +86,15 @@ app.get('/', (req, res) => {
     });
 });
 
+// Redirect legacy reset-password links to the frontend reset page.
+// This helps when emails link to the backend host (e.g., during development)
+app.get('/reset-password/:resettoken', (req, res) => {
+  const token = req.params.resettoken;
+  const frontendBase = process.env.FRONTEND_URL || process.env.CLIENT_URL || (process.env.NODE_ENV !== 'production' ? 'http://localhost:3000' : `${req.protocol}://${req.get('host')}`);
+  // Redirect to the frontend reset route
+  return res.redirect(`${frontendBase.replace(/\/$/, '')}/reset-password/${token}`);
+});
+
 // Serve frontend
 if (process.env.NODE_ENV === 'production') {
     const frontendPath = path.join(__dirname, '../../frontend/build');

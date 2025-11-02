@@ -1,5 +1,6 @@
-import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import AuthContext from '../../context/AuthContext';
 import {
     LayoutDashboard,
     Briefcase,
@@ -17,6 +18,8 @@ import {
 
 const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
     const location = useLocation();
+    const navigate = useNavigate();
+    const { logout } = useContext(AuthContext);
     const commonClasses = 'flex items-center px-4 py-2.5 rounded-lg transition-all duration-200 hover:scale-105';
 
     const navItems = [
@@ -35,7 +38,6 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
     const bottomNavItems = [
         { href: '/dashboard/profile', icon: <User />, label: 'Profile' },
         { href: '/dashboard/delete-account', icon: <Trash2 />, label: 'Delete Account' },
-        { href: '/logout', icon: <LogOut />, label: 'Logout' },
     ];
 
     // Close sidebar on mobile after navigation
@@ -95,6 +97,25 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
                                 <span className="ml-2">{item.label}</span>
                             </NavLink>
                         ))}
+
+                        {/* Logout button - calls AuthContext.logout with client-side navigation */}
+                        <button
+                            onClick={() => {
+                                try {
+                                    // Call logout with navigate so AuthContext performs a client-side redirect
+                                    if (logout) logout({ navigate, redirectTo: '/' });
+                                } catch (err) {
+                                    // Fallback: clear local token and navigate
+                                    localStorage.removeItem('token');
+                                    navigate('/');
+                                }
+                            }}
+                            className={`${commonClasses} text-gray-700 hover:bg-gray-100 w-full text-left mt-2`}
+                            aria-label="Logout"
+                        >
+                            <LogOut />
+                            <span className="ml-2">Logout</span>
+                        </button>
                     </div>
                 </nav>
             </aside>

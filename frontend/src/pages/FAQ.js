@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { ChevronDownIcon, MagnifyingGlassIcon, BriefcaseIcon, CurrencyDollarIcon, ShieldCheckIcon, ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
-import Footer from "../components/Footer";
+// Footer moved to App-level for specific pages (full-bleed display)
 
 const faqs = [
   {
@@ -96,7 +96,6 @@ const FAQ = () => {
           </div>
         )}
       </div>
-      <Footer />
     </div>
   );
 };

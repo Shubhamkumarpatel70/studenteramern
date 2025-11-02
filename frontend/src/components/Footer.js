@@ -2,8 +2,8 @@ import React from "react";
 import { FaWhatsapp, FaLinkedin, FaInstagram } from 'react-icons/fa';
 
 const Footer = () => (
-  <footer className="bg-[#0A2463] text-[#FFFFFF] pt-12 pb-4 px-4 md:px-16 font-[Inter,sans-serif] font-semibold transition-all duration-300">
-    <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 pb-8 border-b border-[#F8F9FA]">
+  <footer className="w-full bg-[#0A2463] text-[#FFFFFF] pt-12 pb-4 font-[Inter,sans-serif] font-semibold transition-all duration-300">
+    <div className="max-w-7xl mx-auto px-4 md:px-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 pb-8 border-b border-[#F8F9FA]">
       {/* About */}
       <div>
         <div className="flex items-center mb-4">
@@ -38,11 +38,11 @@ const Footer = () => (
       <div>
         <h3 className="font-bold text-xl mb-4 text-[#FFFFFF]">Contact Us</h3>
         <p className="mb-2 text-[#F8F9FA]">Have any questions? Feel free to reach out to us for more information.</p>
-        <div className="flex items-center mb-2"><span className="text-2xl mr-2">📞</span> <span>+91- 90278 80288<br/>(Monday - Saturday) 10 AM - 6 PM</span></div>
+        <div className="flex items-center mb-2"><span className="text-2xl mr-2">📞</span> <span>+91- 90278 80288<br/>(Monday - Saturday) 10 AM - 4 PM</span></div>
         <div className="flex items-center"><span className="text-2xl mr-2">✉️</span> <span>contact.studentera@gmail.com</span></div>
       </div>
     </div>
-    <div className="text-center text-[#F8F9FA] text-sm pt-4">
+    <div className="text-center text-[#F8F9FA] text-sm pt-4 px-4 md:px-16">
       © {new Date().getFullYear()} <span className="font-semibold text-[#FFFFFF]">Student Era</span>. All rights reserved.
     </div>
   </footer>

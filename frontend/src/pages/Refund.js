@@ -1,6 +1,6 @@
 import React from "react";
 import { CreditCard, Clock, Shield, Mail, Phone } from "lucide-react";
-import Footer from "../components/Footer";
+// Footer moved to App-level for specific pages (full-bleed display)
 
 const Refund = () => (
   <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4 py-8">
@@ -89,7 +89,6 @@ const Refund = () => (
         </div>
       </div>
     </div>
-    <Footer />
   </div>
 );
 

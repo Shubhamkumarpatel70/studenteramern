@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FileText, Users, Shield, RefreshCw, Mail } from "lucide-react";
-import Footer from "../components/Footer";
+// Footer moved to App-level for specific pages (full-bleed display)
 
 const sections = [
   { id: "acceptance", title: "1. Acceptance of Terms", icon: FileText },
@@ -116,7 +116,6 @@ const Terms = () => {
           </section>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

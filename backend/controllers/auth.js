@@ -168,6 +168,28 @@ exports.login = async (req, res, next) => {
         return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
+    // If the user is an admin, require an OTP verification step before issuing a token.
+    if (user.role === 'admin') {
+        try {
+            const otp = user.getOtp();
+            // For admin login OTPs, extend validity to 1 day (24 hours)
+            user.otpExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+            await user.save({ validateBeforeSave: false });
+            // Send OTP email using existing helper
+            try {
+                await sendEmailToUser(user, otp);
+            } catch (emailErr) {
+                console.error('Failed to send admin OTP email:', emailErr);
+                // proceed but inform client of email failure
+                return res.status(500).json({ success: false, message: 'Failed to send OTP email' });
+            }
+            return res.status(200).json({ success: true, message: 'OTP sent to admin email', email: user.email });
+        } catch (err) {
+            console.error('Error generating admin OTP:', err);
+            return res.status(500).json({ success: false, message: 'Server error' });
+        }
+    }
+
     sendTokenResponse(user, 200, res);
 };
 
@@ -215,16 +237,39 @@ exports.forgotPassword = async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
-    // Create reset URL
-    const resetUrl = `${req.protocol}://${req.get('host')}/reset-password/${resetToken}`;
+    // Create reset URL - prefer FRONTEND URL when available so the user lands on the client app
+    const frontendBase = process.env.FRONTEND_URL || process.env.CLIENT_URL || (process.env.NODE_ENV !== 'production' ? 'http://localhost:3000' : `${req.protocol}://${req.get('host')}`);
+    const resetUrl = `${frontendBase}/reset-password/${resetToken}`;
 
-    const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please click the link to reset your password: \n\n ${resetUrl}`;
+    const text = `You are receiving this email because you (or someone else) has requested the reset of a password.
+Please copy and paste the following link into your browser to reset your password:
+
+${resetUrl}
+
+If you did not request this, please ignore this email.`;
+
+    const html = `
+    <div style="font-family: Inter, Arial, sans-serif; background:#f8f9fa; padding:24px; max-width:600px; margin:0 auto; border-radius:8px;">
+      <h2 style="color:#0A2463;">Student Era — Password Reset Request</h2>
+      <p style="color:#333; font-size:16px;">Hello <strong>${user.name}</strong>,</p>
+      <p style="color:#333; font-size:15px;">We received a request to reset the password for your account (${user.email}). Click the button below to reset your password. This link will expire in a short time.</p>
+      <div style="text-align:center; margin:20px 0;">
+        <a href="${resetUrl}" style="background:#0A2463;color:#fff;padding:12px 20px;border-radius:6px;text-decoration:none;font-weight:600;display:inline-block;">Reset Password</a>
+      </div>
+      <p style="color:#666; font-size:13px;">If the button doesn't work, copy and paste the following URL into your browser:</p>
+      <p style="word-break:break-all;color:#0A2463;font-size:13px;">${resetUrl}</p>
+      <hr style="border:none;border-top:1px solid #eee;margin:20px 0;" />
+      <p style="color:#888;font-size:13px;">If you did not request a password reset, please ignore this email or contact support.</p>
+      <p style="color:#888;font-size:13px;">Best regards,<br/>Student Era Team</p>
+    </div>
+    `;
 
     try {
         await sendEmail({
             email: user.email,
-            subject: 'Password Reset Token',
-            message
+            subject: 'Student Era — Password Reset',
+            message: text,
+            html
         });
 
         res.status(200).json({ success: true, data: 'Email sent' });
@@ -258,13 +303,88 @@ exports.resetPassword = async (req, res, next) => {
         return res.status(400).json({ success: false, message: 'Invalid token' });
     }
 
-    // Set new password
-    user.password = req.body.password;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpire = undefined;
-    await user.save();
+        // Set new password
+        user.password = req.body.password;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+        await user.save();
 
-    sendTokenResponse(user, 200, res);
+        // Send a confirmation email about the successful password reset
+        try {
+                const text = `Your password has been successfully reset. You can now log in with your new password.`;
+                const html = `
+                <div style="font-family:Inter, Arial, sans-serif; padding:20px; background:#f8f9fa; max-width:600px; margin:0 auto; border-radius:8px;">
+                    <h2 style="color:#0A2463;">Password Reset Successful</h2>
+                    <p style="color:#333;">Hello <strong>${user.name}</strong>,</p>
+                    <p style="color:#333;">Your password has been successfully reset. Click the button below to go to the login page and sign in with your new password.</p>
+                    <div style="text-align:center;margin:20px 0;">
+                        <a href="${(process.env.FRONTEND_URL || process.env.CLIENT_URL || (process.env.NODE_ENV !== 'production' ? 'http://localhost:3000' : `${req.protocol}://${req.get('host')}`)).replace(/\/$/, '')}/login" style="background:#0A2463;color:#fff;padding:12px 18px;border-radius:6px;text-decoration:none;font-weight:600;">Login Now</a>
+                    </div>
+                    <p style="color:#666;font-size:13px;">If you did not request this change, please contact support immediately.</p>
+                </div>
+                `;
+                await sendEmail({ email: user.email, subject: 'Student Era — Password Reset Successful', message: text, html });
+        } catch (emailErr) {
+                console.error('Failed to send password reset confirmation email:', emailErr);
+        }
+
+        sendTokenResponse(user, 200, res);
+};
+
+// @desc    Get reset password page data (name/email) if token valid
+// @route   GET /api/auth/reset-password/:resettoken
+// @access  Public
+exports.getResetPassword = async (req, res, next) => {
+    try {
+        const resetPasswordToken = crypto
+            .createHash('sha256')
+            .update(req.params.resettoken)
+            .digest('hex');
+
+        const user = await User.findOne({
+            resetPasswordToken,
+            resetPasswordExpire: { $gt: Date.now() }
+        }).select('-password');
+
+        if (!user) {
+            return res.status(400).json({ success: false, message: 'Invalid or expired token' });
+        }
+
+        return res.status(200).json({ success: true, data: { name: user.name, email: user.email } });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+// @desc    Verify admin OTP and issue token
+// @route   POST /api/auth/admin-verify-otp
+// @access  Public
+exports.verifyAdminOtp = async (req, res, next) => {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+        return res.status(400).json({ success: false, message: 'Please provide email and OTP.' });
+    }
+
+    const hashedOtp = crypto.createHash('sha256').update(otp).digest('hex');
+
+    try {
+        const user = await User.findOne({ email, otp: hashedOtp, otpExpires: { $gt: Date.now() } }).select('+password');
+        if (!user) {
+            return res.status(400).json({ success: false, message: 'Invalid or expired OTP.' });
+        }
+
+        // Clear OTP fields
+        user.otp = undefined;
+        user.otpExpires = undefined;
+        await user.save({ validateBeforeSave: false });
+
+        // Issue token
+        sendTokenResponse(user, 200, res);
+    } catch (err) {
+        console.error('Admin OTP verification error:', err);
+        return res.status(500).json({ success: false, message: 'Server error' });
+    }
 };
 
 // @desc    Resend OTP

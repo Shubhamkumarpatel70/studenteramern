@@ -1,6 +1,6 @@
 import React from "react";
 import { Shield, Eye, Lock, Database, Mail, Phone, FileText } from "lucide-react";
-import Footer from "../components/Footer";
+// Footer moved to App-level for specific pages (full-bleed display)
 
 const Privacy = () => (
   <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4 py-8">
@@ -118,7 +118,6 @@ const Privacy = () => (
         </div>
       </div>
     </div>
-    <Footer />
   </div>
 );
 

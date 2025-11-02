@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import api from './config/api';
 import Navbar from "./components/Navbar";
+import Footer from './components/Footer';
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -118,8 +119,8 @@ const AppContent = () => {
     useEffect(() => {
       const handler = () => {
         try {
-          // Ensure local logout state is cleared
-          if (logout) logout();
+          // Ensure local logout state is cleared without causing a redirect
+          if (logout) logout({ noRedirect: true });
         } catch (e) {
           // ignore
         }
@@ -225,9 +226,19 @@ const AppContent = () => {
           {/* Not Found Route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        {/* Render Footer at root-level for selected pages so it can be full-bleed */}
+        <FooterRenderer />
       </Router>
     </>
   );
+};
+
+// Component to render Footer outside page containers for specific routes
+const FooterRenderer = () => {
+  const { pathname } = useLocation();
+  const paths = ['/faq', '/terms', '/privacy', '/refund', '/contact'];
+  if (paths.includes(pathname)) return <Footer />;
+  return null;
 };
 
 // The application root is rendered in `index.js`, which already wraps
