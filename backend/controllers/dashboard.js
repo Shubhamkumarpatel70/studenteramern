@@ -36,7 +36,22 @@ exports.getDashboardStats = async (req, res, next) => {
             };
         } else {
             // Regular user stats
-            const meetingsCount = await Meeting.countDocuments({ 'attendees.user': userId });
+            // Count meetings relevant to the user (similar logic as getMeetings)
+            const orConditions = [ { targetType: 'all' }, { targetType: 'users', selectedUsers: userId } ];
+            if (req.user.role === 'co-admin') {
+                orConditions.push({ targetType: 'co-admins' });
+            }
+            if (req.user.role === 'accountant') {
+                orConditions.push({ targetType: 'accountants' });
+            }
+            if (req.user.role === 'user') {
+                const userApplications = await Application.find({ user: userId, status: 'Approved' }).select('internship');
+                const userInternshipIds = userApplications.map(app => app.internship).filter(Boolean);
+                if (userInternshipIds.length > 0) {
+                    orConditions.push({ targetType: 'internship', selectedInternship: { $in: userInternshipIds } });
+                }
+            }
+            const meetingsCount = await Meeting.countDocuments({ $or: orConditions });
             const notificationsCount = await Notification.countDocuments({ user: userId });
             const certificatesCount = await Certificate.countDocuments({ user: userId });
             const offerLettersCount = await OfferLetter.countDocuments({ user: userId });

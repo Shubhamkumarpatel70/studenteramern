@@ -85,7 +85,8 @@ const ManageMeetings = () => {
 
         const meetingData = {
             title: formData.title,
-            date: formData.date,
+            // convert local datetime-local value to ISO (UTC)
+            date: formData.date ? new Date(formData.date).toISOString() : '',
             link: formData.link,
             targetType: formData.targetType,
             selectedInternship: formData.targetType === 'internship' ? formData.internshipId : undefined,

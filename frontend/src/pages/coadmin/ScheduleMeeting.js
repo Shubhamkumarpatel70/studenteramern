@@ -51,7 +51,8 @@ const ScheduleMeeting = () => {
         setSuccess('');
         const meetingData = {
             title: formData.title,
-            date: formData.date,
+            // convert local datetime-local value to ISO (UTC) so backend stores a timezone-aware timestamp
+            date: formData.date ? new Date(formData.date).toISOString() : '',
             link: formData.link,
             expireAfterMinutes: formData.expireAfterMinutes,
             targetType: formData.targetType,

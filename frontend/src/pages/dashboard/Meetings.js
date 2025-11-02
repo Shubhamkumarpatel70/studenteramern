@@ -9,12 +9,14 @@ const JoinMeetingButton = ({ meetingDate, meetingLink, expireAfterMinutes = 60 }
     const [isExpired, setIsExpired] = useState(false);
 
     useEffect(() => {
+        // Normalize meeting time to epoch ms so timezone differences won't affect the countdown
+        const meetingTs = meetingDate ? new Date(meetingDate).getTime() : null;
         const interval = setInterval(() => {
-            const now = new Date();
-            const meetingDateTime = new Date(meetingDate);
-            const meetingEndTime = new Date(meetingDateTime.getTime() + (expireAfterMinutes || 60) * 60 * 1000);
-            const diff = meetingDateTime - now;
-            const diffEnd = meetingEndTime - now;
+            if (!meetingTs) return;
+            const nowTs = Date.now();
+            const meetingEndTs = meetingTs + (expireAfterMinutes || 60) * 60 * 1000;
+            const diff = meetingTs - nowTs;
+            const diffEnd = meetingEndTs - nowTs;
 
             if (diffEnd <= 0) {
                 setIsExpired(true);
@@ -114,7 +116,8 @@ const Meetings = () => {
                         {meetings.map(meeting => (
                             <div key={meeting._id} className="bg-white rounded-lg shadow p-4 flex flex-col gap-2">
                                 <div className="font-semibold text-gray-800">{meeting.title}</div>
-                                <div className="text-xs text-gray-500">{new Date(meeting.date).toLocaleString('en-US', { timeZone: 'UTC' })}</div>
+                                {/* Show meeting time in user's local timezone for clarity */}
+                                <div className="text-xs text-gray-500">{new Date(meeting.date).toLocaleString()}</div>
                                 <div className="text-sm text-gray-600">{meeting.description}</div>
                                 <JoinMeetingButton meetingDate={meeting.date} meetingLink={meeting.link} expireAfterMinutes={meeting.expireAfterMinutes} />
                             </div>

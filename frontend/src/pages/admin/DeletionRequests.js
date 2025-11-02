@@ -5,7 +5,7 @@ const DeletionRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedRequest, setSelectedRequest] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [actionError, setActionError] = useState('');
   const [actionSuccess, setActionSuccess] = useState('');
@@ -14,7 +14,7 @@ const DeletionRequests = () => {
     setLoading(true);
     setError('');
     try {
-      const res = await api.get('/users/deletion-requests');
+      const res = await api.get('/account-deletion-requests');
       setRequests(res.data.data);
     } catch (err) {
       setError('Failed to fetch deletion requests.');
@@ -26,16 +26,27 @@ const DeletionRequests = () => {
     fetchRequests();
   }, []);
 
-  const handleDelete = async () => {
+  const handleApprove = async (request) => {
     setActionError('');
     setActionSuccess('');
     try {
-      await api.delete(`/users/${selectedUser._id}/permanent`);
-      setActionSuccess('User permanently deleted.');
-      setModalOpen(false);
+      await api.put(`/account-deletion-requests/${request._id}/approve`);
+      setActionSuccess('Account deletion request approved and user account deleted.');
       fetchRequests();
     } catch (err) {
-      setActionError('Failed to delete user.');
+      setActionError('Failed to approve deletion request.');
+    }
+  };
+
+  const handleReject = async (request) => {
+    setActionError('');
+    setActionSuccess('');
+    try {
+      await api.put(`/account-deletion-requests/${request._id}/reject`);
+      setActionSuccess('Account deletion request rejected.');
+      fetchRequests();
+    } catch (err) {
+      setActionError('Failed to reject deletion request.');
     }
   };
 
@@ -57,19 +68,35 @@ const DeletionRequests = () => {
             </tr>
           </thead>
           <tbody>
-            {requests.map(user => (
-              <tr key={user._id} className="border-b">
-                <td className="py-2 px-4 font-semibold">{user.name}</td>
-                <td className="py-2 px-4">{user.email}</td>
-                <td className="py-2 px-4 text-sm text-gray-700">{user.deletionReason || '-'}</td>
-                <td className="py-2 px-4 text-xs text-gray-500">{user.updatedAt ? new Date(user.updatedAt).toLocaleString() : '-'}</td>
+            {requests.map(request => (
+              <tr key={request._id} className="border-b">
+                <td className="py-2 px-4 font-semibold">{request.userName}</td>
+                <td className="py-2 px-4">{request.userEmail}</td>
+                <td className="py-2 px-4 text-sm text-gray-700">{request.reason}</td>
+                <td className="py-2 px-4 text-xs text-gray-500">{new Date(request.requestedAt).toLocaleString()}</td>
                 <td className="py-2 px-4">
-                  <button
-                    className="px-4 py-2 bg-[#FF3B30] text-white rounded font-bold hover:bg-[#FF453A] transition"
-                    onClick={() => { setSelectedUser(user); setModalOpen(true); }}
-                  >
-                    Delete Permanently
-                  </button>
+                  {request.status === 'pending' ? (
+                    <div className="flex gap-2">
+                      <button
+                        className="px-3 py-1 bg-green-600 text-white rounded text-sm font-bold hover:bg-green-700 transition"
+                        onClick={() => handleApprove(request)}
+                      >
+                        Approve
+                      </button>
+                      <button
+                        className="px-3 py-1 bg-red-600 text-white rounded text-sm font-bold hover:bg-red-700 transition"
+                        onClick={() => handleReject(request)}
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  ) : (
+                    <span className={`px-2 py-1 rounded text-sm font-semibold ${
+                      request.status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    }`}>
+                      {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                    </span>
+                  )}
                 </td>
               </tr>
             ))}

@@ -75,6 +75,7 @@ app.use('/api/assigned-tasks', assignedTasks);
 app.use('/api/contact-queries', require('./routes/contactQueries'));
 app.use('/api/help-queries', require('./routes/helpQueries'));
 app.use('/api/payment-options', require('./routes/paymentOptions'));
+app.use('/api/account-deletion-requests', require('./routes/accountDeletionRequests'));
 
 // Root route
 app.get('/', (req, res) => {

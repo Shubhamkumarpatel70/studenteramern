@@ -13,30 +13,31 @@ exports.getMeetings = async (req, res, next) => {
             // Admin gets all meetings
             meetings = await Meeting.find().populate('user', 'name email').sort({ date: 'asc' });
         } else {
-            // Find meetings targeted at 'all'
-            const publicMeetings = Meeting.find({ targetType: 'all' });
+            // Build query to find meetings relevant to this user
+            const userId = user.id;
+            const orConditions = [ { targetType: 'all' } ];
 
-            // Find meetings for the user's role or specific internships
-            let roleSpecificMeetings;
+            // If meeting explicitly lists users
+            orConditions.push({ targetType: 'users', selectedUsers: userId });
+
+            // Role specific meetings
             if (user.role === 'co-admin') {
-                roleSpecificMeetings = Meeting.find({ targetType: 'co-admins' });
-            } else if (user.role === 'accountant') {
-                roleSpecificMeetings = Meeting.find({ targetType: 'accountants' });
-            } else { // 'user'
-                // Find internships the user is approved for
-                const userApplications = await Application.find({ user: user.id, status: 'Approved' }).select('internship');
-                const userInternshipIds = userApplications.map(app => app.internship);
-
-                roleSpecificMeetings = Meeting.find({
-                    targetType: 'internship',
-                    selectedInternship: { $in: userInternshipIds }
-                });
+                orConditions.push({ targetType: 'co-admins' });
+            }
+            if (user.role === 'accountant') {
+                orConditions.push({ targetType: 'accountants' });
             }
 
-            const [publicArr, roleArr] = await Promise.all([publicMeetings, roleSpecificMeetings]);
-            meetings = [...publicArr, ...roleArr];
-            // Sort combined meetings by date
-            meetings.sort((a, b) => new Date(a.date) - new Date(b.date));
+            // If regular user, also include internship-specific meetings where user's internships match
+            if (user.role === 'user') {
+                const userApplications = await Application.find({ user: userId, status: 'Approved' }).select('internship');
+                const userInternshipIds = userApplications.map(app => app.internship).filter(Boolean);
+                if (userInternshipIds.length > 0) {
+                    orConditions.push({ targetType: 'internship', selectedInternship: { $in: userInternshipIds } });
+                }
+            }
+
+            meetings = await Meeting.find({ $or: orConditions }).populate('user', 'name email').sort({ date: 'asc' });
         }
 
         res.status(200).json({ success: true, count: meetings.length, data: meetings });
