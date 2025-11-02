@@ -44,7 +44,7 @@ exports.register = async (req, res, next) => {
             });
         }
 
-        // Send OTP email and inform the client whether email sending succeeded
+        // Send OTP email and inf orm the client whether email sending succeeded
         try {
             await sendEmailToUser(user, otp);
             // Return basic user info so frontend can proceed to OTP verification
