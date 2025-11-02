@@ -3,6 +3,8 @@ import axios from 'axios';
 // Set base URL for axios
 const baseURL = process.env.REACT_APP_API_URL
   ? process.env.REACT_APP_API_URL.replace(/\/$/, '') + '/api'
+  : process.env.NODE_ENV === 'development'
+  ? 'http://localhost:5000/api'
   : 'https://studenteramernbackend.onrender.com/api';
 
 // Create axios instance with base URL
