@@ -23,7 +23,7 @@ const Login = () => {
             if (from !== '/') {
                 navigate(from, { replace: true });
             } else {
-                 switch (user.role) {
+                switch (user.role) {
                     case 'admin':
                         navigate('/admin-dashboard', { replace: true });
                         break;

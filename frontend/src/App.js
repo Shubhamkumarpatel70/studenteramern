@@ -49,6 +49,7 @@ import ManageTasks from './pages/admin/ManageTasks';
 import AssignTasks from './pages/admin/AssignTasks';
 import Queries from "./pages/admin/Queries";
 import DeletionRequests from './pages/admin/DeletionRequests';
+import ManagePayments from './pages/admin/ManagePayments';
 
 
 // Co-Admin Pages
@@ -170,6 +171,7 @@ const AppContent = () => {
               <Route path="manage-testimonials" element={<ManageTestimonials />} />
               <Route path="post-announcement" element={<PostAnnouncement />} />
               <Route path="manage-meetings" element={<ManageMeetings />} />
+              <Route path="manage-payments" element={<ManagePayments />} />
               <Route path="send-notification" element={<SendNotification />} />
               <Route path="generate-certificate" element={<GenerateCertificate />} />
               <Route path="generate-offer-letter" element={<GenerateOfferLetter />} />
