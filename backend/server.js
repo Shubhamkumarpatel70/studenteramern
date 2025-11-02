@@ -2,6 +2,13 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
+const helmet = require('helmet');
+const compression = require('compression');
+const rateLimit = require('express-rate-limit');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp');
+const morgan = require('morgan');
 const offerLetters = require('./routes/offerLetters');
 const certificates = require('./routes/certificates');
 const transactions = require('./routes/transactions');
@@ -23,25 +30,46 @@ connectDB();
 
 const app = express();
 
-// Enable CORS (move to very top)
+// Use morgan logging in development for requests
+if (process.env.NODE_ENV !== 'production') {
+  app.use(morgan('dev'));
+}
+
+// Set secure HTTP headers
+app.use(helmet());
+
+// Prevent HTTP parameter pollution
+app.use(hpp());
+
+// Data sanitization against NoSQL injection
+app.use(mongoSanitize());
+
+// Data sanitization against XSS
+app.use(xss());
+
+// Gzip compression for responses
+app.use(compression());
+
+// Enable CORS with configured frontend origin(s)
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'https://studentera.live',
+  'http://localhost:3000'
+];
 app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'https://studenteramernfrontend.onrender.com',
-    'https://studentera.live'
-  ],
+  origin: function(origin, callback) {
+    // allow requests with no origin like mobile apps or curl
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = `The CORS policy for this site does not allow access from the specified Origin.`;
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   credentials: true
 }));
 
 // Handle preflight requests
-app.options('*', cors({
-  origin: [
-    'http://localhost:3000',
-    'https://studenteramernfrontend.onrender.com',
-    'https://studentera.live'
-  ],
-  credentials: true
-}));
+app.options('*', cors());
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -51,6 +79,18 @@ app.get('/health', (req, res) => {
 // Body parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Rate limiting: apply to auth routes later, but set a reasonable default
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Too many requests from this IP, please try again later.' }
+});
+
+// Apply default rate limiter to all API routes
+app.use('/api', apiLimiter);
 
 // Set static folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
