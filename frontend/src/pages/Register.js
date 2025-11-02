@@ -17,8 +17,10 @@ const Register = () => {
         e.preventDefault();
         setError('');
         try {
-            await register({ name, email, password, role });
-            navigate('/otp-verify', { state: { email } });
+            const res = await register({ name, email, password, role });
+            const targetEmail = res?.email || email;
+            // Pass along whether the backend reported an email sending problem
+            navigate('/otp-verify', { state: { email: targetEmail, emailError: !!res?.emailError } });
         } catch (err) {
             const message = err.response?.data?.message || 'Registration failed. Please try again.';
             setError(message);

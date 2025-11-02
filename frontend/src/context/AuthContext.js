@@ -106,11 +106,12 @@ export const AuthProvider = ({ children }) => {
         const config = { headers: { 'Content-Type': 'application/json' } };
         try {
             const res = await api.post('/auth/register', userData, config);
-            // Add notification with login ID and intern ID (if available)
-            addLocalNotification(`Registration successful! Login ID: ${res.data.user?.email || userData.email} | Intern ID: ${res.data.user?.internId || 'Check your email/OTP'}`);
-            return res.data;
+            // API now returns email and internId (and may include emailError)
+            const data = res.data || {};
+            addLocalNotification(`Registration successful! Login ID: ${data.email || userData.email} | Intern ID: ${data.internId || 'Check your email/OTP'}`);
+            return data;
         } catch (err) {
-            console.error('Registration failed:', err.response.data.message);
+            console.error('Registration failed:', err.response?.data?.message || err.message);
             // If user already exists, throw error to be handled by component
             if (err.response?.data?.message?.includes('already exists')) {
                 throw err;

@@ -4,7 +4,8 @@ const PaymentOptionSchema = new mongoose.Schema({
   displayName: { type: String, required: true },
   upiId: { type: String, required: true },
   qrCodeUrl: { type: String },
-  instructions: { type: String }
+  instructions: { type: String },
+  isActive: { type: Boolean, default: true }
 });
 
 // Add a static method to insert a default payment option if none exist

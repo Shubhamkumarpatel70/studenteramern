@@ -45,8 +45,9 @@ const PaymentPage = () => {
         };
         fetchInternship();
         api.get('/payment-options').then(res => {
-            setPaymentOptions(res.data.data);
-            setSelectedOption(res.data.data[0] || null);
+            const activeOptions = res.data.data.filter(option => option.isActive !== false);
+            setPaymentOptions(activeOptions);
+            setSelectedOption(activeOptions[0] || null);
         });
     }, [internshipId]);
 

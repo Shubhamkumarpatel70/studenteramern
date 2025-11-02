@@ -44,17 +44,20 @@ exports.register = async (req, res, next) => {
             });
         }
 
-        // Send OTP email
+        // Send OTP email and inform the client whether email sending succeeded
         try {
             await sendEmailToUser(user, otp);
-            res.status(200).json({ success: true, message: `An OTP has been sent to ${user.email}` });
+            // Return basic user info so frontend can proceed to OTP verification
+            return res.status(200).json({ success: true, message: `An OTP has been sent to ${user.email}`, email: user.email, internId: user.internId });
         } catch (emailError) {
             console.error("Failed to send OTP email:", emailError);
-            // Still save the user but inform about email issue
-            res.status(200).json({
+            // Still return success but indicate email failure so frontend can surface it and allow resend
+            return res.status(200).json({
                 success: true,
-                message: `Registration successful but OTP email failed. Please contact support.`,
-                emailError: true
+                message: `Registration successful but OTP email failed. Please use the resend option or contact support.`,
+                emailError: true,
+                email: user.email,
+                internId: user.internId
             });
         }
 
@@ -82,16 +85,13 @@ async function sendEmailToUser(user, otp) {
     </div>
     `;
     const text = `Your OTP for verification is: ${otp}\nIt will expire in 10 minutes.\nNever share your OTP with anyone.`;
-    try {
-        await sendEmail({
-            email: user.email,
-            subject: 'Student Era - Account Verification OTP',
-            message: text,
-            html: html
-        });
-    } catch (emailError) {
-        console.error("Failed to send OTP email:", emailError);
-    }
+    // Let errors bubble up to the caller so registration can respond appropriately
+    await sendEmail({
+        email: user.email,
+        subject: 'Student Era - Account Verification OTP',
+        message: text,
+        html: html
+    });
 }
 
 // @desc    Verify OTP
@@ -211,7 +211,7 @@ exports.forgotPassword = async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
 
     // Create reset URL
-    const resetUrl = `${req.protocol}://${req.get('host')}/resetpassword/${resetToken}`;
+    const resetUrl = `${req.protocol}://${req.get('host')}/reset-password/${resetToken}`;
 
     const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please click the link to reset your password: \n\n ${resetUrl}`;
 

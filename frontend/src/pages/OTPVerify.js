@@ -9,6 +9,7 @@ const OTPVerify = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const email = location.state?.email;
+    const emailError = location.state?.emailError;
 
     const onVerify = async (e) => {
         e.preventDefault();
@@ -58,6 +59,11 @@ const OTPVerify = () => {
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="bg-[#F8F9FA] py-8 px-4 shadow-2xl sm:rounded-2xl sm:px-10 border border-[#0A2463]">
                     {error && <div className="mb-4 text-[#DC3545] text-center font-semibold">{error}</div>}
+                    {emailError && (
+                        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-center text-yellow-800">
+                            We were unable to send the OTP email automatically. Please click "Resend" below or contact support.
+                        </div>
+                    )}
                     <form className="space-y-6" onSubmit={onVerify}>
                         <div>
                             <label htmlFor="otp" className="block text-sm font-medium text-[#212529] mb-2">

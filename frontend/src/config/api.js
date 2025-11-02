@@ -33,9 +33,16 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Handle unauthorized access
-      localStorage.removeItem('token');
-      window.location.href = '/login';
+        // Handle unauthorized access: dispatch an event so the React Router
+        // can perform a client-side navigation without forcing a full page reload
+        // (which can cause a 404 on static hosts when requesting e.g. /login).
+        localStorage.removeItem('token');
+        try {
+          window.dispatchEvent(new Event('unauthorized'));
+        } catch (e) {
+          // Fallback to full navigation if dispatching the event fails for some reason
+          window.location.href = '/login';
+        }
     }
     return Promise.reject(error);
   }

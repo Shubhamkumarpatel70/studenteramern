@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import api from './config/api';
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
@@ -60,7 +60,7 @@ import ViewMeetings from "./pages/coadmin/ViewMeetings";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 
-import AuthContext, { AuthProvider } from './context/AuthContext';
+import AuthContext from './context/AuthContext';
 import ProfileCompletionModal from './components/ProfileCompletionModal';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -107,6 +107,30 @@ const AppContent = () => {
     };
   }, []);
 
+  // Component to handle unauthorized events dispatched from the axios instance.
+  // It listens for the `unauthorized` event and uses react-router navigation
+  // to move to the login page without causing a full page reload (avoids 404 on static hosts).
+  const UnauthorizedHandler = () => {
+    const navigate = useNavigate();
+    const { logout } = useContext(AuthContext);
+
+    useEffect(() => {
+      const handler = () => {
+        try {
+          // Ensure local logout state is cleared
+          if (logout) logout();
+        } catch (e) {
+          // ignore
+        }
+        navigate('/login');
+      };
+      window.addEventListener('unauthorized', handler);
+      return () => window.removeEventListener('unauthorized', handler);
+    }, [logout, navigate]);
+
+    return null;
+  };
+
   if (!isOnline) {
     return <NoInternet />;
   }
@@ -120,6 +144,7 @@ const AppContent = () => {
       <ToastContainer position="top-right" autoClose={4000} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
       {showProfileModal && <ProfileCompletionModal />}
       <Router>
+        <UnauthorizedHandler />
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
@@ -133,8 +158,8 @@ const AppContent = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/otp-verify" element={<OTPVerify />} />
-          <Route path="/forgotpassword" element={<ForgotPassword />} />
-          <Route path="/resetpassword/:resettoken" element={<ResetPassword />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:resettoken" element={<ResetPassword />} />
           <Route path="/internships/:id" element={<InternshipDetails />} />
           <Route path="/internships" element={<Internships />} />
           <Route path="/apply/:internshipId" element={<ProtectedRoute roles={['user']}><Apply /></ProtectedRoute>} />
@@ -204,12 +229,7 @@ const AppContent = () => {
   );
 };
 
-function App() {
-  return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
-  );
-}
-
-export default App;
+// The application root is rendered in `index.js`, which already wraps
+// the app with `AuthProvider`. Export AppContent directly to avoid
+// double-wrapping the context provider.
+export default AppContent;
