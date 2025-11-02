@@ -101,7 +101,7 @@ const Meetings = () => {
                         {meetings.map(meeting => (
                             <div key={meeting._id} className="bg-white rounded-lg shadow p-4 flex flex-col gap-2">
                                 <div className="font-semibold text-gray-800">{meeting.title}</div>
-                                <div className="text-xs text-gray-500">{new Date(meeting.date).toLocaleString()}</div>
+                                <div className="text-xs text-gray-500">{new Date(meeting.date).toLocaleString('en-US', { timeZone: 'UTC' })}</div>
                                 <div className="text-sm text-gray-600">{meeting.description}</div>
                                 <JoinMeetingButton meetingDate={meeting.date} meetingLink={meeting.link} expireAfterMinutes={meeting.expireAfterMinutes} />
                             </div>
