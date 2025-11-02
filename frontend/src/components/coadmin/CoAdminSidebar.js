@@ -19,6 +19,7 @@ const CoAdminSidebar = ({ isSidebarOpen, setSidebarOpen }) => {
                 <NavLink to="/coadmin" end className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}>Home</NavLink>
                 <NavLink to="/coadmin/students" className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}>Manage Students</NavLink>
                 <NavLink to="/coadmin/meetings" className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}>Meetings</NavLink>
+                <NavLink to="/coadmin/schedule-meeting" className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}>Schedule Meeting</NavLink>
                 <NavLink to="/coadmin/deletion-requests" className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}><Trash2 className="mr-2" size={18}/>Deletion Requests</NavLink>
                 <div className="pt-4 border-t border-gray-200">
                     <NavLink to="/logout" className={`${commonClasses} ${inactiveClass}`}>Logout</NavLink>

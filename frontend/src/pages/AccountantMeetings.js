@@ -48,7 +48,7 @@ const AccountantMeetings = () => {
                                         <a href={meeting.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">{meeting.link}</a>
                                     </td>
                                     <td className="px-4 py-2">
-                                        <a href={meeting.link} target="_blank" rel="noopener noreferrer" className="bg-teal-500 text-white px-3 py-1 rounded">Join</a>
+                                        <a href={meeting.link} target="_blank" rel="noopener noreferrer" className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition-colors">Join</a>
                                     </td>
                                 </tr>
                             ))}

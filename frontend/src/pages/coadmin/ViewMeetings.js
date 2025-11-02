@@ -201,12 +201,11 @@ const ViewMeetings = () => {
                             <p className="text-sm text-gray-500">{new Date(meeting.date).toLocaleString()}</p>
                             <a href={meeting.link} target="_blank" rel="noopener noreferrer" className="text-teal-600 underline">Join Meeting</a>
                         </div>
-                        {meeting.creatorId === currentUserId && (
-                            <div className="flex space-x-2">
-                                <button onClick={() => handleEdit(meeting)} className="px-3 py-1 bg-blue-500 text-white rounded">Edit</button>
-                                <button onClick={() => handleDelete(meeting._id)} className="px-3 py-1 bg-red-500 text-white rounded">Delete</button>
-                            </div>
-                        )}
+                        <div className="flex space-x-2">
+                            <button onClick={() => handleEdit(meeting)} className="px-3 py-1 bg-blue-500 text-white rounded">Edit</button>
+                            <button onClick={() => handleDelete(meeting._id)} className="px-3 py-1 bg-red-500 text-white rounded">Delete</button>
+                            <a href={meeting.link} target="_blank" rel="noopener noreferrer" className="px-3 py-1 bg-green-500 text-white rounded">Join</a>
+                        </div>
                     </div>
                 ))}
             </div>

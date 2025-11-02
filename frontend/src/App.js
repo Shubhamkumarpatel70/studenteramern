@@ -50,6 +50,7 @@ import AssignTasks from './pages/admin/AssignTasks';
 import Queries from "./pages/admin/Queries";
 import DeletionRequests from './pages/admin/DeletionRequests';
 import ManagePayments from './pages/admin/ManagePayments';
+import ScheduleMeeting from "./pages/coadmin/ScheduleMeeting";
 
 
 // Co-Admin Pages
@@ -212,6 +213,7 @@ const AppContent = () => {
               <Route index element={<CoAdminHome />} />
               <Route path="students" element={<ManageStudents />} />
               <Route path="meetings" element={<ViewMeetings />} />
+              <Route path="schedule-meeting" element={<ScheduleMeeting />} />
               <Route path="deletion-requests" element={<DeletionRequests />} />
             </Route>
           </Route>

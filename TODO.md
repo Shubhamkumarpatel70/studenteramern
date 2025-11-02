@@ -17,7 +17,7 @@
 
 - [x] Debug "Failed to fetch deletion requests" error in admin/coadmin dashboards
 - [x] Check API endpoint and authentication
-- [x] Fixed API endpoint URLs in DeletionRequests.js (removed leading slash since baseURL already includes /api)
+- [x] Fixed API endpoint URLs in DeletionRequests.js (added leading slash since baseURL already includes /api)
 
 ## 4. Remove Color Gradients from User Dashboard
 
