@@ -9,12 +9,12 @@ import Certificates from './Certificates';
 import { Calendar, Bell, Award, FileText } from 'lucide-react';
 
 const StatCard = ({ title, value, linkTo, icon }) => (
-    <Link to={linkTo} className="bg-gradient-to-br from-white via-blue-50 to-indigo-50 p-6 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-blue-100/50 flex flex-col items-center text-center hover:scale-105 group">
-        <div className="mb-3 p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full text-white shadow-lg group-hover:shadow-xl transition-shadow">
+    <Link to={linkTo} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 flex flex-col items-center text-center hover:scale-105 group">
+        <div className="mb-3 p-3 bg-blue-600 rounded-full text-white shadow-md group-hover:shadow-lg transition-shadow">
             {icon}
         </div>
         <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 font-sans">{title}</h3>
-        <p className="text-3xl sm:text-4xl font-extrabold text-indigo-600 mt-2 font-sans drop-shadow-sm">{value}</p>
+        <p className="text-3xl sm:text-4xl font-extrabold text-blue-600 mt-2 font-sans">{value}</p>
     </Link>
 );
 

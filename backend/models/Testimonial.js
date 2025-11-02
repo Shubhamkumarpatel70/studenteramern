@@ -1,29 +1,38 @@
 const mongoose = require('mongoose');
 
 const TestimonialSchema = new mongoose.Schema({
-    quote: {
-        type: String,
-        required: [true, 'Please add a quote'],
-        trim: true
-    },
     name: {
         type: String,
-        required: [true, 'Please add the person\'s name'],
-        trim: true
+        required: true
     },
-    role: {
+    message: {
         type: String,
-        required: [true, 'Please add the person\'s role (e.g., internship title)'],
-        trim: true
+        required: true
     },
-    avatar: {
-        type: String, // URL to image
-        default: 'https://i.pravatar.cc/150'
+    image: {
+        type: String,
+        required: false
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
+    designation: {
+        type: String,
+        required: false
+    },
+    company: {
+        type: String,
+        required: false
+    },
+    rating: {
+        type: Number,
+        min: 1,
+        max: 5,
+        default: 5
+    },
+    isActive: {
+        type: Boolean,
+        default: true
     }
+}, {
+    timestamps: true
 });
 
-module.exports = mongoose.model('Testimonial', TestimonialSchema); 
+module.exports = mongoose.model('Testimonial', TestimonialSchema);

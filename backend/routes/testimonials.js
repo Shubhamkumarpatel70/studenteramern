@@ -1,8 +1,7 @@
 const express = require('express');
-const router = express.Router();
-
 const {
     getTestimonials,
+    getTestimonial,
     createTestimonial,
     updateTestimonial,
     deleteTestimonial
@@ -10,12 +9,15 @@ const {
 
 const { protect, authorize } = require('../middleware/auth');
 
-// Public route to get all testimonials
-router.get('/', getTestimonials);
+const router = express.Router();
 
-// Admin routes
-router.post('/', protect, authorize('admin'), createTestimonial);
-router.put('/:id', protect, authorize('admin'), updateTestimonial);
-router.delete('/:id', protect, authorize('admin'), deleteTestimonial);
+router.route('/')
+    .get(getTestimonials)
+    .post(protect, authorize('admin'), createTestimonial);
+
+router.route('/:id')
+    .get(getTestimonial)
+    .put(protect, authorize('admin'), updateTestimonial)
+    .delete(protect, authorize('admin'), deleteTestimonial);
 
 module.exports = router;

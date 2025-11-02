@@ -347,8 +347,10 @@ const TestimonialsSection = () => {
             try {
                 const { data } = await api.get('/testimonials');
                 setTestimonials(data.data);
+                setLoading(false);
             } catch (error) {
                 console.error("Could not fetch testimonials", error);
+                setLoading(false);
             }
         };
         fetchTestimonials();
@@ -368,12 +370,12 @@ const TestimonialsSection = () => {
                 <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-3">
                     {displayTestimonials.map((testimonial, index) => (
                         <div key={index} className="bg-[#FFFFFF] rounded-2xl shadow-xl p-8 group transition-transform duration-300 hover:scale-105 border border-[#0A2463]">
-                            <p className="text-[#212529] mb-6 font-sans">"{testimonial.quote}"</p>
+                            <p className="text-[#212529] mb-6 font-sans">"{testimonial.message || testimonial.quote}"</p>
                             <div className="flex items-center">
-                                <img className="w-12 h-12 rounded-full mr-4" src={testimonial.avatar || 'https://i.pravatar.cc/150'} alt={testimonial.name} />
+                                <img className="w-12 h-12 rounded-full mr-4" src={testimonial.image || testimonial.avatar || 'https://i.pravatar.cc/150'} alt={testimonial.name} />
                                 <div>
                                     <p className="font-semibold text-[#0A2463] font-sans">{testimonial.name}</p>
-                                    <p className="text-[#212529] text-sm font-sans">{testimonial.role}</p>
+                                    <p className="text-[#212529] text-sm font-sans">{testimonial.designation || testimonial.role}</p>
                                 </div>
                             </div>
                         </div>
