@@ -14,6 +14,19 @@ const Login = () => {
     const location = useLocation();
     const from = location.state?.from?.pathname || '/';
 
+    const getRedirectPath = (role) => {
+        switch (role) {
+            case 'admin':
+                return '/admin-dashboard';
+            case 'co-admin':
+                return '/coadmin';
+            case 'accountant':
+                return '/accountant';
+            default:
+                return '/dashboard';
+        }
+    };
+
     const { email, password } = formData;
 
     const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -23,24 +36,8 @@ const Login = () => {
         setError('');
         const result = await login(email, password);
         if (result && !result.error) {
-            // Redirect to the page the user was trying to access, or to a default based on role
-            if (from !== '/') {
-                navigate(from, { replace: true });
-            } else {
-                switch (result.role) {
-                    case 'admin':
-                        navigate('/admin-dashboard', { replace: true });
-                        break;
-                    case 'co-admin':
-                        navigate('/coadmin', { replace: true });
-                        break;
-                    case 'accountant':
-                        navigate('/accountant', { replace: true });
-                        break;
-                    default:
-                        navigate('/dashboard', { replace: true });
-                }
-            }
+            const redirectPath = from !== '/' ? from : getRedirectPath(result.role);
+            navigate(redirectPath, { replace: true });
         } else {
             const errorMessage = result?.error || 'Login failed';
             if (errorMessage === 'Invalid credentials') {

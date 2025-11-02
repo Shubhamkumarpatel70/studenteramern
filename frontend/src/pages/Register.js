@@ -7,6 +7,7 @@ const Register = () => {
     const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'user' });
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const { register } = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -16,9 +17,11 @@ const Register = () => {
     const onSubmit = async e => {
         e.preventDefault();
         setError('');
+        setLoading(true);
         // Basic client-side password validation
         if (password.length < 6) {
             setError('Password must be at least 6 characters long.');
+            setLoading(false);
             return;
         }
         try {
@@ -35,6 +38,8 @@ const Register = () => {
                     navigate('/login');
                 }, 3000);
             }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -132,9 +137,10 @@ const Register = () => {
                     <div>
                         <button
                             type="submit"
-                            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-[#FFFFFF] bg-[#0A2463] hover:bg-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#28A745] transition duration-200"
+                            disabled={loading}
+                            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-[#FFFFFF] bg-[#0A2463] hover:bg-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#28A745] transition duration-200 disabled:opacity-50"
                         >
-                            Create Account
+                            {loading ? 'Creating Account...' : 'Create Account'}
                         </button>
                     </div>
                 </form>

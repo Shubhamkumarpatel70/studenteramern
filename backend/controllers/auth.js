@@ -6,7 +6,7 @@ const sendEmail = require('../utils/sendEmail');
 // @route   POST /api/auth/register
 // @access  Public
 exports.register = async (req, res, next) => {
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body; // Role is intentionally omitted for security
 
     try {
         let user = await User.findOne({ email });
@@ -37,7 +37,7 @@ exports.register = async (req, res, next) => {
                 name,
                 email,
                 password,
-                role,
+                role: 'user', // Force role to user for all new registrations
                 internId,
                 otp: hashedOtp,
                 otpExpires: otpExpires
