@@ -16,7 +16,7 @@ router
 
 router
     .route('/:id')
-    .put(protect, authorize('admin'), updateMeeting)
-    .delete(protect, authorize('admin'), deleteMeeting);
+    .put(protect, authorize('admin', 'co-admin'), updateMeeting)
+    .delete(protect, authorize('admin', 'co-admin'), deleteMeeting);
 
 module.exports = router; 
