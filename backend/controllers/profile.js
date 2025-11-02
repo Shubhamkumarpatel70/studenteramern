@@ -73,7 +73,21 @@ exports.requestAccountDeletion = async (req, res) => {
         user.deletionRequested = true;
         user.deletionReason = reason || '';
         await user.save();
-        res.status(200).json({ success: true, message: 'Account deletion requested. Status: Pending.' });
+    // Also create an AccountDeletionRequest document so admins can review requests
+    try {
+      const AccountDeletionRequest = require('../models/AccountDeletionRequest');
+      const deletionRequest = await AccountDeletionRequest.create({
+        userId: user._id,
+        userName: user.name,
+        userEmail: user.email,
+        reason: reason || ''
+      });
+      return res.status(200).json({ success: true, message: 'Account deletion requested. Status: Pending.', data: deletionRequest });
+    } catch (err) {
+      console.error('Failed to create AccountDeletionRequest document:', err);
+      // Even if creating the separate request document fails, return success for the user's action
+      return res.status(200).json({ success: true, message: 'Account deletion requested. Status: Pending.' });
+    }
     } catch (err) {
         res.status(500).json({ success: false, message: 'Server Error' });
     }

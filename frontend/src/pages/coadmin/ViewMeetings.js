@@ -68,9 +68,12 @@ const ViewMeetings = () => {
     const handleEdit = (meeting) => {
         setEditMode(true);
         setSelectedMeetingId(meeting._id);
+        // Convert stored meeting.date into a datetime-local friendly local string
+        const d = new Date(meeting.date);
+        const localISO = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
         setFormData({
             title: meeting.title,
-            date: new Date(meeting.date).toISOString().slice(0, 16),
+            date: localISO,
             link: meeting.link,
             expireAfterMinutes: meeting.expireAfterMinutes || 60,
             targetType: meeting.targetType || 'all',
@@ -198,7 +201,7 @@ const ViewMeetings = () => {
                     <div key={meeting._id} className="p-4 border rounded-lg flex justify-between items-center">
                         <div>
                             <h2 className="font-bold">{meeting.title}</h2>
-                            <p className="text-sm text-gray-500">{new Date(meeting.date).toLocaleString('en-US', { timeZone: 'UTC' })}</p>
+                            <p className="text-sm text-gray-500">{new Date(meeting.date).toLocaleString()}</p>
                             <a href={meeting.link} target="_blank" rel="noopener noreferrer" className="text-teal-600 underline">Join Meeting</a>
                         </div>
                         <div className="flex space-x-2">

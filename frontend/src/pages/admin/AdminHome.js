@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../config/api';
 import { Users, Briefcase, Calendar, DollarSign, FileText, CheckCircle2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const StatCard = ({ icon, title, value, color }) => (
     <div className={`p-6 rounded-lg shadow-lg flex items-center space-x-4 ${color}`}>
@@ -79,6 +80,17 @@ const AdminHome = () => {
                         value={stats.totalRegistrations ?? 0} 
                         color="bg-pink-500"
                     />
+                    <Link to="/admin-dashboard/deletion-requests" className="block">
+                        <div className="p-6 rounded-lg shadow-lg flex items-center space-x-4 bg-red-500 hover:opacity-95 transition">
+                            <div className="p-3 rounded-full bg-white bg-opacity-30">
+                                <CheckCircle2 size={32} className="text-white" />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-semibold text-white">Deletion Requests</h3>
+                                <p className="text-3xl font-bold text-white">View & Manage</p>
+                            </div>
+                        </div>
+                    </Link>
                 </div>
             ) : (
                 <p>Could not load statistics.</p>

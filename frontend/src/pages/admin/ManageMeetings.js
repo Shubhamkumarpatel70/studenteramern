@@ -55,9 +55,12 @@ const ManageMeetings = () => {
     const handleEdit = (meeting) => {
         setEditMode(true);
         setSelectedMeetingId(meeting._id);
+        // Convert stored meeting.date (ISO) into a local datetime-local value
+        const d = new Date(meeting.date);
+        const localISO = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
         setFormData({
             title: meeting.title,
-            date: new Date(meeting.date).toISOString().slice(0, 16),
+            date: localISO,
             link: meeting.link,
             targetType: meeting.targetType,
             internshipId: meeting.selectedInternship || '',
@@ -182,7 +185,7 @@ const ManageMeetings = () => {
                             {meetings.map(meeting => (
                                 <tr key={meeting._id}>
                                     <td className="px-6 py-4 whitespace-nowrap">{meeting.title}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{new Date(meeting.date).toLocaleString('en-US', { timeZone: 'UTC' })}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{new Date(meeting.date).toLocaleString()}</td>
                                     <td className="px-6 py-4 whitespace-nowrap capitalize">{meeting.targetType}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         {meeting.user && (
