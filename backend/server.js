@@ -26,6 +26,7 @@ const app = express();
 // Enable CORS (move to very top)
 app.use(cors({
   origin: [
+    'http://localhost:3000',
     'https://studenteramernfrontend.onrender.com',
     'https://studentera.live'
   ],
@@ -35,6 +36,7 @@ app.use(cors({
 // Handle preflight requests
 app.options('*', cors({
   origin: [
+    'http://localhost:3000',
     'https://studenteramernfrontend.onrender.com',
     'https://studentera.live'
   ],
