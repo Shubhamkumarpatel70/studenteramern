@@ -15,7 +15,7 @@ const InternshipDetails = () => {
     useEffect(() => {
         const fetchInternship = async () => {
             try {
-                const { data } = await api.get(`/internships/${id}`);
+                const { data } = await api.get(`/internships/public/${id}`);
                 setInternship(data.data);
             } catch (err) {
                 setError('Could not load internship details. It might be closed or invalid.');

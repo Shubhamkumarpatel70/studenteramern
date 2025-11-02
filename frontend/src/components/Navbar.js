@@ -66,7 +66,7 @@ const Navbar = () => {
                     </div>
                     {/* Hamburger Button - only on small screens */}
                     <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle Menu" className="md:hidden p-2 hover:bg-[#8E8E93]/20 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#0A84FF]">
-                        <svg className={`h-7 w-7 transition-transform duration-300 ${menuOpen ? 'rotate-90' : ''}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className={`h-7 w-7 transition-transform duration-300 ${menuOpen ? 'rotate-90' : ''}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#28A745">
                             {menuOpen ? (
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             ) : (
