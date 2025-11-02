@@ -16,13 +16,18 @@ const Register = () => {
     const onSubmit = async e => {
         e.preventDefault();
         setError('');
+        // Basic client-side password validation
+        if (password.length < 6) {
+            setError('Password must be at least 6 characters long.');
+            return;
+        }
         try {
             const res = await register({ name, email, password, role });
             const targetEmail = res?.email || email;
             // Pass along whether the backend reported an email sending problem
             navigate('/otp-verify', { state: { email: targetEmail, emailError: !!res?.emailError } });
         } catch (err) {
-            const message = err.response?.data?.message || 'Registration failed. Please try again.';
+            const message = err.response?.data?.message || err.message || 'Registration failed. Please try again.';
             setError(message);
             // If user already exists, redirect to login
             if (message.includes('already exists')) {

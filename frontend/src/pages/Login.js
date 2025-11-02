@@ -144,6 +144,16 @@ const Login = () => {
                                 <AlertCircle className="w-5 h-5 text-red-500 mr-2" />
                                 <p className="text-sm text-red-700">{error}</p>
                             </div>
+                            {error === 'Please verify your email before logging in. Check your email for the verification link.' && (
+                                <div className="mt-3 text-sm">
+                                    <button
+                                        onClick={() => navigate('/otp-verify', { state: { email } })}
+                                        className="text-[#0A84FF] underline"
+                                    >
+                                        Resend verification code / Verify now
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     )}
 

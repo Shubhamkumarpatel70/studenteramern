@@ -10,7 +10,8 @@ const baseURL = process.env.REACT_APP_API_URL
 // Create axios instance with base URL
 const api = axios.create({
   baseURL: baseURL,
-  timeout: 10000,
+  // Increase timeout to allow for slower network/email send operations during registration
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
   },

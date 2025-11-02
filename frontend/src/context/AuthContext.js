@@ -112,11 +112,12 @@ export const AuthProvider = ({ children }) => {
             addLocalNotification(`Registration successful! Login ID: ${data.email || userData.email} | Intern ID: ${data.internId || 'Check your email/OTP'}`);
             return data;
         } catch (err) {
-            console.error('Registration failed:', err.response?.data?.message || err.message);
-            // If user already exists, throw error to be handled by component
-            if (err.response?.data?.message?.includes('already exists')) {
-                throw err;
-            }
+            const message = err.response?.data?.message || err.message || 'Registration failed';
+            console.error('Registration failed:', message);
+            // Surface the error to the calling component so it can display an appropriate message
+            const error = new Error(message);
+            error.response = err.response;
+            throw error;
         }
     };
 
