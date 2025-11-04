@@ -9,7 +9,11 @@ if (process.env.REACT_APP_API_URL) {
 } else if (process.env.NODE_ENV === 'development') {
   baseURL = 'http://localhost:5000/api';
 } else {
-  baseURL = 'https://studenteramernbackend.onrender.com/api';
+  // In production, prefer a relative path so the frontend talks to the same origin
+  // backend (for example when deployed together to Vercel and routed via /api).
+  // If you deploy frontend and backend separately and need an absolute URL,
+  // set REACT_APP_API_URL in your environment instead.
+  baseURL = '/api';
 }
 
 // Log the baseURL for easier debugging in dev
@@ -21,8 +25,11 @@ if (process.env.NODE_ENV !== 'production') {
 // Create axios instance with base URL
 const api = axios.create({
   baseURL: baseURL,
-  // Increase timeout to allow for slower network/email send operations during registration
-  timeout: 120000,
+  // Set a reasonable timeout. If your backend legitimately needs more time for
+  // registration (e.g. heavy processing), increase this via REACT_APP_API_TIMEOUT.
+  timeout: process.env.REACT_APP_API_TIMEOUT
+    ? parseInt(process.env.REACT_APP_API_TIMEOUT, 10)
+    : 60000,
   headers: {
     'Content-Type': 'application/json',
   },
