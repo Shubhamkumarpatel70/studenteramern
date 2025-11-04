@@ -15,6 +15,7 @@ const OTPVerify = () => {
     const location = useLocation();
     const email = location.state?.email;
     const emailError = location.state?.emailError;
+    const isAdmin = location.state?.isAdmin || false;
 
     // Resend timer
     useEffect(() => {
@@ -42,8 +43,17 @@ const OTPVerify = () => {
         e.preventDefault();
         setError('');
         try {
-            await api.post('/auth/verify-otp', { email, otp });
-            setShowSuccessModal(true);
+            // Use different endpoint for admin OTP verification
+            const endpoint = isAdmin ? '/auth/admin-verify-otp' : '/auth/verify-otp';
+            const res = await api.post(endpoint, { email, otp });
+
+            if (isAdmin) {
+                // For admin, redirect to admin dashboard after successful verification
+                navigate('/admin-dashboard', { replace: true });
+            } else {
+                // For regular users, show success modal
+                setShowSuccessModal(true);
+            }
         } catch (err) {
             const msg = err.response?.data?.message || 'Invalid OTP. Please try again.';
             setError(msg);
@@ -87,7 +97,7 @@ const OTPVerify = () => {
                 <div className="text-center mb-6">
                     <Shield className="w-16 h-16 text-[#0A2463] mx-auto mb-4" />
                     <h2 className="text-3xl font-extrabold text-[#0A2463]">
-                        Verify your account
+                        {isAdmin ? 'Verify Admin Login' : 'Verify your account'}
                     </h2>
                     <p className="mt-2 text-sm text-[#212529]">
                         We've sent a 6-digit code to {email}.

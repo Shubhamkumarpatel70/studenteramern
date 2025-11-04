@@ -93,6 +93,13 @@ export const AuthProvider = ({ children }) => {
         try {
             const res = await api.post('/auth/login', body, config);
             if (!res || !res.data) throw new Error('No response from server');
+
+            // Check if this is an admin OTP response
+            if (res.data.message === 'OTP sent to admin email') {
+                // Return special admin OTP response
+                return { adminOtpSent: true, email: res.data.email };
+            }
+
             dispatch({ type: 'LOGIN_SUCCESS', payload: res.data });
             // Removed notification for login
             return res.data.user;
