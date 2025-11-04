@@ -114,21 +114,18 @@ UserSchema.methods.matchPassword = async function(enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// Generate and hash OTP
+// Generate and store plain OTP
 UserSchema.methods.getOtp = function() {
     // Generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Hash the OTP and set it on the user model
-    this.otp = crypto
-        .createHash('sha256')
-        .update(otp)
-        .digest('hex');
+    // Store the plain OTP
+    this.otp = otp;
 
     // Set an expiry time for the OTP (10 minutes)
     this.otpExpires = Date.now() + 10 * 60 * 1000;
 
-    return otp; // Return the unhashed OTP to be sent via email
+    return otp; // Return the plain OTP to be sent via email
 };
 
 // Generate and hash password reset token

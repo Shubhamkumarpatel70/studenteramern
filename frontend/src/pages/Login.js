@@ -9,6 +9,7 @@ const Login = () => {
     const [showModal, setShowModal] = useState(false);
     const [countdown, setCountdown] = useState(5);
     const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
@@ -34,23 +35,28 @@ const Login = () => {
     const onSubmit = async e => {
         e.preventDefault();
         setError('');
-        const result = await login(email, password);
-        if (result && !result.error) {
-            const redirectPath = from !== '/' ? from : getRedirectPath(result.role);
-            navigate(redirectPath, { replace: true });
-        } else {
-            const errorMessage = result?.error || 'Login failed';
-            if (errorMessage === 'Invalid credentials') {
-                setError('Invalid email or password. Please check your credentials and try again.');
-            } else if (errorMessage === 'Please verify your email before logging in.') {
-                setError('Please verify your email before logging in. Check your email for the verification link.');
-            } else if (errorMessage === 'Your account is pending deletion and cannot be accessed. Please contact support if this is a mistake.') {
-                setError('Your account is pending deletion. Please contact support for assistance.');
+        setIsSubmitting(true);
+        try {
+            const result = await login(email, password);
+            if (result && !result.error) {
+                const redirectPath = from !== '/' ? from : getRedirectPath(result.role);
+                navigate(redirectPath, { replace: true });
             } else {
-                // Show modal for unregistered user
-                setShowModal(true);
-                setCountdown(5);
+                const errorMessage = result?.error || 'Login failed';
+                if (errorMessage === 'Invalid credentials') {
+                    setError('Invalid email or password. Please check your credentials and try again.');
+                } else if (errorMessage === 'Please verify your email before logging in.') {
+                    setError('Please verify your email before logging in. Check your email for the verification link.');
+                } else if (errorMessage === 'Your account is pending deletion and cannot be accessed. Please contact support if this is a mistake.') {
+                    setError('Your account is pending deletion. Please contact support for assistance.');
+                } else {
+                    // Show modal for unregistered user
+                    setShowModal(true);
+                    setCountdown(5);
+                }
             }
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -157,9 +163,10 @@ const Login = () => {
                     <div>
                         <button
                             type="submit"
-                            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-[#FFFFFF] bg-[#0A2463] hover:bg-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#28A745] transition duration-200"
+                            disabled={isSubmitting}
+                            className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-[#FFFFFF] ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#0A2463] hover:bg-[#1C1C1E]'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#28A745] transition duration-200`}
                         >
-                            Sign in
+                            {isSubmitting ? 'Signing in...' : 'Sign in'}
                         </button>
                     </div>
                 </form>

@@ -20,12 +20,11 @@ exports.register = async (req, res, next) => {
         }
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const hashedOtp = crypto.createHash('sha256').update(otp).digest('hex');
         const otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
 
         if (user && !user.isVerified) {
             // Update existing unverified user
-            user.otp = hashedOtp;
+            user.otp = otp;
             user.otpExpires = otpExpires;
             user.name = name; // Update name in case it changed
             user.password = password; // This will trigger the pre-save hook to re-hash
@@ -39,7 +38,7 @@ exports.register = async (req, res, next) => {
                 password,
                 role: 'user', // Force role to user for all new registrations
                 internId,
-                otp: hashedOtp,
+                otp: otp,
                 otpExpires: otpExpires
             });
         }
@@ -108,12 +107,10 @@ exports.verifyOtp = async (req, res, next) => {
         return res.status(400).json({ success: false, message: 'Please provide email and OTP.' });
     }
 
-    const hashedOtp = crypto.createHash('sha256').update(otp).digest('hex');
-
     try {
         const user = await User.findOne({
             email,
-            otp: hashedOtp,
+            otp: otp,
             otpExpires: { $gt: Date.now() }
         });
 
@@ -366,10 +363,8 @@ exports.verifyAdminOtp = async (req, res, next) => {
         return res.status(400).json({ success: false, message: 'Please provide email and OTP.' });
     }
 
-    const hashedOtp = crypto.createHash('sha256').update(otp).digest('hex');
-
     try {
-        const user = await User.findOne({ email, otp: hashedOtp, otpExpires: { $gt: Date.now() } }).select('+password');
+        const user = await User.findOne({ email, otp: otp, otpExpires: { $gt: Date.now() } }).select('+password');
         if (!user) {
             return res.status(400).json({ success: false, message: 'Invalid or expired OTP.' });
         }

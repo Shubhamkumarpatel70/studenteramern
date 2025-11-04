@@ -10,7 +10,7 @@ const StatCard = ({ icon, title, value, color }) => (
         </div>
         <div>
             <h3 className="text-lg font-semibold text-white">{title}</h3>
-            <p className="text-3xl font-bold text-white">{value}</p>
+            <p className="text-3xl font-bold text-white">{typeof value === 'number' ? value.toLocaleString() : value}</p>
         </div>
     </div>
 );

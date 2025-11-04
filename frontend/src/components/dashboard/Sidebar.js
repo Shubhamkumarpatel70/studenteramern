@@ -57,7 +57,7 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
                 />
             )}
             <aside
-                className={`fixed inset-y-0 left-0 bg-gray-800 shadow-lg w-64 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:relative md:translate-x-0 z-[100] flex flex-col font-sans font-medium border-r border-gray-200`}
+                className={`fixed inset-y-0 left-0 bg-white shadow-lg w-64 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:relative md:translate-x-0 z-[100] flex flex-col font-sans font-medium border-r border-gray-200`}
                 aria-label="User dashboard sidebar"
             >
                 <div className="p-4 flex items-center justify-between border-b border-gray-200">
@@ -76,7 +76,7 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
                             key={item.href}
                             to={item.href}
                             end={item.href === '/dashboard'}
-                            className={({ isActive }) => `${commonClasses} ${isActive ? 'bg-blue-600 text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'}`}
+                            className={({ isActive }) => `${commonClasses} ${isActive ? 'bg-blue-600 text-white shadow-md' : 'text-gray-900 hover:bg-gray-100'}`}
                             onClick={handleNav}
                             tabIndex={0}
                         >
@@ -89,7 +89,7 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
                             <NavLink
                                 key={item.href}
                                 to={item.href}
-                                className={({ isActive }) => `${commonClasses} ${isActive ? 'bg-blue-600 text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'}`}
+                                className={({ isActive }) => `${commonClasses} ${isActive ? 'bg-blue-600 text-white shadow-md' : 'text-gray-900 hover:bg-gray-100'}`}
                                 onClick={handleNav}
                                 tabIndex={0}
                             >
@@ -110,7 +110,7 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
                                     navigate('/');
                                 }
                             }}
-                            className={`${commonClasses} text-gray-700 hover:bg-gray-100 w-full text-left mt-2`}
+                            className={`${commonClasses} text-gray-900 hover:bg-gray-100 w-full text-left mt-2`}
                             aria-label="Logout"
                         >
                             <LogOut />
