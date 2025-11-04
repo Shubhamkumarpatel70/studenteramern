@@ -10,5 +10,7 @@
 
 ## Current Status
 
-- Backend admin login with OTP is implemented
-- Frontend needs updates for two-step admin authentication
+- Admin login is now simple - no OTP required
+- Admin login flow: Login -> Admin Dashboard (same as regular users)
+- Regular user login flow: Login -> Dashboard (unchanged)
+- OTP verification still available for user registration

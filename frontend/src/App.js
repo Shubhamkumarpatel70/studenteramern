@@ -41,6 +41,7 @@ import ManageUsers from "./pages/admin/ManageUsers";
 import ManageMeetings from "./pages/admin/ManageMeetings";
 import SendNotification from "./pages/admin/SendNotification";
 import GenerateCertificate from "./pages/admin/GenerateCertificate";
+import CertificateVerification from "./pages/admin/CertificateVerification";
 import GenerateOfferLetter from "./pages/admin/GenerateOfferLetter";
 import AddInternship from "./pages/admin/AddInternship";
 import InternshipRegistrations from "./pages/admin/InternshipRegistrations";
@@ -201,6 +202,7 @@ const AppContent = () => {
               <Route path="manage-payments" element={<ManagePayments />} />
               <Route path="send-notification" element={<SendNotification />} />
               <Route path="generate-certificate" element={<GenerateCertificate />} />
+              <Route path="certificate-verification" element={<CertificateVerification />} />
               <Route path="generate-offer-letter" element={<GenerateOfferLetter />} />
               <Route path="queries" element={<Queries />} />
               <Route path="help-queries" element={<HelpQueries />} />

@@ -48,7 +48,10 @@ const OTPVerify = () => {
             const res = await api.post(endpoint, { email, otp });
 
             if (isAdmin) {
-                // For admin, redirect to admin dashboard after successful verification
+                // For admin, set authentication state and redirect to admin dashboard
+                // Since admin-verify-otp returns the token, we need to update the auth context
+                // The backend already sends the token, so we can use the login function to set the state
+                // But since we already verified, we can directly navigate and let the context load the user
                 navigate('/admin-dashboard', { replace: true });
             } else {
                 // For regular users, show success modal

@@ -39,12 +39,7 @@ const Login = () => {
         try {
             const result = await login(email, password);
             if (result && !result.error) {
-                // Check if admin OTP was sent
-                if (result.adminOtpSent) {
-                    // Navigate to OTP verification for admin
-                    navigate('/otp-verify', { state: { email: result.email, isAdmin: true } });
-                    return;
-                }
+                // For all users (admin and regular), redirect to dashboard after login
                 const redirectPath = from !== '/' ? from : getRedirectPath(result.role);
                 navigate(redirectPath, { replace: true });
             } else {

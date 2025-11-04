@@ -165,28 +165,7 @@ exports.login = async (req, res, next) => {
         return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
-    // If the user is an admin, require an OTP verification step before issuing a token.
-    if (user.role === 'admin') {
-        try {
-            const otp = user.getOtp();
-            // For admin login OTPs, extend validity to 1 day (24 hours)
-            user.otpExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
-            await user.save({ validateBeforeSave: false });
-            // Send OTP email using existing helper
-            try {
-                await sendEmailToUser(user, otp);
-            } catch (emailErr) {
-                console.error('Failed to send admin OTP email:', emailErr);
-                // proceed but inform client of email failure
-                return res.status(500).json({ success: false, message: 'Failed to send OTP email' });
-            }
-            return res.status(200).json({ success: true, message: 'OTP sent to admin email', email: user.email });
-        } catch (err) {
-            console.error('Error generating admin OTP:', err);
-            return res.status(500).json({ success: false, message: 'Server error' });
-        }
-    }
-
+    // Admin login is now simple - no OTP required
     sendTokenResponse(user, 200, res);
 };
 
@@ -407,9 +386,18 @@ exports.resendOtp = async (req, res, next) => {
         await user.save({ validateBeforeSave: false });
 
         // Using the existing helper to send the email
-        await sendEmailToUser(user, otp);
-
-        res.status(200).json({ success: true, message: `A new OTP has been sent to ${email}` });
+        try {
+            await sendEmailToUser(user, otp);
+            res.status(200).json({ success: true, message: `A new OTP has been sent to ${email}` });
+        } catch (emailError) {
+            console.error("Failed to send OTP email:", emailError);
+            res.status(200).json({
+                success: true,
+                message: `OTP generated but email failed. Please try resending.`,
+                emailError: true,
+                email: user.email
+            });
+        }
 
     } catch (err) {
         console.error(err);

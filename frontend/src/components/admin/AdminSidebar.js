@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { FileText, FileCheck2, Users, Briefcase, ClipboardList, MessageSquare, Megaphone, Mail, Trash2, CreditCard } from 'lucide-react';
+import { FileText, FileCheck2, Users, Briefcase, ClipboardList, MessageSquare, Megaphone, Mail, Trash2, CreditCard, ShieldCheck } from 'lucide-react';
 
 const AdminSidebar = ({ isSidebarOpen, setSidebarOpen }) => {
     const commonClasses = 'flex items-center px-4 py-2.5 rounded-lg transition-colors duration-200';
@@ -23,6 +23,7 @@ const AdminSidebar = ({ isSidebarOpen, setSidebarOpen }) => {
                 <NavLink to="/admin-dashboard/manage-payments" className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}><CreditCard className="mr-2" size={18}/>Manage Payments</NavLink>
                 <NavLink to="/admin-dashboard/send-notification" className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}>Send Notification</NavLink>
                 <NavLink to="/admin-dashboard/generate-certificate" className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}>Generate Certificate</NavLink>
+                <NavLink to="/admin-dashboard/certificate-verification" className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}><ShieldCheck className="mr-2" size={18}/>Certificate Verification</NavLink>
                 <NavLink to="/admin-dashboard/generate-offer-letter" className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}>Generate Offer Letter</NavLink>
                 <NavLink to="/admin-dashboard/internship-registrations" className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}>Internship Registrations</NavLink>
                 <NavLink to="/admin-dashboard/manage-tasks" className={({ isActive }) => `${commonClasses} ${isActive ? activeClass : inactiveClass}`}>Manage Tasks</NavLink>
