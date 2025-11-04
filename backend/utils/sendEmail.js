@@ -2,9 +2,9 @@ const nodemailer = require('nodemailer');
 
 const sendEmail = async (options) => {
     // Build transporter with reasonable defaults and TLS options.
-    const host = process.env.SMTP_HOST;
-    const port = parseInt(process.env.SMTP_PORT, 10) || 587;
-    const user = process.env.SMTP_USER;
+    const host = process.env.EMAIL_HOST;
+    const port = parseInt(process.env.EMAIL_PORT, 10) || 587;
+    const user = process.env.EMAIL_USER;
     const pass = process.env.SMTP_PASS;
 
     const transporterConfig = {
