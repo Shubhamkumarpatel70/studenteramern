@@ -151,7 +151,7 @@ const Login = () => {
                             {error === 'Please verify your email before logging in. Check your email for the verification link.' && (
                                 <div className="mt-3 text-sm">
                                     <button
-                                        onClick={() => navigate('/otp-verify', { state: { email } })}
+                                        onClick={() => navigate(`/otp-verify?email=${encodeURIComponent(email)}`)}
                                         className="text-[#0A84FF] underline"
                                     >
                                         Resend verification code / Verify now
