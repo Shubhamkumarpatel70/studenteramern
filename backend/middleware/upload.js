@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 
 // Create the uploads directory if it doesn't exist
-const uploadDir = 'backend/uploads/tasks';
+const uploadDir = process.env.UPLOAD_PATH || './uploads/tasks';
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
