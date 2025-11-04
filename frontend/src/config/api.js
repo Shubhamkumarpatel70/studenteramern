@@ -22,7 +22,7 @@ if (process.env.NODE_ENV !== 'production') {
 const api = axios.create({
   baseURL: baseURL,
   // Increase timeout to allow for slower network/email send operations during registration
-  timeout: 60000,
+  timeout: 120000,
   headers: {
     'Content-Type': 'application/json',
   },
