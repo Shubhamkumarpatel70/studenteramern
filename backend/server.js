@@ -53,7 +53,8 @@ app.use(compression());
 // Enable CORS with configured frontend origin(s)
 const allowedOrigins = [
   process.env.FRONTEND_URL || 'https://studentera.live',
-  'http://localhost:3000'
+  'http://localhost:3000',
+  'https://studentera.live'
 ];
 app.use(cors({
   origin: function(origin, callback) {
@@ -65,7 +66,9 @@ app.use(cors({
     }
     return callback(null, true);
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 // Handle preflight requests
