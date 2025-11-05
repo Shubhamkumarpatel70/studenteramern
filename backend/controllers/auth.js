@@ -43,22 +43,18 @@ exports.register = async (req, res, next) => {
             });
         }
 
-        // Send OTP email and inf orm the client whether email sending succeeded
-        try {
-            await sendEmailToUser(user, otp);
-            // Return basic user info so frontend can proceed to OTP verification
-            return res.status(200).json({ success: true, message: `An OTP has been sent to ${user.email}`, email: user.email, internId: user.internId });
-        } catch (emailError) {
+        // Send OTP email asynchronously to avoid timeout
+        sendEmailToUser(user, otp).catch(emailError => {
             console.error("Failed to send OTP email:", emailError);
-            // Still return success but indicate email failure so frontend can surface it and allow resend
-            return res.status(200).json({
-                success: true,
-                message: `Registration successful but OTP email failed. Please use the resend option or contact support.`,
-                emailError: true,
-                email: user.email,
-                internId: user.internId
-            });
-        }
+        });
+
+        // Return success immediately without waiting for email
+        return res.status(200).json({
+            success: true,
+            message: `Registration successful! Please check your email for the OTP.`,
+            email: user.email,
+            internId: user.internId
+        });
 
     } catch (err) {
         console.error('Registration error:', err);
@@ -385,19 +381,12 @@ exports.resendOtp = async (req, res, next) => {
         const otp = user.getOtp();
         await user.save({ validateBeforeSave: false });
 
-        // Using the existing helper to send the email
-        try {
-            await sendEmailToUser(user, otp);
-            res.status(200).json({ success: true, message: `A new OTP has been sent to ${email}` });
-        } catch (emailError) {
+        // Send OTP email asynchronously to avoid timeout
+        sendEmailToUser(user, otp).catch(emailError => {
             console.error("Failed to send OTP email:", emailError);
-            res.status(200).json({
-                success: true,
-                message: `OTP generated but email failed. Please try resending.`,
-                emailError: true,
-                email: user.email
-            });
-        }
+        });
+
+        res.status(200).json({ success: true, message: `A new OTP has been sent to ${email}` });
 
     } catch (err) {
         console.error(err);

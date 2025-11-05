@@ -29,7 +29,7 @@ const api = axios.create({
   // registration (e.g. heavy processing), increase this via REACT_APP_API_TIMEOUT.
   timeout: process.env.REACT_APP_API_TIMEOUT
     ? parseInt(process.env.REACT_APP_API_TIMEOUT, 10)
-    : 60000,
+    : 30000,
   headers: {
     'Content-Type': 'application/json',
   },
