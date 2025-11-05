@@ -1,41 +1,46 @@
-# Fix User Register Flow in Production
+# Testing Plan for Registration and OTP Verification Flow
 
-## Issue
+## Information Gathered
 
-- In localhost, user registration works perfectly: data stores in DB and navigates to OTP page
-- In production, registration was timing out with "timeout of 60000ms exceeded" error
+- **Backend**: `auth.js` handles registration, OTP verification, and resend endpoints. OTP emails are sent asynchronously.
+- **Frontend**: `Register.js` for registration form, `OTPVerify.js` for OTP input, `AuthContext.js` for authentication state.
+- **Email**: `sendEmail.js` handles email sending with nodemailer.
+- **API**: `api.js` configures axios with interceptors for auth tokens.
+- **Flow**: Register → Navigate to OTP page → Enter OTP → Verify → Success/Login
 
-## Root Cause
+## Plan
 
-- Email sending was blocking the registration response, causing timeouts in production
-- SMTP email sending can take longer than the default 60-second timeout
-- React Router's `navigate()` function may not work reliably in production environments
+### Backend API Testing
 
-## Solution Implemented
+- [ ] Test registration endpoint with valid data
+- [ ] Test registration with duplicate email
+- [ ] Test OTP verification with correct OTP
+- [ ] Test OTP verification with incorrect OTP
+- [ ] Test OTP verification with expired OTP
+- [ ] Test resend OTP functionality
 
-1. **Made email sending asynchronous**: Changed from `await sendEmailToUser()` to `sendEmailToUser().catch()` so registration responds immediately
-2. **Reduced frontend timeout**: Changed API timeout from 60 seconds to 30 seconds for faster error feedback
-3. **Fixed navigation**: Changed from React Router `navigate()` to `window.location.href` for production reliability
+### Frontend Flow Testing
 
-## Files Modified
+- [ ] Test registration form submission and navigation to OTP page
+- [ ] Test OTP page display with email parameter
+- [ ] Test OTP input and submission
+- [ ] Test resend button functionality
+- [ ] Test success modal and navigation to login
+- [ ] Test error handling for invalid OTP
 
-- `backend/controllers/auth.js`: Made email sending asynchronous in both register and resendOtp functions
-- `frontend/src/config/api.js`: Reduced timeout from 60000ms to 30000ms
-- `frontend/src/pages/Register.js`: Changed navigation method to window.location.href
-- `TODO.md`: Updated with fix details
+### Integration Testing
 
-## Testing Required
+- [ ] Test complete flow: Register → OTP → Verify → Login
+- [ ] Test resend flow when email fails
+- [ ] Test token persistence and auth context updates
 
-- Deploy the changes to production
-- Test the complete registration flow: user fills form → data saves to DB → navigates to OTP page → OTP verification works
-- Verify no regressions in localhost functionality
+## Dependent Files to be edited
 
-## Status
+None - this is testing only. Any issues found will be addressed in subsequent updates.
 
-- [x] Identified the timeout issue
-- [x] Implemented asynchronous email sending
-- [x] Reduced frontend timeout
-- [x] Fixed navigation issue
-- [x] Fixed 404 error for /otp-verify route in production
-- [x] Implemented email normalization (case-insensitive email handling)
-- [ ] Deployed and tested in production (pending)
+## Followup steps
+
+- [ ] Document any bugs or issues found
+- [ ] Fix identified issues if any
+- [ ] Re-test after fixes
+- [ ] Confirm deployment readiness

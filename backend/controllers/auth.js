@@ -54,7 +54,8 @@ exports.register = async (req, res, next) => {
             success: true,
             message: `Registration successful! Please check your email for the OTP.`,
             email: normalizedEmail,
-            internId: user.internId
+            internId: user.internId,
+            emailError: false // Always return false since we don't wait for email
         });
 
     } catch (err) {
@@ -392,7 +393,7 @@ exports.resendOtp = async (req, res, next) => {
             console.error("Failed to send OTP email:", e);
         });
 
-        res.status(200).json({ success: true, message: `A new OTP has been sent to ${email}` });
+        res.status(200).json({ success: true, message: `A new OTP has been sent to ${email}`, emailError: false });
 
     } catch (err) {
         console.error(err);
