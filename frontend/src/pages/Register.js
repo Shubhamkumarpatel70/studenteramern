@@ -27,9 +27,10 @@ const Register = () => {
     try {
             const res = await register({ name, email, password, role });
             const targetEmail = res?.email || email;
-            // Use window.location.href for production reliability to ensure navigation works
-            const otpUrl = `/otp-verify?email=${encodeURIComponent(targetEmail)}${res?.emailError ? '&emailError=true' : ''}`;
-            window.location.href = otpUrl;
+            // Pass along whether the backend reported an email sending problem
+            // Include the same info in the URL query so direct links work in production
+            const query = `?email=${encodeURIComponent(targetEmail)}&emailError=${!!res?.emailError}`;
+            navigate(`/otp-verify${query}`, { state: { email: targetEmail, emailError: !!res?.emailError } });
         } catch (err) {
             const message = err.response?.data?.message || err.message || 'Registration failed. Please try again.';
             setError(message);

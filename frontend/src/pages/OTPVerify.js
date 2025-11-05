@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Shield, Mail, RefreshCw, CheckCircle, X, AlertCircle } from 'lucide-react';
 import api from '../config/api';
 
@@ -13,11 +13,17 @@ const OTPVerify = () => {
     const [errorCountdown, setErrorCountdown] = useState(5);
     const navigate = useNavigate();
     const location = useLocation();
-    const [searchParams] = useSearchParams();
+    
 
     // Get email from URL params first, then fallback to location state
-    const email = searchParams.get('email') || location.state?.email;
-    const emailError = searchParams.get('emailError') === 'true' || location.state?.emailError;
+    // Support both navigation state and direct URL query params so the OTP page
+    // works when navigated internally (state) or opened directly from an email link.
+    const params = new URLSearchParams(location.search);
+    const emailFromQuery = params.get('email');
+    const emailErrorFromQuery = params.get('emailError') === 'true';
+
+    const email = location.state?.email || emailFromQuery;
+    const emailError = typeof location.state?.emailError !== 'undefined' ? location.state.emailError : emailErrorFromQuery;
     const isAdmin = location.state?.isAdmin || false;
 
     // Resend timer
