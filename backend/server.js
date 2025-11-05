@@ -21,6 +21,7 @@ const assignedTasks = require('./routes/assignedTasks');
 const path = require('path');
 const mongoose = require('mongoose');
 const PaymentOption = require('./models/PaymentOption');
+const sendEmail = require('./utils/sendEmail');
 
 // Load env vars
 dotenv.config({ path: './config/config.env' });
@@ -146,6 +147,26 @@ if (process.env.NODE_ENV === 'production') {
     app.get(/^\/(?!api|uploads).*/, (req, res) => {
         res.sendFile(path.join(frontendPath, 'index.html'));
     });
+}
+
+// Optional email test endpoint - enable by setting ENABLE_EMAIL_TEST=true in env
+if (process.env.ENABLE_EMAIL_TEST === 'true') {
+  app.post('/api/email-test', async (req, res) => {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ success: false, message: 'Please provide an email in the body.' });
+    try {
+      const info = await sendEmail({
+        email,
+        subject: 'Student Era - Test Email',
+        message: 'This is a test email from Student Era.',
+        html: '<p>This is a test email from <strong>Student Era</strong>.</p>'
+      });
+      return res.status(200).json({ success: true, message: 'Test email sent', info });
+    } catch (err) {
+      console.error('Email test failed:', err);
+      return res.status(500).json({ success: false, message: err.message || 'Failed to send test email' });
+    }
+  });
 }
 
 // Handle 404 for undefined routes (should be last)

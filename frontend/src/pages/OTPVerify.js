@@ -113,16 +113,9 @@ const OTPVerify = () => {
                     <h2 className="text-3xl font-extrabold text-[#0A2463]">
                         {isAdmin ? 'Verify Admin Login' : 'Verify your account'}
                     </h2>
-                    {!emailError && (
-                        <p className="mt-2 text-sm text-[#212529]">
-                            We've sent a 6-digit code to {email}.
-                        </p>
-                    )}
-                    {emailError && (
-                        <p className="mt-2 text-sm text-[#DC3545]">
-                            We were unable to send the OTP email automatically. Please click "Resend" below or contact support.
-                        </p>
-                    )}
+                    <p className="mt-2 text-sm text-[#212529]">
+                        We've sent a 6-digit code to {email}.
+                    </p>
                 </div>
             </div>
 
