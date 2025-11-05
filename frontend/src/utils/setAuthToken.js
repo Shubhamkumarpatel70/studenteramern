@@ -1,7 +1,7 @@
 import api from '../config/api';
 
 const setAuthToken = token => {
-    if (token) {
+    if (token && token.trim() !== '') {
         // Apply authorization token to every request if logged in
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         localStorage.setItem('token', token);
@@ -12,4 +12,4 @@ const setAuthToken = token => {
     }
 };
 
-export default setAuthToken; 
+export default setAuthToken;

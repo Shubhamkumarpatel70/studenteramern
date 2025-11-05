@@ -61,12 +61,14 @@ export const AuthProvider = ({ children }) => {
 
     // Load user
     const loadUser = async () => {
-        if (localStorage.token) {
-            setAuthToken(localStorage.token);
+        const token = localStorage.getItem('token');
+        if (token && token.trim() !== '') {
+            setAuthToken(token);
             try {
                 const res = await api.get('/auth/me');
                 dispatch({ type: 'USER_LOADED', payload: res.data.data });
             } catch (err) {
+                console.error('Failed to load user:', err);
                 dispatch({ type: 'LOGOUT' });
             }
         } else {
