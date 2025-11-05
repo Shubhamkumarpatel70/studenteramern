@@ -1,16 +1,32 @@
-# Admin Login Frontend Implementation
+# Fix User Register Flow in Production
 
-## Tasks to Complete
+## Issue
 
-- [x] Update AuthContext.js login function to detect admin OTP response and handle it appropriately
-- [x] Modify Login.js to redirect to OTP verification when admin OTP is sent
-- [x] Update OTPVerify.js to handle both regular user and admin OTP verification
-- [x] Test admin login flow end-to-end
-- [x] Verify proper error handling and user feedback
+- In localhost, user registration works perfectly: data stores in DB and navigates to OTP page
+- In production, data stores in DB but navigation to OTP page fails
 
-## Current Status
+## Root Cause
 
-- Admin login is now simple - no OTP required
-- Admin login flow: Login -> Admin Dashboard (same as regular users)
-- Regular user login flow: Login -> Dashboard (unchanged)
-- OTP verification still available for user registration
+- React Router's `navigate()` function may not work reliably in production environments (especially with static hosting like Vercel)
+- Production builds can have routing issues where client-side navigation fails
+
+## Solution Implemented
+
+- Changed navigation method from `navigate('/otp-verify?email=...')` to `window.location.href = '/otp-verify?email=...'`
+- This forces a full page reload, ensuring navigation works in production
+
+## Files Modified
+
+- `frontend/src/pages/Register.js`: Updated the onSubmit function to use window.location.href instead of navigate()
+
+## Testing Required
+
+- Deploy the changes to production
+- Test user registration flow to ensure navigation to OTP page works
+- Verify that OTP verification still works after navigation
+
+## Status
+
+- [x] Identified the issue
+- [x] Implemented the fix
+- [ ] Tested in production (pending deployment)

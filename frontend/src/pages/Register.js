@@ -24,11 +24,12 @@ const Register = () => {
             setLoading(false);
             return;
         }
-        try {
+    try {
             const res = await register({ name, email, password, role });
             const targetEmail = res?.email || email;
-            // Pass email as URL param for production reliability
-            navigate(`/otp-verify?email=${encodeURIComponent(targetEmail)}${res?.emailError ? '&emailError=true' : ''}`);
+            // Use window.location.href for production reliability to ensure navigation works
+            const otpUrl = `/otp-verify?email=${encodeURIComponent(targetEmail)}${res?.emailError ? '&emailError=true' : ''}`;
+            window.location.href = otpUrl;
         } catch (err) {
             const message = err.response?.data?.message || err.message || 'Registration failed. Please try again.';
             setError(message);
