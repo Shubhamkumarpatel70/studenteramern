@@ -24,9 +24,9 @@ const Register = () => {
             setLoading(false);
             return;
         }
-    try {
-            const res = await register({ name, email, password, role });
-            const targetEmail = res?.email || email;
+        try {
+            const res = await register({ name, email: email.toLowerCase(), password, role });
+            const targetEmail = res?.email || email.toLowerCase();
             // Pass along whether the backend reported an email sending problem
             // Include the same info in the URL query so direct links work in production
             const query = `?email=${encodeURIComponent(targetEmail)}&emailError=${!!res?.emailError}`;

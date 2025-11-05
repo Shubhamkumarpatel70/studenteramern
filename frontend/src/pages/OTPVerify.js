@@ -54,7 +54,7 @@ const OTPVerify = () => {
         try {
             // Use different endpoint for admin OTP verification
             const endpoint = isAdmin ? '/auth/admin-verify-otp' : '/auth/verify-otp';
-            const res = await api.post(endpoint, { email, otp });
+            const res = await api.post(endpoint, { email: email.toLowerCase(), otp });
 
             if (isAdmin) {
                 // For admin, set authentication state and redirect to admin dashboard
@@ -80,7 +80,7 @@ const OTPVerify = () => {
     const onResend = async () => {
         if (!canResend) return;
         try {
-            await api.post('/auth/resend-otp', { email });
+            await api.post('/auth/resend-otp', { email: email.toLowerCase() });
             setResendTimer(30);
             setCanResend(false);
             alert('A new OTP has been sent to your email.');

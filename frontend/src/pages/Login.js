@@ -37,7 +37,7 @@ const Login = () => {
         setError('');
         setIsSubmitting(true);
         try {
-            const result = await login(email, password);
+            const result = await login(email.toLowerCase(), password);
             if (result && !result.error) {
                 // For all users (admin and regular), redirect to dashboard after login
                 const redirectPath = from !== '/' ? from : getRedirectPath(result.role);

@@ -7,9 +7,10 @@ const sendEmail = require('../utils/sendEmail');
 // @access  Public
 exports.register = async (req, res, next) => {
     const { name, email, password } = req.body; // Role is intentionally omitted for security
+    const normalizedEmail = email.toLowerCase();
 
     try {
-        let user = await User.findOne({ email });
+        let user = await User.findOne({ email: normalizedEmail });
 
         if (user && user.isVerified) {
             return res.status(400).json({ success: false, message: 'User already exists and is verified. Please login instead.' });
@@ -34,7 +35,7 @@ exports.register = async (req, res, next) => {
             const internId = `SE${Date.now()}`;
             user = await User.create({
                 name,
-                email,
+                email: normalizedEmail,
                 password,
                 role: 'user', // Force role to user for all new registrations
                 internId,
@@ -61,7 +62,7 @@ exports.register = async (req, res, next) => {
         return res.status(200).json({
             success: true,
             message: `Registration successful! Please check your email for the OTP.`,
-            email: user.email,
+            email: normalizedEmail,
             internId: user.internId,
             emailError: emailError
         });
@@ -109,13 +110,14 @@ async function sendEmailToUser(user, otp) {
 // @access  Public
 exports.verifyOtp = async (req, res, next) => {
     const { email, otp } = req.body;
-    if (!email || !otp) {
+    const normalizedEmail = email.toLowerCase();
+    if (!normalizedEmail || !otp) {
         return res.status(400).json({ success: false, message: 'Please provide email and OTP.' });
     }
 
     try {
         const user = await User.findOne({
-            email,
+            email: normalizedEmail,
             otp: otp,
             otpExpires: { $gt: Date.now() }
         });
@@ -142,14 +144,15 @@ exports.verifyOtp = async (req, res, next) => {
 // @access  Public
 exports.login = async (req, res, next) => {
     const { email, password } = req.body;
+    const normalizedEmail = email.toLowerCase();
 
     // Validate email & password
-    if (!email || !password) {
+    if (!normalizedEmail || !password) {
         return res.status(400).json({ success: false, message: 'Please provide an email and password' });
     }
 
     // Check for user
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email: normalizedEmail }).select('+password');
 
     if (user && user.deletionRequested) {
         return res.status(403).json({ success: false, message: 'Your account is pending deletion and cannot be accessed. Please contact support if this is a mistake.' });
@@ -207,7 +210,8 @@ const sendTokenResponse = (user, statusCode, res) => {
 // @route   POST /api/auth/forgotpassword
 // @access  Public
 exports.forgotPassword = async (req, res, next) => {
-    const user = await User.findOne({ email: req.body.email });
+    const normalizedEmail = req.body.email.toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
 
     if (!user) {
         // We don't want to reveal if a user exists or not
@@ -344,12 +348,13 @@ exports.getResetPassword = async (req, res, next) => {
 // @access  Public
 exports.verifyAdminOtp = async (req, res, next) => {
     const { email, otp } = req.body;
-    if (!email || !otp) {
+    const normalizedEmail = email.toLowerCase();
+    if (!normalizedEmail || !otp) {
         return res.status(400).json({ success: false, message: 'Please provide email and OTP.' });
     }
 
     try {
-        const user = await User.findOne({ email, otp: otp, otpExpires: { $gt: Date.now() } }).select('+password');
+        const user = await User.findOne({ email: normalizedEmail, otp: otp, otpExpires: { $gt: Date.now() } }).select('+password');
         if (!user) {
             return res.status(400).json({ success: false, message: 'Invalid or expired OTP.' });
         }
@@ -372,12 +377,13 @@ exports.verifyAdminOtp = async (req, res, next) => {
 // @access  Public
 exports.resendOtp = async (req, res, next) => {
     const { email } = req.body;
-    if (!email) {
+    const normalizedEmail = email.toLowerCase();
+    if (!normalizedEmail) {
         return res.status(400).json({ success: false, message: 'Please provide an email.' });
     }
-    
+
     try {
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email: normalizedEmail });
 
         if (!user) {
             // Don't want to reveal if a user exists or not for security reasons

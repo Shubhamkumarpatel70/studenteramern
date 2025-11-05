@@ -37,4 +37,5 @@
 - [x] Reduced frontend timeout
 - [x] Fixed navigation issue
 - [x] Fixed 404 error for /otp-verify route in production
+- [x] Implemented email normalization (case-insensitive email handling)
 - [ ] Deployed and tested in production (pending)
