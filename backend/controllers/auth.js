@@ -391,12 +391,19 @@ exports.resendOtp = async (req, res, next) => {
         const otp = user.getOtp();
         await user.save({ validateBeforeSave: false });
 
-        // Send OTP email asynchronously to avoid timeout
-        sendEmailToUser(user, otp).catch(emailError => {
-            console.error("Failed to send OTP email:", emailError);
-        });
+        // Try to send OTP email but wait a short time so we can inform the client
+        let emailError = false;
+        try {
+            await Promise.race([
+                sendEmailToUser(user, otp),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('sendEmail timeout')), 5000))
+            ]);
+        } catch (e) {
+            emailError = true;
+            console.error("Failed to send OTP email:", e);
+        }
 
-        res.status(200).json({ success: true, message: `A new OTP has been sent to ${email}` });
+        res.status(200).json({ success: true, message: `A new OTP has been sent to ${email}`, emailError });
 
     } catch (err) {
         console.error(err);

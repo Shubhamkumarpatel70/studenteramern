@@ -63,8 +63,10 @@ const OTPVerify = () => {
                 // But since we already verified, we can directly navigate and let the context load the user
                 navigate('/admin-dashboard', { replace: true });
             } else {
-                // For regular users, show success modal
-                setShowSuccessModal(true);
+                    // For regular users, show success modal briefly then redirect to login
+                    setShowSuccessModal(true);
+                    // After a short delay, navigate to login so the user can sign in
+                    setTimeout(() => navigate('/login'), 1500);
             }
         } catch (err) {
             const msg = err.response?.data?.message || 'Invalid OTP. Please try again.';
