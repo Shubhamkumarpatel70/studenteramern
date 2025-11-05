@@ -36,4 +36,5 @@
 - [x] Implemented asynchronous email sending
 - [x] Reduced frontend timeout
 - [x] Fixed navigation issue
+- [x] Fixed 404 error for /otp-verify route in production
 - [ ] Deployed and tested in production (pending)
