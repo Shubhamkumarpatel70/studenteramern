@@ -16,10 +16,12 @@ if (process.env.REACT_APP_API_URL) {
   baseURL = '/api';
 }
 
-// Log the baseURL for easier debugging in dev
-if (process.env.NODE_ENV !== 'production') {
+// Log the baseURL for easier debugging in dev or when explicitly enabled in production
+if (process.env.NODE_ENV !== 'production' || process.env.REACT_APP_DEBUG_API === 'true') {
   // eslint-disable-next-line no-console
   console.info('API baseURL:', baseURL);
+  // eslint-disable-next-line no-console
+  console.info('API timeout (ms):', process.env.REACT_APP_API_TIMEOUT || 60000);
 }
 
 // Create axios instance with base URL

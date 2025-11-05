@@ -43,17 +43,27 @@ exports.register = async (req, res, next) => {
             });
         }
 
-        // Send OTP email asynchronously to avoid timeout
-        sendEmailToUser(user, otp).catch(emailError => {
-            console.error("Failed to send OTP email:", emailError);
-        });
+        // Try to send OTP email but don't block the response for too long.
+        // We'll wait up to a short timeout so we can inform the client if email failed.
+        let emailError = false;
+        try {
+            // Wait for the email to be sent, but only up to 5 seconds to avoid long blocking in registration.
+            await Promise.race([
+                sendEmailToUser(user, otp),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('sendEmail timeout')), 5000))
+            ]);
+        } catch (e) {
+            emailError = true;
+            console.error("Failed to send OTP email:", e);
+        }
 
-        // Return success immediately without waiting for email
+        // Return success immediately (user data saved); include emailError so frontend can show resend/UI.
         return res.status(200).json({
             success: true,
             message: `Registration successful! Please check your email for the OTP.`,
             email: user.email,
-            internId: user.internId
+            internId: user.internId,
+            emailError: emailError
         });
 
     } catch (err) {
