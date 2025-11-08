@@ -116,6 +116,22 @@ function parseMessageWithLinks(message) {
   });
 }
 
+// Helper function for retry logic with exponential backoff
+const retryWithBackoff = async (fn, maxRetries = 3, baseDelay = 1000) => {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            return await fn();
+        } catch (error) {
+            if (attempt === maxRetries || (error.code !== 'ECONNABORTED' && !error.message?.includes('timeout'))) {
+                throw error;
+            }
+            const delay = baseDelay * Math.pow(2, attempt - 1);
+            console.warn(`Attempt ${attempt} failed, retrying in ${delay}ms...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+    }
+};
+
 const AnnouncementBar = () => {
     const [announcements, setAnnouncements] = useState([]);
     const [show, setShow] = useState(true);
@@ -123,9 +139,12 @@ const AnnouncementBar = () => {
     useEffect(() => {
         const fetchAnnouncements = async () => {
             try {
-                const { data } = await api.get('/announcements');
-                if (data.data && data.data.length > 0) {
-                    setAnnouncements(data.data);
+                const result = await retryWithBackoff(async () => {
+                    const { data } = await api.get('/announcements');
+                    return data;
+                });
+                if (result.data && result.data.length > 0) {
+                    setAnnouncements(result.data);
                 }
             } catch (error) {
                 console.error("Could not fetch announcements", error);
@@ -297,8 +316,11 @@ const LatestInternships = () => {
     useEffect(() => {
         const fetchInternships = async () => {
             try {
-                const res = await api.get('/internships/public');
-                setInternships(res.data.data);
+                const result = await retryWithBackoff(async () => {
+                    const res = await api.get('/internships/public');
+                    return res.data;
+                });
+                setInternships(result.data);
             } catch (err) {
                 console.error('Error fetching internships:', err);
                 setError('Failed to load internships.');
@@ -345,8 +367,11 @@ const TestimonialsSection = () => {
     useEffect(() => {
         const fetchTestimonials = async () => {
             try {
-                const { data } = await api.get('/testimonials');
-                setTestimonials(data.data);
+                const result = await retryWithBackoff(async () => {
+                    const { data } = await api.get('/testimonials');
+                    return data;
+                });
+                setTestimonials(result.data);
                 setLoading(false);
             } catch (error) {
                 console.error("Could not fetch testimonials", error);

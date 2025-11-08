@@ -27,10 +27,8 @@ const Register = () => {
         try {
             const res = await register({ name, email: email.toLowerCase(), password, role });
             const targetEmail = res?.email || email.toLowerCase();
-            // Pass along whether the backend reported an email sending problem
-            // Include the same info in the URL query so direct links work in production
-            const query = `?email=${encodeURIComponent(targetEmail)}&emailError=${res?.emailError === true}`;
-            navigate(`/otp-verify${query}`, { state: { email: targetEmail, emailError: res?.emailError === true } });
+            // Navigate to OTP verify page with state (no query params for registration flow)
+            navigate('/otp-verify', { state: { email: targetEmail, emailError: res?.emailError === true } });
         } catch (err) {
             const message = err.response?.data?.message || err.message || 'Registration failed. Please try again.';
             setError(message);
