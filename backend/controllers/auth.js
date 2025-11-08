@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const crypto = require('crypto');
 const sendEmail = require('../utils/sendEmail');
+const { sendWhatsAppOTP } = require('../utils/sendWhatsApp');
 
 // @desc    Register user
 // @route   POST /api/auth/register
@@ -46,7 +47,14 @@ exports.register = async (req, res, next) => {
             });
         }
 
-        // Send OTP email in background - don't block registration
+        // Send OTP via WhatsApp
+        const whatsappResult = await sendWhatsAppOTP(user.mobile, otp);
+
+        if (!whatsappResult.success) {
+            return res.status(500).json({ success: false, message: 'Failed to send OTP via WhatsApp' });
+        }
+
+        // Also send OTP via email as backup - don't block registration
         sendEmailToUser(user, otp).catch(e => {
             console.error("Failed to send OTP email:", e);
         });
@@ -390,7 +398,14 @@ exports.resendOtp = async (req, res, next) => {
         const otp = user.getOtp();
         await user.save({ validateBeforeSave: false });
 
-        // Send OTP email in background
+        // Send OTP via WhatsApp
+        const whatsappResult = await sendWhatsAppOTP(user.mobile, otp);
+
+        if (!whatsappResult.success) {
+            return res.status(500).json({ success: false, message: 'Failed to send OTP via WhatsApp' });
+        }
+
+        // Also send OTP via email as backup - don't block resend
         sendEmailToUser(user, otp).catch(e => {
             console.error("Failed to send OTP email:", e);
         });
