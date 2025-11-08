@@ -1,52 +1,44 @@
 const nodemailer = require('nodemailer');
 
 const sendEmail = async (options) => {
-    // Check if SendGrid API key is available (preferred for production)
-    const sendgridApiKey = process.env.SENDGRID_API_KEY;
+    // Build transporter with Gmail-specific optimizations for production
+    const host = process.env.EMAIL_HOST;
+    const port = parseInt(process.env.EMAIL_PORT, 10) || 587;
+    const user = process.env.EMAIL_USER;
+    const pass = process.env.SMTP_PASS;
 
-    let transporter;
+    const transporterConfig = {
+        host,
+        port,
+        secure: false, // Use STARTTLS instead of SMTPS for better compatibility
+        auth: {},
+        // Increase timeouts for production environments
+        connectionTimeout: 60000, // 60 seconds
+        greetingTimeout: 30000,   // 30 seconds
+        socketTimeout: 60000,     // 60 seconds
+        tls: {
+            // Allow self-signed certs and be more permissive
+            rejectUnauthorized: false,
+            // Force TLS version for better compatibility
+            minVersion: 'TLSv1.2'
+        },
+        // Additional Gmail-specific settings
+        requireTLS: true,
+        opportunisticTLS: false,
+        // Pool settings to improve connection reuse
+        pool: true,
+        maxConnections: 5,
+        maxMessages: 100
+    };
 
-    if (sendgridApiKey) {
-        // Use SendGrid for production
-        transporter = nodemailer.createTransport({
-            host: 'smtp.sendgrid.net',
-            port: 587,
-            secure: false,
-            auth: {
-                user: 'apikey',
-                pass: sendgridApiKey
-            },
-            tls: {
-                rejectUnauthorized: false
-            }
-        });
+    if (user && pass) {
+        transporterConfig.auth = { user, pass };
     } else {
-        // Fallback to Gmail SMTP (for development/localhost)
-        const host = process.env.EMAIL_HOST;
-        const port = parseInt(process.env.EMAIL_PORT, 10) || 587;
-        const user = process.env.EMAIL_USER;
-        const pass = process.env.SMTP_PASS;
-
-        const transporterConfig = {
-            host,
-            port,
-            secure: port === 465, // true for 465, false for other ports
-            auth: {},
-            tls: {
-                // Allow self-signed certs (useful for some SMTP providers); you can enable stricter checks in production
-                rejectUnauthorized: false
-            }
-        };
-
-        if (user && pass) {
-            transporterConfig.auth = { user, pass };
-        } else {
-            // If no auth provided, delete the auth key
-            delete transporterConfig.auth;
-        }
-
-        transporter = nodemailer.createTransport(transporterConfig);
+        // If no auth provided, delete the auth key
+        delete transporterConfig.auth;
     }
+
+    const transporter = nodemailer.createTransport(transporterConfig);
 
     const fromAddress = process.env.FROM_EMAIL || process.env.SMTP_USER || `noreply@${process.env.HOSTNAME || 'localhost'}`;
     const fromName = process.env.FROM_NAME || 'Student Era';
