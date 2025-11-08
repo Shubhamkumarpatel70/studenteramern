@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 
 const sendEmail = async (options) => {
+    console.log('Attempting to send email...');
     // Build transporter with Gmail-specific optimizations for production
     const host = process.env.EMAIL_HOST;
     const port = parseInt(process.env.EMAIL_PORT, 10) || 587;
@@ -8,6 +9,7 @@ const sendEmail = async (options) => {
     const pass = process.env.SMTP_PASS;
 
     if (!user || !pass) throw new Error('Missing EMAIL_USER or SMTP_PASS (app password)');
+    console.log(`Email config: host=${host}, port=${port}, user=${user ? 'set' : 'not set'}`);
 
     const transporterConfig = {
     host: host,
@@ -22,6 +24,7 @@ const sendEmail = async (options) => {
     tls: { minVersion: 'TLSv1.2' },
     // disable pooling to debug; re-enable only after you confirm working
     pool: false
+
   };
 
     const transporter = nodemailer.createTransport(transporterConfig);
@@ -37,9 +40,12 @@ const sendEmail = async (options) => {
         ...(options.html ? { html: options.html } : {})
     };
 
+    console.log(`Sending email to: ${options.email}, Subject: ${options.subject}`);
+
     // This will throw if sending fails; let callers handle the error so we can inform the user
     const info = await transporter.sendMail(message);
     console.log('Message sent: %s', info.messageId);
+    console.log('Email sent successfully.');
     return info;
 };
 
