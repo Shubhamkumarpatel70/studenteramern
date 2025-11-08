@@ -1,17 +1,17 @@
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { UserPlus, User, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { UserPlus, User, Mail, Lock, Eye, EyeOff, AlertCircle, Phone } from 'lucide-react';
 import AuthContext from '../context/AuthContext';
 
 const Register = () => {
-    const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'user' });
+    const [formData, setFormData] = useState({ name: '', email: '', password: '', mobile: '', role: 'user' });
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const { register } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    const { name, email, password, role } = formData;
+    const { name, email, password, mobile, role } = formData;
     const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const onSubmit = async e => {
@@ -25,7 +25,7 @@ const Register = () => {
             return;
         }
         try {
-            const res = await register({ name, email: email.toLowerCase(), password, role });
+            const res = await register({ name, email: email.toLowerCase(), password, mobile, role });
             const targetEmail = res?.email || email.toLowerCase();
             // Navigate to OTP verify page with state (no query params for registration flow)
             navigate('/otp-verify', { state: { email: targetEmail, emailError: res?.emailError === true } });
@@ -104,6 +104,27 @@ const Register = () => {
                                 onChange={onChange}
                                 className="appearance-none block w-full pl-10 pr-4 py-3 border border-[#0A2463] rounded-lg shadow-sm placeholder-[#6C757D] focus:outline-none focus:ring-2 focus:ring-[#28A745] focus:border-[#28A745] sm:text-sm bg-[#FFFFFF]"
                                 placeholder="Enter your email"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label htmlFor="mobile" className="block text-sm font-medium text-[#212529] mb-2">
+                            Mobile Number
+                        </label>
+                        <div className="relative">
+                            <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#0A2463] w-5 h-5" />
+                            <input
+                                id="mobile"
+                                name="mobile"
+                                type="tel"
+                                required
+                                value={mobile}
+                                onChange={onChange}
+                                className="appearance-none block w-full pl-10 pr-4 py-3 border border-[#0A2463] rounded-lg shadow-sm placeholder-[#6C757D] focus:outline-none focus:ring-2 focus:ring-[#28A745] focus:border-[#28A745] sm:text-sm bg-[#FFFFFF]"
+                                placeholder="Enter your 10-digit mobile number"
+                                pattern="[6-9]{1}[0-9]{9}"
+                                maxLength="10"
                             />
                         </div>
                     </div>
