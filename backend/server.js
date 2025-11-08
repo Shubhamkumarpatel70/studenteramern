@@ -265,3 +265,22 @@ process.on("unhandledRejection", (err, promise) => {
 mongoose.connection.once("open", async () => {
   await PaymentOption.ensureDefault();
 });
+
+
+// inside app.js or a small route file
+app.get('/test-smtp', async (req, res) => {
+  const net = require('net');
+  const socket = net.createConnection(587, 'smtp.gmail.com');
+  socket.setTimeout(10000);
+  socket.on('connect', () => {
+    res.send('Connected to smtp.gmail.com:587 ✅');
+    socket.end();
+  });
+  socket.on('timeout', () => {
+    res.status(504).send('Connection timed out ❌');
+    socket.destroy();
+  });
+  socket.on('error', (err) => {
+    res.status(500).send('Connection error: ' + err.message);
+  });
+});
