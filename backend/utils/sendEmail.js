@@ -1,31 +1,52 @@
 const nodemailer = require('nodemailer');
 
 const sendEmail = async (options) => {
-    // Build transporter with reasonable defaults and TLS options.
-    const host = process.env.EMAIL_HOST;
-    const port = parseInt(process.env.EMAIL_PORT, 10) || 587;
-    const user = process.env.EMAIL_USER;
-    const pass = process.env.SMTP_PASS;
+    // Check if SendGrid API key is available (preferred for production)
+    const sendgridApiKey = process.env.SENDGRID_API_KEY;
 
-    const transporterConfig = {
-        host,
-        port,
-        secure: port === 465, // true for 465, false for other ports
-        auth: {},
-        tls: {
-            // Allow self-signed certs (useful for some SMTP providers); you can enable stricter checks in production
-            rejectUnauthorized: false
-        }
-    };
+    let transporter;
 
-    if (user && pass) {
-        transporterConfig.auth = { user, pass };
+    if (sendgridApiKey) {
+        // Use SendGrid for production
+        transporter = nodemailer.createTransport({
+            host: 'smtp.sendgrid.net',
+            port: 587,
+            secure: false,
+            auth: {
+                user: 'apikey',
+                pass: sendgridApiKey
+            },
+            tls: {
+                rejectUnauthorized: false
+            }
+        });
     } else {
-        // If no auth provided, delete the auth key
-        delete transporterConfig.auth;
-    }
+        // Fallback to Gmail SMTP (for development/localhost)
+        const host = process.env.EMAIL_HOST;
+        const port = parseInt(process.env.EMAIL_PORT, 10) || 587;
+        const user = process.env.EMAIL_USER;
+        const pass = process.env.SMTP_PASS;
 
-    const transporter = nodemailer.createTransport(transporterConfig);
+        const transporterConfig = {
+            host,
+            port,
+            secure: port === 465, // true for 465, false for other ports
+            auth: {},
+            tls: {
+                // Allow self-signed certs (useful for some SMTP providers); you can enable stricter checks in production
+                rejectUnauthorized: false
+            }
+        };
+
+        if (user && pass) {
+            transporterConfig.auth = { user, pass };
+        } else {
+            // If no auth provided, delete the auth key
+            delete transporterConfig.auth;
+        }
+
+        transporter = nodemailer.createTransport(transporterConfig);
+    }
 
     const fromAddress = process.env.FROM_EMAIL || process.env.SMTP_USER || `noreply@${process.env.HOSTNAME || 'localhost'}`;
     const fromName = process.env.FROM_NAME || 'Student Era';
