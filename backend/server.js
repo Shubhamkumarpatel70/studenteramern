@@ -22,6 +22,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 const PaymentOption = require("./models/PaymentOption");
 const sendEmail = require("./utils/sendEmail");
+const fs = require("fs");
 
 // Load env vars
 dotenv.config({ path: "./config/config.env" });
