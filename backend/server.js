@@ -31,6 +31,9 @@ connectDB();
 
 const app = express();
 
+// Trust proxy for accurate IP detection (important for rate limiting behind reverse proxies like Render)
+app.set('trust proxy', 1);
+
 // Use morgan logging in development for requests
 if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
