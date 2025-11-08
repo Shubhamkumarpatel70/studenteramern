@@ -7,36 +7,22 @@ const sendEmail = async (options) => {
     const user = process.env.EMAIL_USER;
     const pass = process.env.SMTP_PASS;
 
-    const transporterConfig = {
-        host,
-        port,
-        secure: false, // Use STARTTLS instead of SMTPS for better compatibility
-        auth: {},
-        // Increase timeouts for production environments
-        connectionTimeout: 60000, // 60 seconds
-        greetingTimeout: 30000,   // 30 seconds
-        socketTimeout: 60000,     // 60 seconds
-        tls: {
-            // Allow self-signed certs and be more permissive
-            rejectUnauthorized: false,
-            // Force TLS version for better compatibility
-            minVersion: 'TLSv1.2'
-        },
-        // Additional Gmail-specific settings
-        requireTLS: true,
-        opportunisticTLS: false,
-        // Pool settings to improve connection reuse
-        pool: true,
-        maxConnections: 5,
-        maxMessages: 100
-    };
+    if (!user || !pass) throw new Error('Missing EMAIL_USER or SMTP_PASS (app password)');
 
-    if (user && pass) {
-        transporterConfig.auth = { user, pass };
-    } else {
-        // If no auth provided, delete the auth key
-        delete transporterConfig.auth;
-    }
+    const transporterConfig = {
+    host: host,
+    port: port,
+    secure: true,                   // SSL
+    auth: { user, pass },
+    // recommended production timeouts
+    connectionTimeout: 60000,
+    greetingTimeout: 30000,
+    socketTimeout: 60000,
+    // avoid overly permissive TLS in prod
+    tls: { minVersion: 'TLSv1.2' },
+    // disable pooling to debug; re-enable only after you confirm working
+    pool: false
+  };
 
     const transporter = nodemailer.createTransport(transporterConfig);
 
