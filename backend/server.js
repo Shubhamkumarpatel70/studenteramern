@@ -58,7 +58,8 @@ app.use(compression());
 const allowedOrigins = [
   process.env.FRONTEND_URL || 'https://studentera.live',
   'http://localhost:3000',
-  'https://studentera.live'
+  'https://studentera.live',
+  'http://localhost:3001' // Add additional localhost port if needed
 ];
 app.use(cors({
   origin: function(origin, callback) {
