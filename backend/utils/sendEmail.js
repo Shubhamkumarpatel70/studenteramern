@@ -21,7 +21,7 @@ const sendEmail = async (options) => {
 
   try {
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
+      host: "smtp.zoho.in",
       port: port,
       secure: secure, // Dynamically set based on port
       auth: {
