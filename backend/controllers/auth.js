@@ -6,7 +6,7 @@ const sendEmail = require('../utils/sendEmail');
 // @route   POST /api/auth/register
 // @access  Public
 exports.register = async (req, res, next) => {
-    const { name, email, password } = req.body; // Role is intentionally omitted for security
+    const { name, email, password, mobile } = req.body; // Role is intentionally omitted for security
     const normalizedEmail = email.toLowerCase();
 
     try {
@@ -29,6 +29,7 @@ exports.register = async (req, res, next) => {
             user.otpExpires = otpExpires;
             user.name = name; // Update name in case it changed
             user.password = password; // This will trigger the pre-save hook to re-hash
+            user.mobile = mobile; // Update mobile number
             await user.save();
         } else {
             // Create new user with OTP
@@ -37,6 +38,7 @@ exports.register = async (req, res, next) => {
                 name,
                 email: normalizedEmail,
                 password,
+                mobile,
                 role: 'user', // Force role to user for all new registrations
                 internId,
                 otp: otp,

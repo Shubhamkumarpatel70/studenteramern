@@ -22,6 +22,14 @@ const UserSchema = new mongoose.Schema({
             'Please add a valid email'
         ]
     },
+    mobile: {
+        type: String,
+        required: [true, 'Please add a mobile number'],
+        match: [
+            /^[6-9]\d{9}$/,
+            'Please add a valid 10-digit mobile number starting with 6-9'
+        ]
+    },
     role: {
         type: String,
         enum: ['user', 'admin', 'co-admin', 'accountant'],
