@@ -24,6 +24,8 @@ const PaymentOption = require("./models/PaymentOption");
 const sendEmail = require("./utils/sendEmail");
 const fs = require("fs");
 
+const nodemailer = require("nodemailer");
+
 // Load env vars
 dotenv.config({ path: "./config/config.env" });
 
@@ -111,23 +113,19 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/images/users", express.static(path.join(__dirname, "images/users")));
 // Test SMTP connection using nodemailer
 app.get("/api/test-smtp", async (req, res) => {
+  const user = process.env.EMAIL_USER;
+  const pass = process.env.SMTP_PASS;
+  const port = parseInt(process.env.EMAIL_PORT) || 587;
+  const secure = port === 465;
   try {
-    const nodemailer = require("nodemailer");
-    const user = process.env.EMAIL_USER;
-    const pass = process.env.SMTP_PASS;
-    const port = parseInt(process.env.EMAIL_PORT) || 587;
-    const secure = port === 465;
-
     if (!user || !pass) {
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: "Missing EMAIL_USER or SMTP_PASS in environment variables.",
-        });
+      return res.status(500).json({
+        success: false,
+        message: "Missing EMAIL_USER or SMTP_PASS in environment variables.",
+      });
     }
 
-    const transporter = nodemailer.createTransporter({
+    const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: port,
       secure: secure,
@@ -144,12 +142,10 @@ app.get("/api/test-smtp", async (req, res) => {
     res.json({ success: true, message: "SMTP connection successful ✅" });
   } catch (error) {
     console.error("SMTP test failed:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "SMTP connection failed: " + error.message,
-      });
+    res.status(500).json({
+      success: false,
+      message: "SMTP connection failed: " + error.message,
+    });
   }
 });
 
