@@ -109,22 +109,48 @@ app.use("/api", apiLimiter);
 // Set static folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/images/users", express.static(path.join(__dirname, "images/users")));
-// inside app.js or a small route file
-app.get('/api/test-smtp', async (req, res) => {
-  const net = require('net');
-  const socket = net.createConnection(587, 'smtp.gmail.com');
-  socket.setTimeout(10000);
-  socket.on('connect', () => {
-    res.send('Connected to smtp.gmail.com:587 ✅');
-    socket.end();
-  });
-  socket.on('timeout', () => {
-    res.status(504).send('Connection timed out ❌');
-    socket.destroy();
-  });
-  socket.on('error', (err) => {
-    res.status(500).send('Connection error: ' + err.message);
-  });
+// Test SMTP connection using nodemailer
+app.get("/api/test-smtp", async (req, res) => {
+  try {
+    const nodemailer = require("nodemailer");
+    const user = process.env.EMAIL_USER;
+    const pass = process.env.SMTP_PASS;
+    const port = parseInt(process.env.EMAIL_PORT) || 587;
+    const secure = port === 465;
+
+    if (!user || !pass) {
+      return res
+        .status(500)
+        .json({
+          success: false,
+          message: "Missing EMAIL_USER or SMTP_PASS in environment variables.",
+        });
+    }
+
+    const transporter = nodemailer.createTransporter({
+      host: "smtp.gmail.com",
+      port: port,
+      secure: secure,
+      auth: {
+        user: user,
+        pass: pass,
+      },
+      tls: {
+        rejectUnauthorized: process.env.NODE_ENV === "production",
+      },
+    });
+
+    await transporter.verify();
+    res.json({ success: true, message: "SMTP connection successful ✅" });
+  } catch (error) {
+    console.error("SMTP test failed:", error);
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "SMTP connection failed: " + error.message,
+      });
+  }
 });
 
 // Mount routers
@@ -214,12 +240,10 @@ if (process.env.ENABLE_EMAIL_TEST === "true") {
   app.post("/api/email-test", async (req, res) => {
     const { email } = req.body;
     if (!email)
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Please provide an email in the body.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Please provide an email in the body.",
+      });
     try {
       const info = await sendEmail({
         email,
@@ -232,12 +256,10 @@ if (process.env.ENABLE_EMAIL_TEST === "true") {
         .json({ success: true, message: "Test email sent", info });
     } catch (err) {
       console.error("Email test failed:", err);
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: err.message || "Failed to send test email",
-        });
+      return res.status(500).json({
+        success: false,
+        message: err.message || "Failed to send test email",
+      });
     }
   });
 }
@@ -282,4 +304,3 @@ process.on("unhandledRejection", (err, promise) => {
 mongoose.connection.once("open", async () => {
   await PaymentOption.ensureDefault();
 });
-
