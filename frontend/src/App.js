@@ -1,12 +1,21 @@
 import React, { useState, useEffect, useContext } from "react";
-import { HashRouter as Router, Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import api from './config/api';
+import {
+  HashRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
+import api from "./config/api";
 import Navbar from "./components/Navbar";
-import Footer from './components/Footer';
+import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import OTPVerify from "./pages/OTPVerify";
+import VerifyEmail from "./pages/VerifyEmail";
+import VerifyEmailToken from "./pages/VerifyEmailToken";
+
 import UserDashboard from "./pages/UserDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import CoAdminDashboard from "./pages/CoAdminDashboard";
@@ -28,10 +37,10 @@ import Certificates from "./pages/dashboard/Certificates";
 import OfferLetters from "./pages/dashboard/OfferLetters";
 import UploadTask from "./pages/dashboard/UploadTask";
 import MyTasks from "./pages/dashboard/MyTasks";
-import PaymentPage from './pages/PaymentPage';
-import Apply from './pages/Apply';
-import InternshipDetails from './pages/InternshipDetails';
-import Internships from './pages/Internships';
+import PaymentPage from "./pages/PaymentPage";
+import Apply from "./pages/Apply";
+import InternshipDetails from "./pages/InternshipDetails";
+import Internships from "./pages/Internships";
 import Help from "./pages/dashboard/Help";
 import HelpQueries from "./pages/admin/HelpQueries";
 
@@ -45,15 +54,14 @@ import CertificateVerification from "./pages/admin/CertificateVerification";
 import GenerateOfferLetter from "./pages/admin/GenerateOfferLetter";
 import AddInternship from "./pages/admin/AddInternship";
 import InternshipRegistrations from "./pages/admin/InternshipRegistrations";
-import ManageTestimonials from './pages/admin/ManageTestimonials';
-import PostAnnouncement from './pages/admin/PostAnnouncement';
-import ManageTasks from './pages/admin/ManageTasks';
-import AssignTasks from './pages/admin/AssignTasks';
+import ManageTestimonials from "./pages/admin/ManageTestimonials";
+import PostAnnouncement from "./pages/admin/PostAnnouncement";
+import ManageTasks from "./pages/admin/ManageTasks";
+import AssignTasks from "./pages/admin/AssignTasks";
 import Queries from "./pages/admin/Queries";
-import DeletionRequests from './pages/admin/DeletionRequests';
-import ManagePayments from './pages/admin/ManagePayments';
+import DeletionRequests from "./pages/admin/DeletionRequests";
+import ManagePayments from "./pages/admin/ManagePayments";
 import ScheduleMeeting from "./pages/coadmin/ScheduleMeeting";
-
 
 // Co-Admin Pages
 import CoAdminHome from "./pages/coadmin/CoAdminHome";
@@ -63,18 +71,18 @@ import ViewMeetings from "./pages/coadmin/ViewMeetings";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 
-import AuthContext from './context/AuthContext';
-import ProfileCompletionModal from './components/ProfileCompletionModal';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import AuthContext from "./context/AuthContext";
+import ProfileCompletionModal from "./components/ProfileCompletionModal";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Error Pages
-import NotFound from './pages/NotFound';
-import NoInternet from './pages/NoInternet';
-import ServerError from './pages/ServerError';
+import NotFound from "./pages/NotFound";
+import NoInternet from "./pages/NoInternet";
+import ServerError from "./pages/ServerError";
 
 import AccountantDashboard from "./pages/AccountantDashboard";
-import DeleteAccount from './pages/dashboard/DeleteAccount';
+import DeleteAccount from "./pages/dashboard/DeleteAccount";
 
 // A wrapper component to access context
 const AppContent = () => {
@@ -87,13 +95,13 @@ const AppContent = () => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
     // Axios interceptor for server errors
     const responseInterceptor = api.interceptors.response.use(
-      response => response,
-      error => {
+      (response) => response,
+      (error) => {
         if (!error.response) {
           // Network error (server is down, CORS, etc.)
           setServerError(true);
@@ -104,8 +112,8 @@ const AppContent = () => {
     );
 
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
       api.interceptors.response.eject(responseInterceptor);
     };
   }, []);
@@ -125,10 +133,10 @@ const AppContent = () => {
         } catch (e) {
           // ignore
         }
-        navigate('/login');
+        navigate("/login");
       };
-      window.addEventListener('unauthorized', handler);
-      return () => window.removeEventListener('unauthorized', handler);
+      window.addEventListener("unauthorized", handler);
+      return () => window.removeEventListener("unauthorized", handler);
     }, [logout, navigate]);
 
     return null;
@@ -144,7 +152,16 @@ const AppContent = () => {
 
   return (
     <>
-      <ToastContainer position="top-right" autoClose={4000} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       {showProfileModal && <ProfileCompletionModal />}
       <Router>
         <UnauthorizedHandler />
@@ -161,22 +178,41 @@ const AppContent = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/otp-verify" element={<OTPVerify />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route
+            path="/verify-email-token/:token"
+            element={<VerifyEmailToken />}
+          />
+          <Route path="/verify-account-pending" element={<OTPVerify />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password/:resettoken" element={<ResetPassword />} />
+          <Route
+            path="/reset-password/:resettoken"
+            element={<ResetPassword />}
+          />
           <Route path="/internships/:id" element={<InternshipDetails />} />
           <Route path="/internships" element={<Internships />} />
-          <Route path="/apply/:internshipId" element={<ProtectedRoute roles={['user']}><Apply /></ProtectedRoute>} />
+          <Route
+            path="/apply/:internshipId"
+            element={
+              <ProtectedRoute roles={["user"]}>
+                <Apply />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/payment" element={<PaymentPage />} />
-          
+
           {/* Protected User Dashboard */}
-          <Route element={<ProtectedRoute roles={['user']} />}>
+          <Route element={<ProtectedRoute roles={["user"]} />}>
             <Route path="/dashboard" element={<UserDashboard />}>
               <Route index element={<DashboardHome />} />
               <Route path="overview" element={<DashboardHome />} />
               <Route path="transactions" element={<Transactions />} />
               <Route path="certificates" element={<Certificates />} />
               <Route path="profile" element={<Profile />} />
-              <Route path="applied-internships" element={<AppliedInternships />} />
+              <Route
+                path="applied-internships"
+                element={<AppliedInternships />}
+              />
               <Route path="meetings" element={<Meetings />} />
               <Route path="notifications" element={<Notifications />} />
               <Route path="offer-letters" element={<OfferLetters />} />
@@ -186,32 +222,47 @@ const AppContent = () => {
               <Route path="delete-account" element={<DeleteAccount />} />
             </Route>
           </Route>
-          
+
           {/* Protected Admin Dashboard */}
-          <Route element={<ProtectedRoute roles={['admin']} />}>
+          <Route element={<ProtectedRoute roles={["admin"]} />}>
             <Route path="/admin-dashboard" element={<AdminDashboard />}>
               <Route index element={<AdminHome />} />
               <Route path="users" element={<ManageUsers />} />
               <Route path="add-internship" element={<AddInternship />} />
-              <Route path="internship-registrations" element={<InternshipRegistrations />} />
+              <Route
+                path="internship-registrations"
+                element={<InternshipRegistrations />}
+              />
               <Route path="manage-tasks" element={<ManageTasks />} />
               <Route path="assign-tasks" element={<AssignTasks />} />
-              <Route path="manage-testimonials" element={<ManageTestimonials />} />
+              <Route
+                path="manage-testimonials"
+                element={<ManageTestimonials />}
+              />
               <Route path="post-announcement" element={<PostAnnouncement />} />
               <Route path="manage-meetings" element={<ManageMeetings />} />
               <Route path="manage-payments" element={<ManagePayments />} />
               <Route path="send-notification" element={<SendNotification />} />
-              <Route path="generate-certificate" element={<GenerateCertificate />} />
-              <Route path="certificate-verification" element={<CertificateVerification />} />
-              <Route path="generate-offer-letter" element={<GenerateOfferLetter />} />
+              <Route
+                path="generate-certificate"
+                element={<GenerateCertificate />}
+              />
+              <Route
+                path="certificate-verification"
+                element={<CertificateVerification />}
+              />
+              <Route
+                path="generate-offer-letter"
+                element={<GenerateOfferLetter />}
+              />
               <Route path="queries" element={<Queries />} />
               <Route path="help-queries" element={<HelpQueries />} />
               <Route path="deletion-requests" element={<DeletionRequests />} />
             </Route>
           </Route>
-          
+
           {/* Protected Co-Admin Dashboard */}
-          <Route element={<ProtectedRoute roles={['co-admin']} />}>
+          <Route element={<ProtectedRoute roles={["co-admin"]} />}>
             <Route path="/coadmin/*" element={<CoAdminDashboard />}>
               <Route index element={<CoAdminHome />} />
               <Route path="students" element={<ManageStudents />} />
@@ -221,7 +272,7 @@ const AppContent = () => {
           </Route>
 
           {/* Protected Accountant Dashboard */}
-          <Route element={<ProtectedRoute roles={['accountant']} />}> 
+          <Route element={<ProtectedRoute roles={["accountant"]} />}>
             <Route path="/accountant/*" element={<AccountantDashboard />} />
           </Route>
 
@@ -238,7 +289,7 @@ const AppContent = () => {
 // Component to render Footer outside page containers for specific routes
 const FooterRenderer = () => {
   const { pathname } = useLocation();
-  const paths = ['/faq', '/terms', '/privacy', '/refund', '/contact'];
+  const paths = ["/faq", "/terms", "/privacy", "/refund", "/contact"];
   if (paths.includes(pathname)) return <Footer />;
   return null;
 };

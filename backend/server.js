@@ -108,9 +108,36 @@ const apiLimiter = rateLimit({
 // Apply default rate limiter to all API routes
 app.use("/api", apiLimiter);
 
-// Set static folder
+// Set static folder with CORS headers for images
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use("/images/users", express.static(path.join(__dirname, "images/users")));
+app.use(
+  "/images/users",
+  express.static(path.join(__dirname, "images/users"), {
+    setHeaders: (res, path) => {
+      res.set("Access-Control-Allow-Origin", "*");
+      res.set("Access-Control-Allow-Methods", "GET, OPTIONS");
+      res.set(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept"
+      );
+      res.set("Cache-Control", "public, max-age=31536000"); // Cache for 1 year
+    },
+  })
+);
+app.use(
+  "/dafaultava.jpg",
+  express.static(path.join(__dirname, "dafaultava.jpg"), {
+    setHeaders: (res, path) => {
+      res.set("Access-Control-Allow-Origin", "*");
+      res.set("Access-Control-Allow-Methods", "GET, OPTIONS");
+      res.set(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept"
+      );
+      res.set("Cache-Control", "public, max-age=31536000");
+    },
+  })
+);
 // Test SMTP connection using nodemailer
 app.get("/api/test-smtp", async (req, res) => {
   const host = process.env.EMAIL_HOST || "smtp.gmail.com";

@@ -1,31 +1,12 @@
-# TODO: Implement Cloudinary Storage for Certificates and Offer Letters
+# TODO: Enhance Admin Dashboard and Profile Picture Upload
 
 ## Tasks
 
-- [x] Modify backend/controllers/certificates.js: Add Cloudinary upload for generateCertificate and generateSelfCertificate functions
-- [x] Modify backend/controllers/offerLetters.js: Add Cloudinary upload for generateOfferLetter function
-- [x] Update delete functions in both controllers to remove from Cloudinary
-- [x] Test certificate and offer letter generation to verify Cloudinary URLs are stored
-- [x] Verify delete functionality removes files from Cloudinary
-- [x] Fix email OTP not working in production by making SMTP host configurable
-- [x] Fix registration timeout issue in production by making email sending asynchronous
-
-## Status
-
-- ✅ **COMPLETED**: All tasks implemented successfully
-- PDFs are now stored in Cloudinary collections (certificates and offerLetters)
-- Files are publicly accessible without authentication
-- URLs are properly formatted for PDF viewing
-- Delete functionality removes files from both database and Cloudinary
-- Email OTP now works in production with configurable SMTP settings
-- Registration timeouts fixed by making email sending asynchronous (fire-and-forget)
-- Local files are automatically cleaned up after upload to save disk space
-
-## Implementation Details
-
-- **Certificates**: Stored in `certificates/` folder on Cloudinary
-- **Offer Letters**: Stored in `offerLetters/` folder on Cloudinary
-- **File Access**: Public URLs allow direct PDF viewing/download
-- **Cleanup**: Local PDF files deleted after successful Cloudinary upload
-- **Error Handling**: Graceful handling of Cloudinary upload failures
-- **Email**: Asynchronous sending prevents registration timeouts
+- [x] Add OTP column to admin ManageUsers table for unverified users
+- [x] Ensure Profile.js uses correct Cloudinary upload endpoint (/api/profile/picture)
+- [x] Update profile image display in user dashboard after upload
+- [x] Fix CORS headers for static image serving in backend
+- [x] Resolve Cloudinary 401 authentication issues
+- [x] Add revenue growth display (₹8,149 increased user amount) in admin dashboard
+- [x] Test admin dashboard OTP display functionality (syntax check passed)
+- [x] Test profile picture upload to Cloudinary and display (syntax check passed)

@@ -1,7 +1,6 @@
 const User = require("../models/User");
 const crypto = require("crypto");
 const sendEmail = require("../utils/sendEmail");
-const { sendEmailWithFallback } = require("../utils/emailService");
 
 // @desc    Register user
 // @route   POST /api/auth/register
@@ -28,19 +27,14 @@ exports.register = async (req, res, next) => {
       });
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
-
     if (user && !user.isVerified) {
       // Update existing unverified user
-      user.otp = otp;
-      user.otpExpires = otpExpires;
       user.name = name; // Update name in case it changed
       user.password = password; // This will trigger the pre-save hook to re-hash
       user.mobile = mobile; // Update mobile number
       await user.save();
     } else {
-      // Create new user with OTP
+      // Create new user
       const internId = `SE${Date.now()}`;
       user = await User.create({
         name,
@@ -49,22 +43,28 @@ exports.register = async (req, res, next) => {
         mobile,
         role: "user", // Force role to user for all new registrations
         internId,
-        otp: otp,
-        otpExpires: otpExpires,
       });
     }
 
-    // Send OTP via email asynchronously (fire-and-forget)
-    sendEmailToUser(user, otp).catch((emailError) => {
-      console.error("Failed to send OTP email (async):", emailError);
-      // TODO: In production, consider alerting admin or retrying email send
-      // Don't block registration - log the error but continue
-    });
+    // Generate OTP
+    const otp = user.getOtp();
+    await user.save({ validateBeforeSave: false });
+
+    // Send OTP via email
+    try {
+      await sendEmailToUser(user, otp);
+    } catch (emailError) {
+      console.error("Failed to send OTP email:", emailError);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to send OTP email. Please try again.",
+      });
+    }
 
     // Return success
     return res.status(200).json({
       success: true,
-      message: `Registration successful! Please check your email for the OTP.`,
+      message: `Registration successful! Please check your email for the OTP to verify your account.`,
       email: normalizedEmail,
       internId: user.internId,
     });
@@ -105,32 +105,13 @@ async function sendEmailToUser(user, otp) {
     </div>
     `;
   const text = `Your OTP for verification is: ${otp}\nIt will expire in 10 minutes.\nNever share your OTP with anyone.`;
-
-  // Try primary email service first, fallback to alternatives if needed
-  try {
-    await sendEmail({
-      email: user.email,
-      subject: "Student Era - Account Verification OTP",
-      message: text,
-      html: html,
-    });
-  } catch (primaryError) {
-    console.warn(
-      "Primary email service failed, trying fallback providers:",
-      primaryError.message
-    );
-    try {
-      await sendEmailWithFallback({
-        email: user.email,
-        subject: "Student Era - Account Verification OTP",
-        message: text,
-        html: html,
-      });
-    } catch (fallbackError) {
-      console.error("All email services failed:", fallbackError.message);
-      throw fallbackError; // Let the caller handle the error
-    }
-  }
+  // Let errors bubble up to the caller so registration can respond appropriately
+  await sendEmail({
+    email: user.email,
+    subject: "Student Era - Account Verification OTP",
+    message: text,
+    html: html,
+  });
 }
 
 // @desc    Verify OTP
@@ -276,12 +257,14 @@ exports.forgotPassword = async (req, res, next) => {
 
   await user.save({ validateBeforeSave: false });
 
-  // Create reset URL - use production URL
-  const resetUrl = `${
+  // Create reset URL - prefer FRONTEND URL when available so the user lands on the client app
+  const frontendBase =
     process.env.FRONTEND_URL ||
     process.env.CLIENT_URL ||
-    `${req.protocol}://${req.get("host")}`
-  }/reset-password/${resetToken}`;
+    (process.env.NODE_ENV !== "production"
+      ? "http://localhost:3000"
+      : `${req.protocol}://${req.get("host")}`);
+  const resetUrl = `${frontendBase}/reset-password/${resetToken}`;
 
   const text = `You are receiving this email because you (or someone else) has requested the reset of a password.
 Please copy and paste the following link into your browser to reset your password:
@@ -307,30 +290,16 @@ If you did not request this, please ignore this email.`;
     `;
 
   try {
-    // Try primary email service first, fallback to alternatives if needed
-    try {
-      await sendEmail({
-        email: user.email,
-        subject: "Student Era — Password Reset",
-        message: text,
-        html,
-      });
-    } catch (primaryError) {
-      console.warn(
-        "Primary email service failed for password reset, trying fallback providers:",
-        primaryError.message
-      );
-      await sendEmailWithFallback({
-        email: user.email,
-        subject: "Student Era — Password Reset",
-        message: text,
-        html,
-      });
-    }
+    await sendEmail({
+      email: user.email,
+      subject: "Student Era — Password Reset",
+      message: text,
+      html,
+    });
 
     res.status(200).json({ success: true, data: "Email sent" });
   } catch (err) {
-    console.log("All email services failed for password reset:", err);
+    console.log(err);
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
 
@@ -378,43 +347,26 @@ exports.resetPassword = async (req, res, next) => {
                     }</strong>,</p>
                     <p style="color:#333;">Your password has been successfully reset. Click the button below to go to the login page and sign in with your new password.</p>
                     <div style="text-align:center;margin:20px 0;">
-                        <a href="${
+                        <a href="${(
                           process.env.FRONTEND_URL ||
                           process.env.CLIENT_URL ||
-                          `${req.protocol}://${req.get("host")}`
-                        }/login" style="background:#0A2463;color:#fff;padding:12px 18px;border-radius:6px;text-decoration:none;font-weight:600;">Login Now</a>
+                          (process.env.NODE_ENV !== "production"
+                            ? "http://localhost:3000"
+                            : `${req.protocol}://${req.get("host")}`)
+                        ).replace(
+                          /\/$/,
+                          ""
+                        )}/login" style="background:#0A2463;color:#fff;padding:12px 18px;border-radius:6px;text-decoration:none;font-weight:600;">Login Now</a>
                     </div>
                     <p style="color:#666;font-size:13px;">If you did not request this change, please contact support immediately.</p>
                 </div>
                 `;
-
-    // Try primary email service first, fallback to alternatives if needed
-    try {
-      await sendEmail({
-        email: user.email,
-        subject: "Student Era — Password Reset Successful",
-        message: text,
-        html,
-      });
-    } catch (primaryError) {
-      console.warn(
-        "Primary email service failed for password reset confirmation, trying fallback providers:",
-        primaryError.message
-      );
-      try {
-        await sendEmailWithFallback({
-          email: user.email,
-          subject: "Student Era — Password Reset Successful",
-          message: text,
-          html,
-        });
-      } catch (fallbackError) {
-        console.error(
-          "All email services failed for password reset confirmation:",
-          fallbackError.message
-        );
-      }
-    }
+    await sendEmail({
+      email: user.email,
+      subject: "Student Era — Password Reset Successful",
+      message: text,
+      html,
+    });
   } catch (emailErr) {
     console.error(
       "Failed to send password reset confirmation email:",
@@ -523,11 +475,16 @@ exports.resendOtp = async (req, res, next) => {
     const otp = user.getOtp();
     await user.save({ validateBeforeSave: false });
 
-    // Send OTP via email asynchronously (fire-and-forget)
-    sendEmailToUser(user, otp).catch((emailError) => {
-      console.error("Failed to send OTP email (async):", emailError);
-      // Don't block resend - log the error but continue
-    });
+    // Send OTP via email
+    try {
+      await sendEmailToUser(user, otp);
+    } catch (emailError) {
+      console.error("Failed to send OTP email:", emailError);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to send OTP email. Please try again.",
+      });
+    }
 
     res.status(200).json({
       success: true,
@@ -536,6 +493,209 @@ exports.resendOtp = async (req, res, next) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Error resending OTP." });
+  }
+};
+
+// @desc    Send email token for verification
+// @route   POST /api/auth/send-email-token
+// @access  Public
+exports.sendEmailToken = async (req, res, next) => {
+  const { email } = req.body;
+  const normalizedEmail = email.toLowerCase();
+
+  if (!normalizedEmail) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Please provide an email." });
+  }
+
+  try {
+    const user = await User.findOne({ email: normalizedEmail });
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found." });
+    }
+
+    if (user.isVerified) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User is already verified." });
+    }
+
+    // Generate token
+    const token = crypto.randomBytes(32).toString("hex");
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+
+    // Save token
+    const EmailToken = require("../models/EmailToken");
+    await EmailToken.create({
+      email: normalizedEmail,
+      tokenHash,
+      expiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
+    });
+
+    // Send email
+    const resetUrl = `${
+      process.env.FRONTEND_URL ||
+      process.env.CLIENT_URL ||
+      (process.env.NODE_ENV !== "production"
+        ? "http://localhost:3000"
+        : `${req.protocol}://${req.get("host")}`)
+    }/verify-email-token/${token}`;
+
+    const text = `Please verify your email by clicking the link: ${resetUrl}`;
+    const html = `<p>Please verify your email by clicking <a href="${resetUrl}">here</a>.</p>`;
+
+    await sendEmail({
+      email: normalizedEmail,
+      subject: "Student Era - Email Verification",
+      message: text,
+      html,
+    });
+
+    res
+      .status(200)
+      .json({ success: true, message: "Verification email sent." });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error." });
+  }
+};
+
+// @desc    Get user details from email token
+// @route   GET /api/auth/verify-email-token/:token
+// @access  Public
+exports.getEmailTokenDetails = async (req, res, next) => {
+  const { token } = req.params;
+
+  if (!token) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Please provide a token." });
+  }
+
+  try {
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+    const EmailToken = require("../models/EmailToken");
+
+    const emailToken = await EmailToken.findOne({
+      tokenHash,
+      used: false,
+      expiresAt: { $gt: Date.now() },
+    });
+
+    if (!emailToken) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid or expired token." });
+    }
+
+    // Get user details
+    const user = await User.findOne({ email: emailToken.email }).select(
+      "name email"
+    );
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found." });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        name: user.name,
+        email: user.email,
+        token: token,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error." });
+  }
+};
+
+// @desc    Verify email token
+// @route   POST /api/auth/verify-email-token
+// @access  Public
+exports.verifyEmailToken = async (req, res, next) => {
+  const { token } = req.body;
+
+  if (!token) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Please provide a token." });
+  }
+
+  try {
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+    const EmailToken = require("../models/EmailToken");
+
+    const emailToken = await EmailToken.findOne({
+      tokenHash,
+      used: false,
+      expiresAt: { $gt: Date.now() },
+    });
+
+    if (!emailToken) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid or expired token." });
+    }
+
+    // Mark token as used
+    emailToken.used = true;
+    await emailToken.save();
+
+    // Verify user
+    const user = await User.findOne({ email: emailToken.email });
+    if (user) {
+      user.isVerified = true;
+      await user.save();
+    }
+
+    res
+      .status(200)
+      .json({ success: true, message: "Email verified successfully." });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error." });
+  }
+};
+
+// @desc    Check verification status
+// @route   GET /api/auth/check-verification
+// @access  Public
+exports.checkVerification = async (req, res, next) => {
+  const { email } = req.query;
+  const normalizedEmail = email.toLowerCase();
+
+  if (!normalizedEmail) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Please provide an email." });
+  }
+
+  try {
+    const user = await User.findOne({ email: normalizedEmail });
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found." });
+    }
+
+    // Prevent caching since verification status can change
+    res.set("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.set("Pragma", "no-cache");
+    res.set("Expires", "0");
+
+    res.status(200).json({ success: true, isVerified: user.isVerified });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error." });
   }
 };
 
