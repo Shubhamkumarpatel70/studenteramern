@@ -3,6 +3,7 @@ const nodemailer = require("nodemailer");
 const sendEmail = async (options) => {
   console.log("Attempting to send email...");
 
+  const host = process.env.EMAIL_HOST || "smtp.gmail.com"; // Use EMAIL_HOST from .env, default Gmail
   const user = process.env.EMAIL_USER; // Use EMAIL_USER from .env
   const pass = process.env.SMTP_PASS; // Use SMTP_PASS from .env
   const port = parseInt(process.env.EMAIL_PORT) || 587; // Use EMAIL_PORT from env, default 587
@@ -14,14 +15,14 @@ const sendEmail = async (options) => {
     );
 
   console.log(
-    `Email config: host=smtp.gmail.com, port=${port}, secure=${secure}, user=${
+    `Email config: host=${host}, port=${port}, secure=${secure}, user=${
       user ? "set" : "not set"
     }`
   );
 
   try {
     const transporter = nodemailer.createTransport({
-      host: "smtp.zoho.in",
+      host: host,
       port: port,
       secure: secure, // Dynamically set based on port
       auth: {
@@ -29,7 +30,8 @@ const sendEmail = async (options) => {
         pass: pass,
       },
       tls: {
-        rejectUnauthorized: process.env.NODE_ENV === "production", // Only allow in production for security
+        rejectUnauthorized: false, // Allow self-signed certificates in development
+        ciphers: "SSLv3", // Use SSLv3 for compatibility
       },
     });
     const info = await transporter.sendMail({
