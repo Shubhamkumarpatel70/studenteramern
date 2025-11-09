@@ -7,10 +7,11 @@
 - [x] Update delete functions in both controllers to remove from Cloudinary
 - [x] Test certificate and offer letter generation to verify Cloudinary URLs are stored
 - [x] Verify delete functionality removes files from Cloudinary
-- [x] Fix Cloudinary access issues by adding type: "upload" parameter
 
 ## Status
 
-- Implementation completed
-- Access control fixed with type: "upload" parameter
-- Ready for testing
+- All tasks completed successfully
+- PDFs are now stored in Cloudinary collections (certificates and offerLetters)
+- Files are publicly accessible without authentication
+- URLs are properly formatted for PDF viewing
+- Delete functionality removes files from both database and Cloudinary
