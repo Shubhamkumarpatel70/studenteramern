@@ -49,6 +49,18 @@ exports.generateCertificate = async (req, res, next) => {
     const pdfDir = path.join(__dirname, "../uploads/certificates");
     if (!fs.existsSync(pdfDir)) fs.mkdirSync(pdfDir, { recursive: true });
     const pdfPath = path.join(pdfDir, `${certificate._id}.pdf`);
+    await generateCertificatePDF(
+      {
+        candidateName,
+        internshipTitle,
+        duration,
+        completionDate,
+        certificateId,
+        signatureName,
+      },
+      pdfPath
+    );
+
     // Upload to Cloudinary
     const result = await cloudinary.uploader.upload(pdfPath, {
       folder: "certificates",
