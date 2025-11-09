@@ -1,10 +1,14 @@
-# TODO: Fix Axios Timeout Issues
+# TODO: Implement Cloudinary Storage for Certificates and Offer Letters
 
 ## Tasks
 
-- [x] Increase default API timeout in frontend/src/config/api.js from 30s to 60s
- - [x] Add retry logic with exponential backoff to fetchAnnouncements in Home.js (up to 3 retries)
-- [x] Add retry logic with exponential backoff to fetchInternships in Home.js (up to 3 retries)
-- [x] Add retry logic with exponential backoff to fetchTestimonials in Home.js (up to 3 retries)
-- [x] Test the app to verify timeouts are resolved
-- [ ] If issues persist, check backend performance or network
+- [x] Modify backend/controllers/certificates.js: Add Cloudinary upload for generateCertificate and generateSelfCertificate functions
+- [x] Modify backend/controllers/offerLetters.js: Add Cloudinary upload for generateOfferLetter function
+- [x] Update delete functions in both controllers to remove from Cloudinary
+- [ ] Test certificate and offer letter generation to verify Cloudinary URLs are stored
+- [ ] Verify delete functionality removes files from Cloudinary
+
+## Status
+
+- Implementation completed
+- Ready for testing
