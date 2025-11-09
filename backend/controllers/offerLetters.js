@@ -69,15 +69,16 @@ exports.generateOfferLetter = async (req, res, next) => {
     // Upload to Cloudinary
     const result = await cloudinary.uploader.upload(pdfPath, {
       folder: "offerLetters",
-      resource_type: "image",
-      public_id: `${offerLetter._id}`,
+      resource_type: "raw",
+      public_id: `${offerLetter._id}.pdf`,
+      type: "upload",
+      access_mode: "public",
+      use_filename: true,
+      unique_filename: false,
     });
 
-    // Update fileUrl with corrected Cloudinary URL for raw files
-    offerLetter.fileUrl = result.secure_url.replace(
-      "/raw/upload/",
-      "/raw/upload/"
-    );
+    // Update fileUrl with Cloudinary URL
+    offerLetter.fileUrl = result.secure_url;
     await offerLetter.save();
 
     // Remove local file after upload
@@ -152,7 +153,7 @@ exports.deleteOfferLetter = async (req, res) => {
     }
     // Remove PDF file from Cloudinary if exists
     if (offerLetter.fileUrl && offerLetter.fileUrl.includes("cloudinary")) {
-      const publicId = `offerLetters/${offerLetter._id}`;
+      const publicId = `offerLetters/${offerLetter._id}.pdf`;
       try {
         await cloudinary.uploader.destroy(publicId, { resource_type: "raw" });
       } catch (cloudinaryError) {

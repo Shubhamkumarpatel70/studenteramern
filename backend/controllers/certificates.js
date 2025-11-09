@@ -64,16 +64,16 @@ exports.generateCertificate = async (req, res, next) => {
     // Upload to Cloudinary
     const result = await cloudinary.uploader.upload(pdfPath, {
       folder: "certificates",
-      resource_type: "image",
-      public_id: `${certificate._id}`,
+      resource_type: "raw",
+      public_id: `${certificate._id}.pdf`,
+      type: "upload",
       access_mode: "public",
+      use_filename: true,
+      unique_filename: false,
     });
 
-    // Update fileUrl with corrected Cloudinary URL for raw files
-    certificate.fileUrl = result.secure_url.replace(
-      "/image/upload/",
-      "/raw/upload/"
-    );
+    // Update fileUrl with Cloudinary URL
+    certificate.fileUrl = result.secure_url;
     await certificate.save();
 
     // Remove local file after upload
@@ -225,14 +225,15 @@ exports.generateSelfCertificate = async (req, res, next) => {
     const result = await cloudinary.uploader.upload(pdfPath, {
       folder: "certificates",
       resource_type: "raw",
-      public_id: `${certificate._id}`,
+      public_id: `${certificate._id}.pdf`,
+      type: "upload",
+      access_mode: "public",
+      use_filename: true,
+      unique_filename: false,
     });
 
-    // Update fileUrl with corrected Cloudinary URL for raw files
-    certificate.fileUrl = result.secure_url.replace(
-      "/raw/upload/",
-      "/raw/upload/"
-    );
+    // Update fileUrl with Cloudinary URL
+    certificate.fileUrl = result.secure_url;
     await certificate.save();
 
     // Remove local file after upload
@@ -256,7 +257,7 @@ exports.deleteCertificate = async (req, res, next) => {
     }
     // Remove PDF file from Cloudinary if exists
     if (certificate.fileUrl && certificate.fileUrl.includes("cloudinary")) {
-      const publicId = `certificates/${certificate._id}`;
+      const publicId = `certificates/${certificate._id}.pdf`;
       try {
         await cloudinary.uploader.destroy(publicId, { resource_type: "raw" });
       } catch (cloudinaryError) {
