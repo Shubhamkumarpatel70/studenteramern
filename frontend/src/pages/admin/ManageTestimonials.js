@@ -9,6 +9,7 @@ const TestimonialModal = ({ testimonial, onClose, onSave, isLoading }) => {
     designation: "",
     image: "",
   });
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (testimonial) {
@@ -25,6 +26,34 @@ const TestimonialModal = ({ testimonial, onClose, onSave, isLoading }) => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    const formDataUpload = new FormData();
+    formDataUpload.append("avatar", file);
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await api.post("/testimonials/upload", formDataUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.success) {
+        setFormData({ ...formData, image: response.data.data.imageUrl });
+      }
+    } catch (error) {
+      console.error("Upload failed:", error);
+      alert("Failed to upload image");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -80,15 +109,27 @@ const TestimonialModal = ({ testimonial, onClose, onSave, isLoading }) => {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Image URL (optional)
+              Avatar Image
             </label>
             <input
-              type="text"
-              name="image"
-              value={formData.image}
-              onChange={handleChange}
+              type="file"
+              accept="image/*"
+              onChange={handleFileUpload}
+              disabled={uploading}
               className="mt-1 block w-full px-3 py-2 border rounded-md"
             />
+            {uploading && (
+              <p className="text-sm text-blue-600 mt-1">Uploading...</p>
+            )}
+            {formData.image && (
+              <div className="mt-2">
+                <img
+                  src={formData.image}
+                  alt="Preview"
+                  className="h-16 w-16 rounded-full object-cover"
+                />
+              </div>
+            )}
           </div>
           <div className="flex justify-end gap-4 pt-4">
             <button
