@@ -73,8 +73,11 @@ exports.generateOfferLetter = async (req, res, next) => {
       public_id: `${offerLetter._id}`,
     });
 
-    // Update fileUrl with Cloudinary URL
-    offerLetter.fileUrl = result.secure_url;
+    // Update fileUrl with corrected Cloudinary URL for raw files
+    offerLetter.fileUrl = result.secure_url.replace(
+      "/raw/upload/",
+      "/raw/upload/"
+    );
     await offerLetter.save();
 
     // Remove local file after upload
@@ -151,7 +154,7 @@ exports.deleteOfferLetter = async (req, res) => {
     if (offerLetter.fileUrl && offerLetter.fileUrl.includes("cloudinary")) {
       const publicId = `offerLetters/${offerLetter._id}`;
       try {
-        await cloudinary.uploader.destroy(publicId, { resource_type: "image" });
+        await cloudinary.uploader.destroy(publicId, { resource_type: "raw" });
       } catch (cloudinaryError) {
         console.error("Error deleting from Cloudinary:", cloudinaryError);
       }

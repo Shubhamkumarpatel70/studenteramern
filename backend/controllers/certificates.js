@@ -66,10 +66,14 @@ exports.generateCertificate = async (req, res, next) => {
       folder: "certificates",
       resource_type: "image",
       public_id: `${certificate._id}`,
+      access_mode: "public",
     });
 
-    // Update fileUrl with Cloudinary URL
-    certificate.fileUrl = result.secure_url;
+    // Update fileUrl with corrected Cloudinary URL for raw files
+    certificate.fileUrl = result.secure_url.replace(
+      "/image/upload/",
+      "/raw/upload/"
+    );
     await certificate.save();
 
     // Remove local file after upload
@@ -220,12 +224,15 @@ exports.generateSelfCertificate = async (req, res, next) => {
     // Upload to Cloudinary
     const result = await cloudinary.uploader.upload(pdfPath, {
       folder: "certificates",
-      resource_type: "image",
+      resource_type: "raw",
       public_id: `${certificate._id}`,
     });
 
-    // Update fileUrl with Cloudinary URL
-    certificate.fileUrl = result.secure_url;
+    // Update fileUrl with corrected Cloudinary URL for raw files
+    certificate.fileUrl = result.secure_url.replace(
+      "/raw/upload/",
+      "/raw/upload/"
+    );
     await certificate.save();
 
     // Remove local file after upload
@@ -251,7 +258,7 @@ exports.deleteCertificate = async (req, res, next) => {
     if (certificate.fileUrl && certificate.fileUrl.includes("cloudinary")) {
       const publicId = `certificates/${certificate._id}`;
       try {
-        await cloudinary.uploader.destroy(publicId, { resource_type: "image" });
+        await cloudinary.uploader.destroy(publicId, { resource_type: "raw" });
       } catch (cloudinaryError) {
         console.error("Error deleting from Cloudinary:", cloudinaryError);
       }
