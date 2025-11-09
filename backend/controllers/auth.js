@@ -53,16 +53,11 @@ exports.register = async (req, res, next) => {
       });
     }
 
-    // Send OTP via email
-    try {
-      await sendEmailToUser(user, otp);
-    } catch (emailError) {
-      console.error("Failed to send OTP email:", emailError);
-      return res.status(500).json({
-        success: false,
-        message: "Failed to send OTP email. Please try again.",
-      });
-    }
+    // Send OTP via email asynchronously (fire-and-forget)
+    sendEmailToUser(user, otp).catch((emailError) => {
+      console.error("Failed to send OTP email (async):", emailError);
+      // Don't block registration - log the error but continue
+    });
 
     // Return success
     return res.status(200).json({
@@ -471,16 +466,11 @@ exports.resendOtp = async (req, res, next) => {
     const otp = user.getOtp();
     await user.save({ validateBeforeSave: false });
 
-    // Send OTP via email
-    try {
-      await sendEmailToUser(user, otp);
-    } catch (emailError) {
-      console.error("Failed to send OTP email:", emailError);
-      return res.status(500).json({
-        success: false,
-        message: "Failed to send OTP email. Please try again.",
-      });
-    }
+    // Send OTP via email asynchronously (fire-and-forget)
+    sendEmailToUser(user, otp).catch((emailError) => {
+      console.error("Failed to send OTP email (async):", emailError);
+      // Don't block resend - log the error but continue
+    });
 
     res.status(200).json({
       success: true,
