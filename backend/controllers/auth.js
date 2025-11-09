@@ -260,14 +260,12 @@ exports.forgotPassword = async (req, res, next) => {
 
   await user.save({ validateBeforeSave: false });
 
-  // Create reset URL - prefer FRONTEND URL when available so the user lands on the client app
-  const frontendBase =
+  // Create reset URL - use production URL
+  const resetUrl = `${
     process.env.FRONTEND_URL ||
     process.env.CLIENT_URL ||
-    (process.env.NODE_ENV !== "production"
-      ? "http://localhost:3000"
-      : `${req.protocol}://${req.get("host")}`);
-  const resetUrl = `${frontendBase}/reset-password/${resetToken}`;
+    `${req.protocol}://${req.get("host")}`
+  }/reset-password/${resetToken}`;
 
   const text = `You are receiving this email because you (or someone else) has requested the reset of a password.
 Please copy and paste the following link into your browser to reset your password:
@@ -350,16 +348,11 @@ exports.resetPassword = async (req, res, next) => {
                     }</strong>,</p>
                     <p style="color:#333;">Your password has been successfully reset. Click the button below to go to the login page and sign in with your new password.</p>
                     <div style="text-align:center;margin:20px 0;">
-                        <a href="${(
+                        <a href="${
                           process.env.FRONTEND_URL ||
                           process.env.CLIENT_URL ||
-                          (process.env.NODE_ENV !== "production"
-                            ? "http://localhost:3000"
-                            : `${req.protocol}://${req.get("host")}`)
-                        ).replace(
-                          /\/$/,
-                          ""
-                        )}/login" style="background:#0A2463;color:#fff;padding:12px 18px;border-radius:6px;text-decoration:none;font-weight:600;">Login Now</a>
+                          `${req.protocol}://${req.get("host")}`
+                        }/login" style="background:#0A2463;color:#fff;padding:12px 18px;border-radius:6px;text-decoration:none;font-weight:600;">Login Now</a>
                     </div>
                     <p style="color:#666;font-size:13px;">If you did not request this change, please contact support immediately.</p>
                 </div>
@@ -483,12 +476,10 @@ exports.resendOtp = async (req, res, next) => {
       await sendEmailToUser(user, otp);
     } catch (emailError) {
       console.error("Failed to send OTP email:", emailError);
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: "Failed to send OTP email. Please try again.",
-        });
+      return res.status(500).json({
+        success: false,
+        message: "Failed to send OTP email. Please try again.",
+      });
     }
 
     res.status(200).json({

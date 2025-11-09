@@ -189,9 +189,7 @@ app.get("/reset-password/:resettoken", (req, res) => {
   const frontendBase =
     process.env.FRONTEND_URL ||
     process.env.CLIENT_URL ||
-    (process.env.NODE_ENV !== "production"
-      ? "http://localhost:3000"
-      : `${req.protocol}://${req.get("host")}`);
+    `${req.protocol}://${req.get("host")}`;
   // Redirect to the frontend reset route
   return res.redirect(
     `${frontendBase.replace(/\/$/, "")}/reset-password/${token}`
