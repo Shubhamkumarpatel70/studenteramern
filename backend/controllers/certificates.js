@@ -49,27 +49,11 @@ exports.generateCertificate = async (req, res, next) => {
     const pdfDir = path.join(__dirname, "../uploads/certificates");
     if (!fs.existsSync(pdfDir)) fs.mkdirSync(pdfDir, { recursive: true });
     const pdfPath = path.join(pdfDir, `${certificate._id}.pdf`);
-    await generateCertificatePDF(
-      {
-        candidateName,
-        internshipTitle,
-        duration,
-        completionDate,
-        certificateId,
-        signatureName,
-      },
-      pdfPath
-    );
-
     // Upload to Cloudinary
     const result = await cloudinary.uploader.upload(pdfPath, {
       folder: "certificates",
-      resource_type: "raw",
-      public_id: `${certificate._id}.pdf`,
-      type: "upload",
-      access_mode: "public",
-      use_filename: true,
-      unique_filename: false,
+      resource_type: "image",
+      public_id: `${certificate._id}`,
     });
 
     // Update fileUrl with Cloudinary URL
@@ -224,12 +208,8 @@ exports.generateSelfCertificate = async (req, res, next) => {
     // Upload to Cloudinary
     const result = await cloudinary.uploader.upload(pdfPath, {
       folder: "certificates",
-      resource_type: "raw",
-      public_id: `${certificate._id}.pdf`,
-      type: "upload",
-      access_mode: "public",
-      use_filename: true,
-      unique_filename: false,
+      resource_type: "image",
+      public_id: `${certificate._id}`,
     });
 
     // Update fileUrl with Cloudinary URL
@@ -257,9 +237,9 @@ exports.deleteCertificate = async (req, res, next) => {
     }
     // Remove PDF file from Cloudinary if exists
     if (certificate.fileUrl && certificate.fileUrl.includes("cloudinary")) {
-      const publicId = `certificates/${certificate._id}.pdf`;
+      const publicId = `certificates/${certificate._id}`;
       try {
-        await cloudinary.uploader.destroy(publicId, { resource_type: "raw" });
+        await cloudinary.uploader.destroy(publicId, { resource_type: "image" });
       } catch (cloudinaryError) {
         console.error("Error deleting from Cloudinary:", cloudinaryError);
       }
