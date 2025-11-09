@@ -307,16 +307,30 @@ If you did not request this, please ignore this email.`;
     `;
 
   try {
-    await sendEmail({
-      email: user.email,
-      subject: "Student Era — Password Reset",
-      message: text,
-      html,
-    });
+    // Try primary email service first, fallback to alternatives if needed
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: "Student Era — Password Reset",
+        message: text,
+        html,
+      });
+    } catch (primaryError) {
+      console.warn(
+        "Primary email service failed for password reset, trying fallback providers:",
+        primaryError.message
+      );
+      await sendEmailWithFallback({
+        email: user.email,
+        subject: "Student Era — Password Reset",
+        message: text,
+        html,
+      });
+    }
 
     res.status(200).json({ success: true, data: "Email sent" });
   } catch (err) {
-    console.log(err);
+    console.log("All email services failed for password reset:", err);
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
 
@@ -373,12 +387,34 @@ exports.resetPassword = async (req, res, next) => {
                     <p style="color:#666;font-size:13px;">If you did not request this change, please contact support immediately.</p>
                 </div>
                 `;
-    await sendEmail({
-      email: user.email,
-      subject: "Student Era — Password Reset Successful",
-      message: text,
-      html,
-    });
+
+    // Try primary email service first, fallback to alternatives if needed
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: "Student Era — Password Reset Successful",
+        message: text,
+        html,
+      });
+    } catch (primaryError) {
+      console.warn(
+        "Primary email service failed for password reset confirmation, trying fallback providers:",
+        primaryError.message
+      );
+      try {
+        await sendEmailWithFallback({
+          email: user.email,
+          subject: "Student Era — Password Reset Successful",
+          message: text,
+          html,
+        });
+      } catch (fallbackError) {
+        console.error(
+          "All email services failed for password reset confirmation:",
+          fallbackError.message
+        );
+      }
+    }
   } catch (emailErr) {
     console.error(
       "Failed to send password reset confirmation email:",
