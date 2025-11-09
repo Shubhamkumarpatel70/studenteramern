@@ -73,6 +73,8 @@ exports.generateOfferLetter = async (req, res, next) => {
       public_id: `${offerLetter._id}.pdf`,
       type: "upload",
       access_mode: "public",
+      use_filename: true,
+      unique_filename: false,
     });
 
     // Update fileUrl with Cloudinary URL

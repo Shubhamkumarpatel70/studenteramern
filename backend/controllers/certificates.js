@@ -68,6 +68,8 @@ exports.generateCertificate = async (req, res, next) => {
       public_id: `${certificate._id}.pdf`,
       type: "upload",
       access_mode: "public",
+      use_filename: true,
+      unique_filename: false,
     });
 
     // Update fileUrl with Cloudinary URL
@@ -226,6 +228,8 @@ exports.generateSelfCertificate = async (req, res, next) => {
       public_id: `${certificate._id}.pdf`,
       type: "upload",
       access_mode: "public",
+      use_filename: true,
+      unique_filename: false,
     });
 
     // Update fileUrl with Cloudinary URL
