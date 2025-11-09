@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const crypto = require("crypto");
 const sendEmail = require("../utils/sendEmail");
+const { sendEmailWithFallback } = require("../utils/emailService");
 
 // @desc    Register user
 // @route   POST /api/auth/register
@@ -56,6 +57,7 @@ exports.register = async (req, res, next) => {
     // Send OTP via email asynchronously (fire-and-forget)
     sendEmailToUser(user, otp).catch((emailError) => {
       console.error("Failed to send OTP email (async):", emailError);
+      // TODO: In production, consider alerting admin or retrying email send
       // Don't block registration - log the error but continue
     });
 
@@ -103,13 +105,32 @@ async function sendEmailToUser(user, otp) {
     </div>
     `;
   const text = `Your OTP for verification is: ${otp}\nIt will expire in 10 minutes.\nNever share your OTP with anyone.`;
-  // Let errors bubble up to the caller so registration can respond appropriately
-  await sendEmail({
-    email: user.email,
-    subject: "Student Era - Account Verification OTP",
-    message: text,
-    html: html,
-  });
+
+  // Try primary email service first, fallback to alternatives if needed
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: "Student Era - Account Verification OTP",
+      message: text,
+      html: html,
+    });
+  } catch (primaryError) {
+    console.warn(
+      "Primary email service failed, trying fallback providers:",
+      primaryError.message
+    );
+    try {
+      await sendEmailWithFallback({
+        email: user.email,
+        subject: "Student Era - Account Verification OTP",
+        message: text,
+        html: html,
+      });
+    } catch (fallbackError) {
+      console.error("All email services failed:", fallbackError.message);
+      throw fallbackError; // Let the caller handle the error
+    }
+  }
 }
 
 // @desc    Verify OTP

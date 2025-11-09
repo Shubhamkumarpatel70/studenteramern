@@ -113,6 +113,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/images/users", express.static(path.join(__dirname, "images/users")));
 // Test SMTP connection using nodemailer
 app.get("/api/test-smtp", async (req, res) => {
+  const host = process.env.EMAIL_HOST || "smtp.gmail.com";
   const user = process.env.EMAIL_USER;
   const pass = process.env.SMTP_PASS;
   const port = parseInt(process.env.EMAIL_PORT) || 587;
@@ -126,7 +127,7 @@ app.get("/api/test-smtp", async (req, res) => {
     }
 
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
+      host: host,
       port: port,
       secure: secure,
       auth: {
@@ -136,6 +137,9 @@ app.get("/api/test-smtp", async (req, res) => {
       tls: {
         rejectUnauthorized: process.env.NODE_ENV === "production",
       },
+      connectionTimeout: 10000,
+      greetingTimeout: 5000,
+      socketTimeout: 10000,
     });
 
     await transporter.verify();
@@ -146,6 +150,23 @@ app.get("/api/test-smtp", async (req, res) => {
       success: false,
       message: "SMTP connection failed: " + error.message,
     });
+  }
+});
+
+// Test multiple email providers
+app.get("/api/test-email-providers", async (req, res) => {
+  const { testEmailConfig } = require("./utils/emailService");
+  const providers = ["gmail", "zoho", "outlook"];
+
+  try {
+    const results = [];
+    for (const provider of providers) {
+      const result = await testEmailConfig(provider);
+      results.push(result);
+    }
+    res.json({ success: true, results });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 

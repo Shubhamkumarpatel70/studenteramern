@@ -30,9 +30,13 @@ const sendEmail = async (options) => {
         pass: pass,
       },
       tls: {
-        rejectUnauthorized: false, // Allow self-signed certificates in development
+        rejectUnauthorized:
+          process.env.NODE_ENV === "production" ? true : false, // Strict in production
         ciphers: "SSLv3", // Use SSLv3 for compatibility
       },
+      connectionTimeout: 10000, // 10 seconds timeout
+      greetingTimeout: 5000, // 5 seconds greeting timeout
+      socketTimeout: 10000, // 10 seconds socket timeout
     });
     const info = await transporter.sendMail({
       from: process.env.FROM_NAME ? `${process.env.FROM_NAME} <${user}>` : user,
