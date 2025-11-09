@@ -58,6 +58,7 @@ import ManageTestimonials from "./pages/admin/ManageTestimonials";
 import PostAnnouncement from "./pages/admin/PostAnnouncement";
 import ManageTasks from "./pages/admin/ManageTasks";
 import AssignTasks from "./pages/admin/AssignTasks";
+import Analytics from "./pages/admin/Analytics";
 import Queries from "./pages/admin/Queries";
 import DeletionRequests from "./pages/admin/DeletionRequests";
 import ManagePayments from "./pages/admin/ManagePayments";
@@ -235,6 +236,7 @@ const AppContent = () => {
               />
               <Route path="manage-tasks" element={<ManageTasks />} />
               <Route path="assign-tasks" element={<AssignTasks />} />
+              <Route path="analytics" element={<Analytics />} />
               <Route
                 path="manage-testimonials"
                 element={<ManageTestimonials />}
