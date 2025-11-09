@@ -76,21 +76,18 @@ const features = [
 const staticTestimonials = [
   {
     quote: "This was an amazing experience! I learned so much and built a real project that I could add to my portfolio. The mentorship was top-notch.",
-    name: "Priya Sharma",
-    role: "Full Stack Development Intern",
-    avatar: "https://i.pravatar.cc/150?img=1"
+    name: "Ranjeet Kumar",
+    role: "Python Developer Intern"
   },
   {
     quote: "The virtual internship was flexible and incredibly informative. I was able to land a job at a major tech company thanks to the skills I gained here.",
-    name: "Rohan Gupta",
-    role: "Data Science Intern",
-    avatar: "https://i.pravatar.cc/150?img=2"
+    name: "Azaz Alam",
+    role: "Graphics Design Intern"
   },
   {
     quote: "I highly recommend Student-Era to any student looking to get a head start in their tech career. The projects are challenging and relevant.",
-    name: "Anjali Singh",
-    role: "Cloud Computing Intern",
-    avatar: "https://i.pravatar.cc/150?img=3"
+    name: "Gulshan Kumar",
+    role: "Web Developer Intern"
   }
 ];
 
