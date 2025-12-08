@@ -38,13 +38,18 @@ exports.register = async (req, res, next) => {
     }
 
     if (user && !user.isVerified) {
-      // Update existing unverified user
+      // Update existing unverified user and verify them
       user.name = name; // Update name in case it changed
       user.password = password; // This will trigger the pre-save hook to re-hash
       user.mobile = mobile; // Update mobile number
+      user.isVerified = true; // Auto-verify on registration
+      // Clear any existing OTP data
+      user.otp = undefined;
+      user.otpExpires = undefined;
+      user.plainOtpForAdmin = undefined;
       await user.save();
     } else {
-      // Create new user
+      // Create new user and verify them automatically
       const internId = `SE${Date.now()}`;
       user = await User.create({
         name,
@@ -53,56 +58,17 @@ exports.register = async (req, res, next) => {
         mobile,
         role: "user", // Force role to user for all new registrations
         internId,
+        isVerified: true, // Auto-verify on registration
       });
     }
 
-    // Generate OTP
-    let otp;
-    try {
-      otp = await user.getOtp();
-      await user.save({ validateBeforeSave: false });
-    } catch (otpError) {
-      console.error("Failed to generate OTP:", otpError);
-      return res.status(500).json({
-        success: false,
-        message: "Failed to generate OTP. Please try again.",
-      });
-    }
-
-    // Send OTP via email
-    try {
-      await sendEmailToUser(user, otp);
-    } catch (emailError) {
-      console.error("Failed to send OTP email:", emailError);
-      console.error("Email error details:", {
-        message: emailError.message,
-        stack: emailError.stack,
-        code: emailError.code,
-      });
-      
-      // Provide more specific error message
-      let errorMessage = "Failed to send OTP email. Please try again.";
-      if (emailError.message && emailError.message.includes("Missing EMAIL_USER")) {
-        errorMessage = "Email service is not configured. Please contact support.";
-      } else if (emailError.message && emailError.message.includes("authentication")) {
-        errorMessage = "Email authentication failed. Please contact support.";
-      } else if (emailError.message && emailError.message.includes("timeout")) {
-        errorMessage = "Email service timeout. Please try again in a few moments.";
-      }
-      
-      return res.status(500).json({
-        success: false,
-        message: errorMessage,
-        error: process.env.NODE_ENV === "development" ? emailError.message : undefined,
-      });
-    }
-
-    // Return success
+    // Return success - user is automatically verified
     return res.status(200).json({
       success: true,
-      message: `Registration successful! Please check your email for the OTP to verify your account.`,
+      message: `Registration successful! You can now login to your account.`,
       email: normalizedEmail,
       internId: user.internId,
+      isVerified: true,
     });
   } catch (err) {
     console.error("Registration error:", err);
@@ -303,13 +269,8 @@ exports.login = async (req, res, next) => {
       .json({ success: false, message: "Invalid credentials" });
   }
 
-  // Check if user is verified
-  if (!user.isVerified) {
-    return res.status(401).json({
-      success: false,
-      message: "Please verify your email before logging in.",
-    });
-  }
+  // Users are now auto-verified on registration, so no need to check verification
+  // This check is removed to allow immediate login after registration
 
   // Check if password matches
   const isMatch = await user.matchPassword(password);

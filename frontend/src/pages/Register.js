@@ -48,9 +48,13 @@ const Register = () => {
         mobile,
         role,
       });
-      const targetEmail = res?.email || email.toLowerCase();
-      // Navigate to verify account pending page
-      navigate("/verify-account-pending", { state: { email: targetEmail } });
+      // Registration successful - redirect to login
+      navigate("/login", { 
+        state: { 
+          message: "Registration successful! Please login to continue.",
+          email: res?.email || email.toLowerCase()
+        } 
+      });
     } catch (err) {
       const message =
         err.response?.data?.message ||

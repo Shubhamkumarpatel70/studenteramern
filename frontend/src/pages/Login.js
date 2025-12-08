@@ -9,11 +9,21 @@ const Login = () => {
     const [showModal, setShowModal] = useState(false);
     const [countdown, setCountdown] = useState(5);
     const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || '/';
+
+    // Show success message if redirected from registration
+    useEffect(() => {
+        if (location.state?.message) {
+            setSuccessMessage(location.state.message);
+            // Clear message after 5 seconds
+            setTimeout(() => setSuccessMessage(''), 5000);
+        }
+    }, [location.state]);
 
     const getRedirectPath = (role) => {
         switch (role) {
@@ -46,8 +56,6 @@ const Login = () => {
                 const errorMessage = result?.error || 'Login failed';
                 if (errorMessage === 'Invalid credentials') {
                     setError('Invalid email or password. Please check your credentials and try again.');
-                } else if (errorMessage === 'Please verify your email before logging in.') {
-                    setError('Please verify your email before logging in. Check your email for the verification link.');
                 } else if (errorMessage === 'Your account is pending deletion and cannot be accessed. Please contact support if this is a mistake.') {
                     setError('Your account is pending deletion. Please contact support for assistance.');
                 } else {
@@ -85,6 +93,12 @@ const Login = () => {
                         </Link>
                     </p>
                 </div>
+
+                {successMessage && (
+                    <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <p className="text-green-800 text-sm font-medium">{successMessage}</p>
+                    </div>
+                )}
 
                 <form className="space-y-6" onSubmit={onSubmit}>
                     <div>

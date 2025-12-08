@@ -111,9 +111,9 @@ export const AuthProvider = ({ children }) => {
         const config = { headers: { 'Content-Type': 'application/json' } };
         try {
             const res = await api.post('/auth/register', userData, config);
-            // API now returns email and internId (and may include emailError)
+            // API now returns email and internId
             const data = res.data || {};
-            addLocalNotification(`Registration successful! Login ID: ${data.email || userData.email} | Intern ID: ${data.internId || 'Check your email/OTP'}`);
+            addLocalNotification(`Registration successful! Login ID: ${data.email || userData.email} | Intern ID: ${data.internId || 'N/A'}`);
             return data;
         } catch (err) {
             // Improve logging for production debugging
