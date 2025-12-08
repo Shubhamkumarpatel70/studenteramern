@@ -30,9 +30,8 @@ const sendEmail = async (options) => {
         pass: pass,
       },
       tls: {
-        rejectUnauthorized:
-          process.env.NODE_ENV === "production" ? true : false, // Strict in production
-        ciphers: "SSLv3", // Use SSLv3 for compatibility
+        rejectUnauthorized: false, // Allow self-signed certificates for better compatibility
+        minVersion: 'TLSv1.2',
       },
       connectionTimeout: 10000, // 10 seconds timeout
       greetingTimeout: 5000, // 5 seconds greeting timeout
@@ -50,7 +49,27 @@ const sendEmail = async (options) => {
     return info;
   } catch (error) {
     console.error("Error sending email:", error);
-    throw new Error(error.message || "Failed to send email");
+    console.error("Email error details:", {
+      message: error.message,
+      code: error.code,
+      command: error.command,
+      response: error.response,
+      responseCode: error.responseCode,
+    });
+    
+    // Provide more specific error messages
+    let errorMessage = "Failed to send email";
+    if (error.code === "EAUTH") {
+      errorMessage = "Email authentication failed. Please check your email credentials.";
+    } else if (error.code === "ECONNECTION" || error.code === "ETIMEDOUT") {
+      errorMessage = "Could not connect to email server. Please try again later.";
+    } else if (error.message && error.message.includes("Invalid login")) {
+      errorMessage = "Invalid email credentials. Please contact support.";
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
+    throw new Error(errorMessage);
   }
 };
 

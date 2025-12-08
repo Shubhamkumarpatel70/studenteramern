@@ -150,6 +150,12 @@ app.get("/api/test-smtp", async (req, res) => {
       return res.status(500).json({
         success: false,
         message: "Missing EMAIL_USER or SMTP_PASS in environment variables.",
+        details: {
+          EMAIL_USER: user ? "set" : "missing",
+          SMTP_PASS: pass ? "set" : "missing",
+          EMAIL_HOST: host,
+          EMAIL_PORT: port,
+        },
       });
     }
 
@@ -162,7 +168,8 @@ app.get("/api/test-smtp", async (req, res) => {
         pass: pass,
       },
       tls: {
-        rejectUnauthorized: process.env.NODE_ENV === "production",
+        rejectUnauthorized: false, // Allow self-signed certificates
+        minVersion: 'TLSv1.2',
       },
       connectionTimeout: 10000,
       greetingTimeout: 5000,
@@ -170,12 +177,27 @@ app.get("/api/test-smtp", async (req, res) => {
     });
 
     await transporter.verify();
-    res.json({ success: true, message: "SMTP connection successful ✅" });
+    res.json({ 
+      success: true, 
+      message: "SMTP connection successful ✅",
+      config: {
+        host,
+        port,
+        secure,
+        user: user.substring(0, 3) + "***", // Partially mask email
+      }
+    });
   } catch (error) {
     console.error("SMTP test failed:", error);
     res.status(500).json({
       success: false,
       message: "SMTP connection failed: " + error.message,
+      error: {
+        code: error.code,
+        command: error.command,
+        response: error.response,
+        responseCode: error.responseCode,
+      },
     });
   }
 });

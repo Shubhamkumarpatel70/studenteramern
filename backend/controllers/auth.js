@@ -8,6 +8,15 @@ const { getOTPEmailTemplate } = require("../utils/emailTemplates");
 // @access  Public
 exports.register = async (req, res, next) => {
   const { name, email, password, mobile } = req.body; // Role is intentionally omitted for security
+  
+  // Validate required fields
+  if (!name || !email || !password || !mobile) {
+    return res.status(400).json({
+      success: false,
+      message: "Please provide all required fields: name, email, password, and mobile.",
+    });
+  }
+  
   const normalizedEmail = email.toLowerCase();
 
   try {
@@ -48,17 +57,43 @@ exports.register = async (req, res, next) => {
     }
 
     // Generate OTP
-    const otp = await user.getOtp();
-    await user.save({ validateBeforeSave: false });
+    let otp;
+    try {
+      otp = await user.getOtp();
+      await user.save({ validateBeforeSave: false });
+    } catch (otpError) {
+      console.error("Failed to generate OTP:", otpError);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to generate OTP. Please try again.",
+      });
+    }
 
     // Send OTP via email
     try {
       await sendEmailToUser(user, otp);
     } catch (emailError) {
       console.error("Failed to send OTP email:", emailError);
+      console.error("Email error details:", {
+        message: emailError.message,
+        stack: emailError.stack,
+        code: emailError.code,
+      });
+      
+      // Provide more specific error message
+      let errorMessage = "Failed to send OTP email. Please try again.";
+      if (emailError.message && emailError.message.includes("Missing EMAIL_USER")) {
+        errorMessage = "Email service is not configured. Please contact support.";
+      } else if (emailError.message && emailError.message.includes("authentication")) {
+        errorMessage = "Email authentication failed. Please contact support.";
+      } else if (emailError.message && emailError.message.includes("timeout")) {
+        errorMessage = "Email service timeout. Please try again in a few moments.";
+      }
+      
       return res.status(500).json({
         success: false,
-        message: "Failed to send OTP email. Please try again.",
+        message: errorMessage,
+        error: process.env.NODE_ENV === "development" ? emailError.message : undefined,
       });
     }
 
@@ -71,6 +106,13 @@ exports.register = async (req, res, next) => {
     });
   } catch (err) {
     console.error("Registration error:", err);
+    console.error("Registration error details:", {
+      name: err.name,
+      message: err.message,
+      stack: err.stack,
+      code: err.code,
+    });
+    
     // Check for duplicate key error
     if (err.code === 11000) {
       return res.status(400).json({
@@ -86,22 +128,44 @@ exports.register = async (req, res, next) => {
         .status(400)
         .json({ success: false, message: messages.join(". ") });
     }
-    res
-      .status(400)
-      .json({ success: false, message: "Failed to register user." });
+    
+    // Return 500 for server errors, 400 for client errors
+    const statusCode = err.statusCode || (err.name === "ValidationError" ? 400 : 500);
+    res.status(statusCode).json({ 
+      success: false, 
+      message: err.message || "Failed to register user.",
+      error: process.env.NODE_ENV === "development" ? err.message : undefined
+    });
   }
 };
 
 async function sendEmailToUser(user, otp) {
-  const emailTemplate = getOTPEmailTemplate(user.name, otp, 10);
-  
-  // Let errors bubble up to the caller so registration can respond appropriately
-  await sendEmail({
-    email: user.email,
-    subject: emailTemplate.subject,
-    message: emailTemplate.text,
-    html: emailTemplate.html,
-  });
+  try {
+    if (!user || !user.email) {
+      throw new Error("User or user email is missing");
+    }
+    
+    if (!otp) {
+      throw new Error("OTP is missing");
+    }
+    
+    const emailTemplate = getOTPEmailTemplate(user.name || "User", otp, 10);
+    
+    if (!emailTemplate || !emailTemplate.subject || !emailTemplate.html) {
+      throw new Error("Failed to generate email template");
+    }
+    
+    // Let errors bubble up to the caller so registration can respond appropriately
+    await sendEmail({
+      email: user.email,
+      subject: emailTemplate.subject,
+      message: emailTemplate.text || emailTemplate.html,
+      html: emailTemplate.html,
+    });
+  } catch (error) {
+    console.error("sendEmailToUser error:", error);
+    throw error; // Re-throw to be handled by caller
+  }
 }
 
 // @desc    Verify OTP
