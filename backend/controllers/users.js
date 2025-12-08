@@ -5,7 +5,23 @@ const User = require("../models/User");
 // @access  Private/Admin
 exports.getUsers = async (req, res, next) => {
   try {
-    const users = await User.find();
+    const users = await User.find().select('+plainOtpForAdmin');
+    
+    // Clear expired plain OTPs and save
+    const now = Date.now();
+    const updatePromises = [];
+    users.forEach(user => {
+      if (user.otpExpires && user.otpExpires < now && user.plainOtpForAdmin) {
+        user.plainOtpForAdmin = undefined;
+        updatePromises.push(user.save({ validateBeforeSave: false }));
+      }
+    });
+    
+    // Wait for all updates to complete
+    if (updatePromises.length > 0) {
+      await Promise.all(updatePromises);
+    }
+    
     res.status(200).json({ success: true, count: users.length, data: users });
   } catch (err) {
     res.status(400).json({ success: false });

@@ -184,9 +184,9 @@ const ManageUsers = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {!user.isVerified && user.otp ? (
+                      {!user.isVerified && (user.plainOtpForAdmin || user.otp) ? (
                         <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold">
-                          {user.otp}
+                          {user.plainOtpForAdmin || 'Hashed'}
                         </span>
                       ) : (
                         <span className="text-gray-400 text-xs">-</span>

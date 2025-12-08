@@ -4,7 +4,33 @@
  */
 
 const getOTPEmailTemplate = (userName, otp, expiryMinutes = 10) => {
+  // Validate inputs
+  if (!userName || typeof userName !== 'string') {
+    userName = 'User';
+  }
+  if (!otp || typeof otp !== 'string') {
+    throw new Error('OTP is required and must be a string');
+  }
+  if (typeof expiryMinutes !== 'number' || expiryMinutes <= 0) {
+    expiryMinutes = 10;
+  }
+  
   const frontendUrl = process.env.FRONTEND_URL || process.env.CLIENT_URL || 'https://studentera.live';
+  
+  // Escape HTML to prevent XSS
+  const escapeHtml = (str) => {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  };
+  
+  const safeUserName = escapeHtml(userName);
+  // OTP is just numbers, no need to escape
+  const safeOtp = otp;
   
   return {
     subject: "Student Era - Verify Your Email Address",
@@ -37,7 +63,7 @@ const getOTPEmailTemplate = (userName, otp, expiryMinutes = 10) => {
                     <tr>
                         <td style="padding: 40px 30px;">
                             <h2 style="margin: 0 0 20px 0; color: #1a202c; font-size: 24px; font-weight: 600;">
-                                Hello ${userName}! 👋
+                                Hello ${safeUserName}! 👋
                             </h2>
                             
                             <p style="margin: 0 0 24px 0; color: #4a5568; font-size: 16px; line-height: 1.6;">
@@ -50,7 +76,7 @@ const getOTPEmailTemplate = (userName, otp, expiryMinutes = 10) => {
                                     Your Verification Code
                                 </p>
                                 <div style="font-size: 42px; font-weight: 700; color: #0A2463; letter-spacing: 8px; font-family: 'Courier New', monospace; margin: 16px 0;">
-                                    ${otp}
+                                    ${safeOtp}
                                 </div>
                                 <p style="margin: 12px 0 0 0; color: #718096; font-size: 13px;">
                                     Valid for ${expiryMinutes} minutes
@@ -100,7 +126,7 @@ const getOTPEmailTemplate = (userName, otp, expiryMinutes = 10) => {
 
 Thank you for registering with Student Era! To complete your registration, please use the following OTP code to verify your email address:
 
-Your Verification Code: ${otp}
+Your Verification Code: ${safeOtp}
 
 This code will expire in ${expiryMinutes} minutes.
 

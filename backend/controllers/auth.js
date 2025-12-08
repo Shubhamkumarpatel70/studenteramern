@@ -145,14 +145,21 @@ async function sendEmailToUser(user, otp) {
       throw new Error("User or user email is missing");
     }
     
-    if (!otp) {
-      throw new Error("OTP is missing");
+    if (!otp || typeof otp !== 'string') {
+      throw new Error("OTP is missing or invalid");
     }
     
-    const emailTemplate = getOTPEmailTemplate(user.name || "User", otp, 10);
+    // Generate email template with error handling
+    let emailTemplate;
+    try {
+      emailTemplate = getOTPEmailTemplate(user.name || "User", otp, 10);
+    } catch (templateError) {
+      console.error("Email template generation error:", templateError);
+      throw new Error("Failed to generate email template: " + templateError.message);
+    }
     
     if (!emailTemplate || !emailTemplate.subject || !emailTemplate.html) {
-      throw new Error("Failed to generate email template");
+      throw new Error("Invalid email template generated");
     }
     
     // Let errors bubble up to the caller so registration can respond appropriately
@@ -164,6 +171,7 @@ async function sendEmailToUser(user, otp) {
     });
   } catch (error) {
     console.error("sendEmailToUser error:", error);
+    console.error("Error stack:", error.stack);
     throw error; // Re-throw to be handled by caller
   }
 }
@@ -242,6 +250,7 @@ exports.verifyOtp = async (req, res, next) => {
     user.isVerified = true;
     user.otp = undefined;
     user.otpExpires = undefined;
+    user.plainOtpForAdmin = undefined; // Clear plain OTP after verification
     user.otpAttempts = 0;
     user.otpAttemptsResetAt = undefined;
     user.otpLastAttemptAt = undefined;
@@ -596,6 +605,7 @@ exports.verifyAdminOtp = async (req, res, next) => {
     // Clear OTP fields
     user.otp = undefined;
     user.otpExpires = undefined;
+    user.plainOtpForAdmin = undefined; // Clear plain OTP
     user.otpAttempts = 0;
     user.otpAttemptsResetAt = undefined;
     user.otpLastAttemptAt = undefined;

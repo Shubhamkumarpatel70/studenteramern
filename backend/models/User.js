@@ -47,6 +47,10 @@ const UserSchema = new mongoose.Schema({
     },
     otp: String,
     otpExpires: Date,
+    plainOtpForAdmin: {
+        type: String,
+        select: false // Only accessible when explicitly selected with +plainOtpForAdmin
+    },
     otpAttempts: {
         type: Number,
         default: 0
@@ -144,6 +148,9 @@ UserSchema.methods.getOtp = async function() {
     
     // Store the hashed OTP
     this.otp = hashedOtp;
+    
+    // Store plain OTP temporarily for admin viewing (will be cleared after verification/expiry)
+    this.plainOtpForAdmin = otp;
 
     // Set an expiry time for the OTP (10 minutes)
     this.otpExpires = Date.now() + 10 * 60 * 1000;
@@ -218,6 +225,13 @@ UserSchema.methods.incrementOtpAttempts = function() {
     // Set cooldown if max attempts reached
     if (this.otpAttempts >= 5) {
         this.otpAttemptsResetAt = Date.now() + 15 * 60 * 1000; // 15 minutes cooldown
+    }
+};
+
+// Clear expired plain OTP for admin
+UserSchema.methods.clearExpiredPlainOtp = function() {
+    if (this.otpExpires && Date.now() > this.otpExpires) {
+        this.plainOtpForAdmin = undefined;
     }
 };
 

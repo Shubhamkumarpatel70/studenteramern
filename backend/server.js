@@ -159,7 +159,21 @@ app.get("/api/test-smtp", async (req, res) => {
       });
     }
 
-    const transporter = nodemailer.createTransport({
+    // Use Gmail service configuration for better compatibility
+    const transporterConfig = host.includes('gmail.com') ? {
+      service: 'gmail',
+      auth: {
+        user: user,
+        pass: pass,
+      },
+      tls: {
+        rejectUnauthorized: false,
+        minVersion: 'TLSv1.2',
+      },
+      connectionTimeout: 60000, // Match production timeouts
+      greetingTimeout: 30000,
+      socketTimeout: 60000,
+    } : {
       host: host,
       port: port,
       secure: secure,
@@ -168,13 +182,15 @@ app.get("/api/test-smtp", async (req, res) => {
         pass: pass,
       },
       tls: {
-        rejectUnauthorized: false, // Allow self-signed certificates
+        rejectUnauthorized: false,
         minVersion: 'TLSv1.2',
       },
-      connectionTimeout: 10000,
-      greetingTimeout: 5000,
-      socketTimeout: 10000,
-    });
+      connectionTimeout: 60000,
+      greetingTimeout: 30000,
+      socketTimeout: 60000,
+    };
+
+    const transporter = nodemailer.createTransport(transporterConfig);
 
     await transporter.verify();
     res.json({ 
