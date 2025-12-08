@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const crypto = require("crypto");
 const sendEmail = require("../utils/sendEmail");
+const { getOTPEmailTemplate } = require("../utils/emailTemplates");
 
 // @desc    Register user
 // @route   POST /api/auth/register
@@ -47,7 +48,7 @@ exports.register = async (req, res, next) => {
     }
 
     // Generate OTP
-    const otp = user.getOtp();
+    const otp = await user.getOtp();
     await user.save({ validateBeforeSave: false });
 
     // Send OTP via email
@@ -92,25 +93,14 @@ exports.register = async (req, res, next) => {
 };
 
 async function sendEmailToUser(user, otp) {
-  const html = `
-    <div style="font-family: Inter, Arial, sans-serif; color: #222; background: #f8f9fa; padding: 24px; border-radius: 10px; max-width: 480px; margin: 0 auto;">
-      <h2 style="color: #0A84FF; margin-bottom: 16px;">Student Era - Email Verification</h2>
-      <p style="font-size: 16px; margin-bottom: 12px;">Hello <b>${user.name}</b>,</p>
-      <p style="font-size: 16px; margin-bottom: 12px;">Your OTP for verification is:</p>
-      <div style="font-size: 32px; font-weight: bold; color: #30D158; letter-spacing: 4px; margin-bottom: 16px;">${otp}</div>
-      <p style="font-size: 15px; color: #555; margin-bottom: 12px;">This OTP will expire in <b>10 minutes</b>.</p>
-      <p style="font-size: 14px; color: #8E8E93;">If you did not request this, please ignore this email.<br>Never share your OTP with anyone.</p>
-      <hr style="margin: 24px 0; border: none; border-top: 1px solid #eee;" />
-      <p style="font-size: 14px; color: #888;">Best regards,<br><b>Student Era Team</b></p>
-    </div>
-    `;
-  const text = `Your OTP for verification is: ${otp}\nIt will expire in 10 minutes.\nNever share your OTP with anyone.`;
+  const emailTemplate = getOTPEmailTemplate(user.name, otp, 10);
+  
   // Let errors bubble up to the caller so registration can respond appropriately
   await sendEmail({
     email: user.email,
-    subject: "Student Era - Account Verification OTP",
-    message: text,
-    html: html,
+    subject: emailTemplate.subject,
+    message: emailTemplate.text,
+    html: emailTemplate.html,
   });
 }
 
@@ -120,28 +110,77 @@ async function sendEmailToUser(user, otp) {
 exports.verifyOtp = async (req, res, next) => {
   const { email, otp } = req.body;
   const normalizedEmail = email.toLowerCase();
+  
   if (!normalizedEmail || !otp) {
     return res
       .status(400)
       .json({ success: false, message: "Please provide email and OTP." });
   }
 
+  // Validate OTP format (6 digits)
+  if (!/^\d{6}$/.test(otp)) {
+    return res
+      .status(400)
+      .json({ success: false, message: "OTP must be a 6-digit number." });
+  }
+
   try {
-    const user = await User.findOne({
-      email: normalizedEmail,
-      otp: otp,
-      otpExpires: { $gt: Date.now() },
-    });
+    const user = await User.findOne({ email: normalizedEmail });
 
     if (!user) {
+      // Don't reveal if user exists for security
       return res
         .status(400)
         .json({ success: false, message: "Invalid or expired OTP." });
     }
 
+    // Check if user can attempt OTP verification
+    if (!user.canAttemptOtp()) {
+      const remainingTime = Math.ceil(
+        (user.otpAttemptsResetAt - Date.now()) / 60000
+      );
+      return res.status(429).json({
+        success: false,
+        message: `Too many failed attempts. Please try again after ${remainingTime} minute(s).`,
+        retryAfter: remainingTime,
+      });
+    }
+
+    // Verify OTP using the secure matching method
+    const isOtpValid = await user.matchOtp(otp);
+
+    if (!isOtpValid) {
+      // Increment attempt counter
+      user.incrementOtpAttempts();
+      await user.save({ validateBeforeSave: false });
+
+      const remainingAttempts = 5 - user.otpAttempts;
+      
+      if (remainingAttempts > 0) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid OTP. ${remainingAttempts} attempt(s) remaining.`,
+          remainingAttempts,
+        });
+      } else {
+        const remainingTime = Math.ceil(
+          (user.otpAttemptsResetAt - Date.now()) / 60000
+        );
+        return res.status(429).json({
+          success: false,
+          message: `Too many failed attempts. Please request a new OTP or try again after ${remainingTime} minute(s).`,
+          retryAfter: remainingTime,
+        });
+      }
+    }
+
+    // OTP is valid - verify user and clear OTP data
     user.isVerified = true;
     user.otp = undefined;
     user.otpExpires = undefined;
+    user.otpAttempts = 0;
+    user.otpAttemptsResetAt = undefined;
+    user.otpLastAttemptAt = undefined;
     await user.save();
 
     res.status(200).json({
@@ -149,7 +188,7 @@ exports.verifyOtp = async (req, res, next) => {
       message: "Email verified successfully. Please log in.",
     });
   } catch (err) {
-    console.error(err);
+    console.error("OTP verification error:", err);
     res.status(500).json({
       success: false,
       message: "Server error during OTP verification.",
@@ -297,17 +336,37 @@ If you did not request this, please ignore this email.`;
       html,
     });
 
-    res.status(200).json({ success: true, data: "Email sent" });
+    res.status(200).json({ 
+      success: true, 
+      data: "If a user with that email exists, a password reset email has been sent.",
+      message: "Password reset email sent successfully. Please check your inbox and spam folder."
+    });
   } catch (err) {
-    console.log(err);
+    console.error("Failed to send password reset email:", err);
+    
+    // Revert the token generation
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
-
     await user.save({ validateBeforeSave: false });
+
+    // Provide more specific error message
+    let errorMessage = "Email could not be sent. Please try again later.";
+    
+    if (err.message && err.message.includes("Missing EMAIL_USER")) {
+      errorMessage = "Email service is not configured. Please contact support.";
+    } else if (err.message && err.message.includes("authentication")) {
+      errorMessage = "Email authentication failed. Please contact support.";
+    } else if (err.message && err.message.includes("timeout")) {
+      errorMessage = "Email service timeout. Please try again in a few moments.";
+    }
 
     return res
       .status(500)
-      .json({ success: false, message: "Email could not be sent" });
+      .json({ 
+        success: false, 
+        message: errorMessage,
+        error: process.env.NODE_ENV === "development" ? err.message : undefined
+      });
   }
 };
 
@@ -422,18 +481,60 @@ exports.verifyAdminOtp = async (req, res, next) => {
   try {
     const user = await User.findOne({
       email: normalizedEmail,
-      otp: otp,
-      otpExpires: { $gt: Date.now() },
     }).select("+password");
+    
     if (!user) {
       return res
         .status(400)
         .json({ success: false, message: "Invalid or expired OTP." });
     }
 
+    // Check if user can attempt OTP verification
+    if (!user.canAttemptOtp()) {
+      const remainingTime = Math.ceil(
+        (user.otpAttemptsResetAt - Date.now()) / 60000
+      );
+      return res.status(429).json({
+        success: false,
+        message: `Too many failed attempts. Please try again after ${remainingTime} minute(s).`,
+        retryAfter: remainingTime,
+      });
+    }
+
+    // Verify OTP using the secure matching method
+    const isOtpValid = await user.matchOtp(otp);
+
+    if (!isOtpValid) {
+      // Increment attempt counter
+      user.incrementOtpAttempts();
+      await user.save({ validateBeforeSave: false });
+
+      const remainingAttempts = 5 - user.otpAttempts;
+      
+      if (remainingAttempts > 0) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid OTP. ${remainingAttempts} attempt(s) remaining.`,
+          remainingAttempts,
+        });
+      } else {
+        const remainingTime = Math.ceil(
+          (user.otpAttemptsResetAt - Date.now()) / 60000
+        );
+        return res.status(429).json({
+          success: false,
+          message: `Too many failed attempts. Please request a new OTP or try again after ${remainingTime} minute(s).`,
+          retryAfter: remainingTime,
+        });
+      }
+    }
+
     // Clear OTP fields
     user.otp = undefined;
     user.otpExpires = undefined;
+    user.otpAttempts = 0;
+    user.otpAttemptsResetAt = undefined;
+    user.otpLastAttemptAt = undefined;
     await user.save({ validateBeforeSave: false });
 
     // Issue token
@@ -449,11 +550,22 @@ exports.verifyAdminOtp = async (req, res, next) => {
 // @access  Public
 exports.resendOtp = async (req, res, next) => {
   const { email } = req.body;
-  const normalizedEmail = email.toLowerCase();
-  if (!normalizedEmail) {
+  
+  // Validate email format
+  if (!email) {
     return res
       .status(400)
-      .json({ success: false, message: "Please provide an email." });
+      .json({ success: false, message: "Please provide an email address." });
+  }
+
+  const normalizedEmail = email.toLowerCase().trim();
+  
+  // Basic email format validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(normalizedEmail)) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Please provide a valid email address." });
   }
 
   try {
@@ -461,38 +573,90 @@ exports.resendOtp = async (req, res, next) => {
 
     if (!user) {
       // Don't want to reveal if a user exists or not for security reasons
+      // Return success to prevent email enumeration
       return res
-        .status(400)
-        .json({ success: false, message: "Invalid request." });
+        .status(200)
+        .json({ 
+          success: true, 
+          message: "If an account exists with this email, a new OTP has been sent." 
+        });
     }
 
     if (user.isVerified) {
       return res
         .status(400)
-        .json({ success: false, message: "This account is already verified." });
+        .json({ 
+          success: false, 
+          message: "This account is already verified. Please log in instead." 
+        });
     }
 
-    const otp = user.getOtp();
+    // Check per-user cooldown (60 seconds minimum between resends)
+    const cooldownCheck = user.canResendOtp(60);
+    if (!cooldownCheck.canResend) {
+      return res.status(429).json({
+        success: false,
+        message: `Please wait ${cooldownCheck.remainingSeconds} second(s) before requesting a new OTP.`,
+        retryAfter: cooldownCheck.remainingSeconds,
+        retryAfterMinutes: cooldownCheck.remainingMinutes,
+      });
+    }
+
+    // Check if user had exceeded attempts before resetting
+    const hadExceededAttempts = !user.canAttemptOtp();
+    const previousResendCount = user.otpResendCount || 0;
+
+    // Generate new OTP (this will reset attempts and track resend)
+    const otp = await user.getOtp();
     await user.save({ validateBeforeSave: false });
 
     // Send OTP via email
     try {
       await sendEmailToUser(user, otp);
+      
+      // Log successful resend for monitoring
+      console.log(`OTP resent successfully to ${normalizedEmail} (Resend #${user.otpResendCount})`);
+      
+      // Build response message
+      let message = `A new OTP has been sent to ${email}.`;
+      
+      if (hadExceededAttempts) {
+        message += " Your previous OTP attempts have been reset.";
+      }
+      
+      if (previousResendCount > 0) {
+        message += ` This is your ${previousResendCount === 1 ? '2nd' : `${previousResendCount + 1}th`} OTP.`;
+      }
+      
+      message += " Please check your inbox and spam folder.";
+      
+      res.status(200).json({
+        success: true,
+        message: message,
+        resendCount: user.otpResendCount,
+        expiresIn: 10, // minutes
+      });
     } catch (emailError) {
       console.error("Failed to send OTP email:", emailError);
+      
+      // Revert the OTP generation if email failed
+      user.otpResendCount = Math.max(0, (user.otpResendCount || 0) - 1);
+      if (previousResendCount === 0) {
+        user.lastOtpSentAt = undefined;
+      }
+      await user.save({ validateBeforeSave: false });
+      
       return res.status(500).json({
         success: false,
-        message: "Failed to send OTP email. Please try again.",
+        message: "Failed to send OTP email. Please check your email address and try again later. If the problem persists, contact support.",
       });
     }
-
-    res.status(200).json({
-      success: true,
-      message: `A new OTP has been sent to ${email}`,
-    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Error resending OTP." });
+    console.error("Resend OTP error:", err);
+    res.status(500).json({ 
+      success: false, 
+      message: "An error occurred while resending OTP. Please try again later." 
+    });
   }
 };
 

@@ -4,6 +4,8 @@ const cloudinary = require("../config/cloudinary");
 const fs = require("fs");
 const path = require("path");
 const mongoose = require("mongoose");
+const sendEmail = require("../utils/sendEmail");
+const { getOfferLetterEmailTemplate } = require("../utils/emailTemplates");
 
 exports.generateOfferLetter = async (req, res, next) => {
   try {
@@ -80,6 +82,35 @@ exports.generateOfferLetter = async (req, res, next) => {
     // Update fileUrl with Cloudinary URL
     offerLetter.fileUrl = result.secure_url;
     await offerLetter.save();
+
+    // Send email to user with offer letter
+    try {
+      const User = require("../models/User");
+      const user = await User.findById(userId);
+      if (user && user.email) {
+        const emailTemplate = getOfferLetterEmailTemplate(
+          user.name,
+          {
+            title: offerLetter.title,
+            company: offerLetter.company,
+            startDate: offerLetter.startDate,
+          },
+          result.secure_url
+        );
+
+        await sendEmail({
+          email: user.email,
+          subject: emailTemplate.subject,
+          message: emailTemplate.text,
+          html: emailTemplate.html,
+        });
+
+        console.log(`Offer letter email sent successfully to ${user.email}`);
+      }
+    } catch (emailError) {
+      console.error("Failed to send offer letter email:", emailError);
+      // Don't fail the request if email fails
+    }
 
     // Remove local file after upload
     fs.unlinkSync(pdfPath);

@@ -4,6 +4,8 @@ const cloudinary = require("../config/cloudinary");
 const fs = require("fs");
 const path = require("path");
 const mongoose = require("mongoose");
+const sendEmail = require("../utils/sendEmail");
+const { getCertificateEmailTemplate } = require("../utils/emailTemplates");
 
 // @desc    Generate a new certificate
 // @route   POST /api/certificates
@@ -75,6 +77,36 @@ exports.generateCertificate = async (req, res, next) => {
     // Update fileUrl with Cloudinary URL
     certificate.fileUrl = result.secure_url;
     await certificate.save();
+
+    // Send email to user with certificate
+    try {
+      const User = require("../models/User");
+      const userDoc = await User.findById(user);
+      if (userDoc && userDoc.email) {
+        const emailTemplate = getCertificateEmailTemplate(
+          userDoc.name,
+          {
+            internshipTitle: certificate.internshipTitle,
+            duration: certificate.duration,
+            completionDate: certificate.completionDate,
+            certificateId: certificate.certificateId,
+          },
+          result.secure_url
+        );
+
+        await sendEmail({
+          email: userDoc.email,
+          subject: emailTemplate.subject,
+          message: emailTemplate.text,
+          html: emailTemplate.html,
+        });
+
+        console.log(`Certificate email sent successfully to ${userDoc.email}`);
+      }
+    } catch (emailError) {
+      console.error("Failed to send certificate email:", emailError);
+      // Don't fail the request if email fails
+    }
 
     // Remove local file after upload
     fs.unlinkSync(pdfPath);

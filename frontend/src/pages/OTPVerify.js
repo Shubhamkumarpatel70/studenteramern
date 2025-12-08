@@ -6,8 +6,10 @@ import api from '../config/api';
 const OTPVerify = () => {
     const [otp, setOtp] = useState('');
     const [error, setError] = useState('');
-    const [resendTimer, setResendTimer] = useState(30);
+    const [resendTimer, setResendTimer] = useState(60); // Start with 60 seconds cooldown
     const [canResend, setCanResend] = useState(false);
+    const [isResending, setIsResending] = useState(false);
+    const [resendSuccess, setResendSuccess] = useState('');
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [showErrorModal, setShowErrorModal] = useState(false);
     const [errorCountdown, setErrorCountdown] = useState(5);
@@ -51,6 +53,12 @@ const OTPVerify = () => {
     const onVerify = async (e) => {
         e.preventDefault();
         setError('');
+        
+        // Validate OTP format
+        if (!validateOtp()) {
+            return;
+        }
+        
         try {
             // Use different endpoint for admin OTP verification
             const endpoint = isAdmin ? '/auth/admin-verify-otp' : '/auth/verify-otp';
@@ -69,7 +77,22 @@ const OTPVerify = () => {
                     setTimeout(() => navigate('/login'), 1500);
             }
         } catch (err) {
-            const msg = err.response?.data?.message || 'Invalid OTP. Please try again.';
+            const errorData = err.response?.data;
+            let msg = errorData?.message || 'Invalid OTP. Please try again.';
+            
+            // Add remaining attempts info if available
+            if (errorData?.remainingAttempts !== undefined) {
+                msg += ` (${errorData.remainingAttempts} attempt(s) remaining)`;
+            }
+            
+            // Handle rate limiting
+            if (err.response?.status === 429) {
+                const retryAfter = errorData?.retryAfter;
+                if (retryAfter) {
+                    msg += ` Please try again in ${retryAfter} minute(s) or request a new OTP.`;
+                }
+            }
+            
             setError(msg);
             setShowErrorModal(true);
             setErrorCountdown(5);
@@ -78,15 +101,63 @@ const OTPVerify = () => {
     };
 
     const onResend = async () => {
-        if (!canResend) return;
+        if (!canResend || isResending) return;
+        
+        setIsResending(true);
+        setError('');
+        setResendSuccess('');
+        
         try {
-            await api.post('/auth/resend-otp', { email: email.toLowerCase() });
-            setResendTimer(30);
+            const res = await api.post('/auth/resend-otp', { email: email.toLowerCase() });
+            
+            // Show success message
+            const successMsg = res.data?.message || 'A new OTP has been sent to your email.';
+            setResendSuccess(successMsg);
+            
+            // Reset timer based on response or default to 60 seconds
+            const retryAfter = res.data?.retryAfter || 60;
+            setResendTimer(retryAfter);
             setCanResend(false);
-            alert('A new OTP has been sent to your email.');
+            
+            // Clear success message after 5 seconds
+            setTimeout(() => {
+                setResendSuccess('');
+            }, 5000);
+            
+            // Auto-focus first OTP input after resend
+            setTimeout(() => {
+                const firstInput = document.getElementById('otp-0');
+                if (firstInput) {
+                    firstInput.focus();
+                    setOtp(''); // Clear current OTP
+                }
+            }, 100);
+            
         } catch (err) {
-            alert('Failed to resend OTP.');
-            console.error(err);
+            const errorData = err.response?.data;
+            let errorMsg = errorData?.message || 'Failed to resend OTP. Please try again later.';
+            
+            // Handle rate limiting with specific cooldown
+            if (err.response?.status === 429) {
+                const retryAfter = errorData?.retryAfter || errorData?.retryAfterSeconds || 60;
+                const retryAfterMinutes = errorData?.retryAfterMinutes;
+                
+                if (retryAfterMinutes && retryAfterMinutes > 1) {
+                    setResendTimer(retryAfterMinutes * 60); // Convert minutes to seconds
+                } else {
+                    setResendTimer(retryAfter);
+                }
+                setCanResend(false);
+            } else {
+                // For other errors, allow retry after shorter delay
+                setResendTimer(30);
+                setCanResend(false);
+            }
+            
+            setError(errorMsg);
+            console.error('Resend OTP error:', err);
+        } finally {
+            setIsResending(false);
         }
     };
 
@@ -94,7 +165,21 @@ const OTPVerify = () => {
         const value = e.target.value.replace(/\D/g, ''); // Only allow digits
         if (value.length <= 6) {
             setOtp(value);
+            setError(''); // Clear error when user starts typing
         }
+    };
+    
+    // Validate OTP format before submission
+    const validateOtp = () => {
+        if (!otp || otp.length !== 6) {
+            setError('Please enter a complete 6-digit OTP code.');
+            return false;
+        }
+        if (!/^\d{6}$/.test(otp)) {
+            setError('OTP must contain only numbers.');
+            return false;
+        }
+        return true;
     };
 
     if (!email) {
@@ -121,9 +206,18 @@ const OTPVerify = () => {
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="bg-[#F8F9FA] py-8 px-4 shadow-2xl sm:rounded-2xl sm:px-10 border border-[#0A2463]">
-                    {error && <div className="mb-4 text-[#DC3545] text-center font-semibold">{error}</div>}
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-center text-red-800 text-sm">
+                            {error}
+                        </div>
+                    )}
+                    {resendSuccess && (
+                        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-center text-green-800 text-sm">
+                            {resendSuccess}
+                        </div>
+                    )}
                     {emailError && (
-                        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-center text-yellow-800">
+                        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-center text-yellow-800 text-sm">
                             We were unable to send the OTP email automatically. Please click "Resend" below or contact support.
                         </div>
                     )}
@@ -186,12 +280,26 @@ const OTPVerify = () => {
                     <div className="mt-6 text-center">
                         <button
                             onClick={onResend}
-                            disabled={!canResend}
-                            className={`font-medium underline flex items-center justify-center gap-2 ${canResend ? 'text-[#28A745] hover:text-[#218838]' : 'text-gray-400 cursor-not-allowed'}`}
+                            disabled={!canResend || isResending}
+                            className={`font-medium flex items-center justify-center gap-2 transition-all ${
+                                canResend && !isResending
+                                    ? 'text-[#28A745] hover:text-[#218838] underline cursor-pointer'
+                                    : 'text-gray-400 cursor-not-allowed'
+                            }`}
                         >
-                            <RefreshCw className="w-4 h-4" />
-                            {canResend ? "Didn't receive a code? Resend" : `Resend in ${resendTimer}s`}
+                            <RefreshCw className={`w-4 h-4 ${isResending ? 'animate-spin' : ''}`} />
+                            {isResending 
+                                ? 'Sending...' 
+                                : canResend 
+                                    ? "Didn't receive a code? Resend" 
+                                    : `Resend in ${resendTimer}s`
+                            }
                         </button>
+                        {!canResend && resendTimer > 0 && (
+                            <p className="mt-2 text-xs text-gray-500">
+                                Please wait before requesting a new code
+                            </p>
+                        )}
                     </div>
                 </div>
             </div>

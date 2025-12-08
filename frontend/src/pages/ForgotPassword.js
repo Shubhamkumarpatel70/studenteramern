@@ -15,10 +15,15 @@ const ForgotPassword = () => {
         setError('');
         setLoading(true);
         try {
-            await api.post('/auth/forgot-password', { email });
-            setMessage('An email has been sent with password reset instructions. Please check your inbox and spam folder.');
+            const res = await api.post('/auth/forgot-password', { email });
+            // Use the message from backend if available, otherwise use default
+            const successMessage = res.data?.message || res.data?.data || 'An email has been sent with password reset instructions. Please check your inbox and spam folder.';
+            setMessage(successMessage);
         } catch (err) {
-            setError('Could not send reset email. Please try again.');
+            // Use the error message from backend if available
+            const errorMessage = err.response?.data?.message || 'Could not send reset email. Please try again.';
+            setError(errorMessage);
+            console.error('Forgot password error:', err.response?.data || err.message);
         } finally {
             setLoading(false);
         }
