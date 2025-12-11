@@ -44,10 +44,10 @@ const StatCard = ({ title, value, linkTo, icon, color = 'blue', subtitle, badge 
     return (
         <Link
             to={linkTo}
-            className="group bg-white p-6 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-200 hover:border-gray-300 hover:-translate-y-1"
+            className="group bg-white p-4 sm:p-6 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-200 hover:border-gray-300 hover:-translate-y-1"
         >
-            <div className="flex items-start justify-between mb-4">
-                <div className={`p-3 rounded-lg ${colorClasses[color]}`}>
+            <div className="flex items-start justify-between mb-3 sm:mb-4">
+                <div className={`p-2 sm:p-3 rounded-lg ${colorClasses[color]}`}>
                     {icon}
                 </div>
                 {badge && (
@@ -56,12 +56,12 @@ const StatCard = ({ title, value, linkTo, icon, color = 'blue', subtitle, badge 
                     </span>
                 )}
             </div>
-            <h3 className="text-sm font-medium text-gray-600 mb-1">{title}</h3>
+            <h3 className="text-xs sm:text-sm font-medium text-gray-600 mb-1">{title}</h3>
             <div className="flex items-baseline justify-between">
-                <p className={`text-3xl font-bold ${colorClasses[color].split(' ')[1]}`}>
+                <p className={`text-2xl sm:text-3xl font-bold ${colorClasses[color].split(' ')[1]}`}>
                     {value}
                 </p>
-                <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1 transition-all" />
             </div>
             {subtitle && (
                 <p className="text-xs text-gray-500 mt-2">{subtitle}</p>
@@ -82,16 +82,16 @@ const QuickActionCard = ({ title, description, icon, linkTo, color = 'blue' }) =
     return (
         <Link
             to={linkTo}
-            className={`${colorClasses[color]} text-white p-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-3`}
+            className={`${colorClasses[color]} text-white p-3 sm:p-4 rounded-lg sm:rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2 sm:gap-3`}
         >
-            <div className="p-2 bg-white/20 rounded-lg">
+            <div className="p-1.5 sm:p-2 bg-white/20 rounded-lg flex-shrink-0">
                 {icon}
             </div>
-            <div className="flex-1">
-                <h4 className="font-semibold text-sm">{title}</h4>
-                <p className="text-xs opacity-90">{description}</p>
+            <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-xs sm:text-sm">{title}</h4>
+                <p className="text-xs opacity-90 hidden sm:block">{description}</p>
             </div>
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-4 w-4 flex-shrink-0" />
         </Link>
     );
 };
@@ -170,16 +170,16 @@ const DashboardHome = () => {
     const greeting = currentHour < 12 ? 'Good Morning' : currentHour < 18 ? 'Good Afternoon' : 'Good Evening';
 
     return (
-        <div className="space-y-6">
+        <div className="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
             {/* Header Section */}
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-6 md:p-8 text-white shadow-lg">
-                <div className="flex items-center gap-3 mb-2">
-                    <Sparkles className="h-6 w-6" />
-                    <h1 className="text-2xl md:text-3xl font-bold">
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 text-white shadow-xl">
+                <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                    <Sparkles className="h-5 w-5 sm:h-6 sm:w-6" />
+                    <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">
                         {greeting}, {user.name?.split(' ')[0]}!
                     </h1>
                 </div>
-                <p className="text-blue-100 text-sm md:text-base">
+                <p className="text-blue-100 text-xs sm:text-sm md:text-base">
                     Here's an overview of your internship journey with Student Era
                 </p>
             </div>
@@ -202,11 +202,11 @@ const DashboardHome = () => {
                 <>
                     {/* Primary Stats */}
                     <div>
-                        <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                            <TrendingUp className="h-5 w-5 text-blue-600" />
+                        <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
+                            <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
                             Overview
                         </h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                             <StatCard
                                 title="Meetings"
                                 value={stats.meetings}
@@ -241,14 +241,14 @@ const DashboardHome = () => {
                     </div>
 
                     {/* Applications & Tasks Stats */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                         {/* Applications Section */}
                         <div>
-                            <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                                <Briefcase className="h-5 w-5 text-indigo-600" />
+                            <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
+                                <Briefcase className="h-4 w-4 sm:h-5 sm:w-5 text-indigo-600" />
                                 Applications
                             </h2>
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                                 <StatCard
                                     title="Total"
                                     value={stats.applications}
@@ -275,11 +275,11 @@ const DashboardHome = () => {
 
                         {/* Tasks Section */}
                         <div>
-                            <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                                <CheckCircle className="h-5 w-5 text-green-600" />
+                            <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
+                                <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
                                 Tasks
                             </h2>
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                                 <StatCard
                                     title="Total Tasks"
                                     value={stats.tasks}
@@ -307,26 +307,26 @@ const DashboardHome = () => {
 
                     {/* WhatsApp Group Card */}
                     {whatsappLink && (
-                        <div className="mb-6">
-                            <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-xl shadow-lg p-6 text-white">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-4">
-                                        <div className="bg-white/20 p-4 rounded-full">
-                                            <MessageCircle className="h-8 w-8" />
+                        <div className="mb-4 sm:mb-6">
+                            <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 text-white">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                    <div className="flex items-center gap-3 sm:gap-4">
+                                        <div className="bg-white/20 p-3 sm:p-4 rounded-full flex-shrink-0">
+                                            <MessageCircle className="h-6 w-6 sm:h-8 sm:w-8" />
                                         </div>
                                         <div>
-                                            <h3 className="text-xl font-bold mb-1">Join WhatsApp Group</h3>
-                                            <p className="text-green-100 text-sm">Connect with our community and get updates</p>
+                                            <h3 className="text-lg sm:text-xl font-bold mb-1">Join WhatsApp Group</h3>
+                                            <p className="text-green-100 text-xs sm:text-sm">Connect with our community and get updates</p>
                                         </div>
                                     </div>
                                     <a
                                         href={whatsappLink}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="bg-white text-green-600 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2"
+                                        className="bg-white text-green-600 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-semibold hover:bg-green-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2 text-sm sm:text-base"
                                     >
                                         Join Now
-                                        <ArrowRight className="h-5 w-5" />
+                                        <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
                                     </a>
                                 </div>
                             </div>
@@ -335,11 +335,11 @@ const DashboardHome = () => {
 
                     {/* Quick Actions */}
                     <div>
-                        <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                            <Sparkles className="h-5 w-5 text-purple-600" />
+                        <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
+                            <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
                             Quick Actions
                         </h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                             <QuickActionCard
                                 title="Browse Internships"
                                 description="Explore available opportunities"

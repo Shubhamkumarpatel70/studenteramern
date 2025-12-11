@@ -72,27 +72,73 @@ const MyTasks = () => {
     }
 
     return (
-        <div className="p-2 sm:p-4 md:p-8 bg-gradient-to-br from-primary-light via-background to-accent-light min-h-screen font-sans font-medium">
-            <div className="w-full max-w-2xl mx-auto font-sans font-medium">
-                <h1 className="text-3xl font-extrabold mb-6 text-primary-dark font-sans">My Tasks</h1>
+        <div className="p-3 sm:p-4 md:p-6 lg:p-8 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 min-h-screen">
+            <div className="w-full max-w-4xl mx-auto">
+                <div className="mb-6 sm:mb-8">
+                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-800 mb-2">My Tasks</h1>
+                    <p className="text-sm sm:text-base text-gray-600">Track and manage your assigned tasks</p>
+                </div>
                 {loading ? (
-                    <div className="text-center py-8">Loading tasks...</div>
+                    <div className="flex justify-center items-center min-h-[40vh]">
+                        <div className="text-center">
+                            <Loader2 className="h-12 w-12 animate-spin text-green-600 mx-auto mb-4" />
+                            <p className="text-gray-600">Loading tasks...</p>
+                        </div>
+                    </div>
+                ) : error ? (
+                    <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
+                        <p className="text-red-800 font-semibold">{error}</p>
+                    </div>
                 ) : tasks.length === 0 ? (
-                    <div className="text-center py-8 text-primary-dark/70 bg-card rounded-2xl shadow-lg">You have no tasks assigned.</div>
+                    <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-green-100/50 p-8 sm:p-12 text-center">
+                        <div className="flex justify-center mb-4">
+                            <div className="bg-gradient-to-br from-green-100 to-emerald-100 rounded-full p-6">
+                                <CheckCircle className="h-16 w-16 text-green-600" />
+                            </div>
+                        </div>
+                        <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">No Tasks Assigned</h3>
+                        <p className="text-gray-600">You have no tasks assigned at the moment. Check back later!</p>
+                    </div>
                 ) : (
-                    <div className="space-y-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                         {tasks.map(task => (
-                            <div key={task._id} className="bg-card rounded-2xl shadow p-4 flex flex-col gap-2 border border-primary-light/30 hover:shadow-2xl transition-shadow duration-200">
-                                <div className="font-bold text-primary-dark text-lg flex items-center gap-2">{task.title}</div>
-                                <div className="flex flex-wrap gap-4 text-xs text-primary-dark/60 mb-1">
-                                    <span className="flex items-center gap-1"><Calendar className="h-4 w-4" /> Due: {new Date(task.dueDate).toLocaleDateString()}</span>
-                                    {task.assignedDate && <span className="flex items-center gap-1"><Clock className="h-4 w-4" /> Assigned: {new Date(task.assignedDate).toLocaleDateString()}</span>}
-                                    {task.domain && <span className="flex items-center gap-1"><Globe className="h-4 w-4" /> {task.domain}</span>}
-                                    {task.internship && (task.internship.title || task.internship.name) && <span className="flex items-center gap-1"><Briefcase className="h-4 w-4" /> {task.internship.title || task.internship.name}</span>}
-                                    {task.assignedBy && (task.assignedBy.name || task.assignedBy.email) && <span className="flex items-center gap-1"><User className="h-4 w-4" /> {task.assignedBy.name || task.assignedBy.email}</span>}
+                            <div key={task._id} className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 border border-green-100/50 hover:shadow-xl transition-all duration-300">
+                                <div className="flex items-start justify-between mb-3">
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-2 line-clamp-2">{task.title}</h3>
+                                    </div>
+                                    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border flex-shrink-0 ${getStatusColor(task.status)}`}>
+                                        {getStatusIcon(task.status)}
+                                        <span className="hidden sm:inline">{getStatusText(task.status)}</span>
+                                    </div>
                                 </div>
-                                <div className="text-sm text-primary-dark/80 mb-1">{task.description}</div>
-                                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold border mt-2 ${getStatusColor(task.status)}`}>{getStatusIcon(task.status)} {getStatusText(task.status)}</div>
+                                {task.description && (
+                                    <p className="text-sm text-gray-600 mb-4 line-clamp-3">{task.description}</p>
+                                )}
+                                <div className="space-y-2 text-xs sm:text-sm text-gray-600 border-t border-gray-100 pt-3">
+                                    <div className="flex items-center gap-2">
+                                        <Calendar className="h-4 w-4 text-green-500 flex-shrink-0" />
+                                        <span>Due: {new Date(task.dueDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                                    </div>
+                                    {task.assignedDate && (
+                                        <div className="flex items-center gap-2">
+                                            <Clock className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                                            <span>Assigned: {new Date(task.assignedDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
+                                        </div>
+                                    )}
+                                    {task.internship && (task.internship.title || task.internship.name) && (
+                                        <div className="flex items-center gap-2">
+                                            <Briefcase className="h-4 w-4 text-purple-500 flex-shrink-0" />
+                                            <span className="truncate">{task.internship.title || task.internship.name}</span>
+                                        </div>
+                                    )}
+                                    {task.domain && (
+                                        <div className="flex items-center gap-2">
+                                            <Globe className="h-4 w-4 text-indigo-500 flex-shrink-0" />
+                                            <span>{task.domain}</span>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         ))}
                     </div>

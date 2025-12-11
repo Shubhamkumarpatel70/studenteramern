@@ -44,7 +44,8 @@ const JoinMeetingButton = ({ meetingDate, meetingLink, expireAfterMinutes = 60 }
 
     if (isExpired) {
         return (
-            <button disabled className="bg-gray-400 text-white font-bold py-2 px-4 rounded cursor-not-allowed">
+            <button disabled className="w-full bg-gray-300 text-gray-600 font-semibold py-3 px-4 rounded-xl cursor-not-allowed flex items-center justify-center gap-2">
+                <Clock className="h-4 w-4" />
                 Meeting Expired
             </button>
         );
@@ -52,15 +53,22 @@ const JoinMeetingButton = ({ meetingDate, meetingLink, expireAfterMinutes = 60 }
 
     if (isMeetingTime) {
         return (
-            <a href={meetingLink} target="_blank" rel="noopener noreferrer" className="bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-600 transition-colors">
+            <a 
+                href={meetingLink} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 hover:shadow-xl"
+            >
+                <Video className="h-4 w-4" />
                 Join Now
             </a>
         );
     }
 
     return (
-        <button disabled className="bg-indigo-500 text-white font-bold py-2 px-4 rounded cursor-not-allowed">
-            Joins in: {timeLeft}
+        <button disabled className="w-full bg-gradient-to-r from-indigo-500 to-blue-600 text-white font-semibold py-3 px-4 rounded-xl cursor-not-allowed flex items-center justify-center gap-2">
+            <Clock className="h-4 w-4" />
+            <span className="text-sm sm:text-base">Joins in: {timeLeft}</span>
         </button>
     );
 };
@@ -89,37 +97,88 @@ const Meetings = () => {
         fetchMeetings();
     }, []);
 
-    if (loading) return <div className="p-8"><Loader2 className="animate-spin" /></div>;
-    if (error) return <div className="p-8 text-red-500">{error}</div>;
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center min-h-[60vh]">
+                <div className="text-center">
+                    <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
+                    <p className="text-gray-600">Loading meetings...</p>
+                </div>
+            </div>
+        );
+    }
+    
+    if (error) {
+        return (
+            <div className="p-4 sm:p-6 md:p-8">
+                <div className="max-w-2xl mx-auto text-center bg-red-50 border border-red-200 rounded-2xl p-6">
+                    <p className="text-red-800 font-semibold">{error}</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="p-2 sm:p-4 md:p-8 bg-gray-50 min-h-screen font-sans font-medium">
-            <div className="max-w-lg mx-auto font-sans font-medium">
-                <div className="flex items-center justify-between mb-6">
-                    <h1 className="text-3xl font-bold text-gray-800">My Meetings</h1>
+        <div className="p-3 sm:p-4 md:p-6 lg:p-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
+            <div className="w-full max-w-3xl mx-auto">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
+                    <div className="flex items-center gap-3">
+                        <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl p-3">
+                            <Calendar className="h-6 w-6 sm:h-7 sm:w-7 text-blue-600" />
+                        </div>
+                        <div>
+                            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-800">My Meetings</h1>
+                            <p className="text-xs sm:text-sm text-gray-600 mt-1">View and join your scheduled meetings</p>
+                        </div>
+                    </div>
                     <button
                         onClick={fetchMeetings}
-                        className="flex items-center gap-2 px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow transition disabled:opacity-50"
+                        className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl shadow-md transition-all duration-200 text-sm sm:text-base font-semibold flex items-center gap-2 disabled:opacity-50"
                         title="Refresh meetings"
                         disabled={loading}
                     >
                         <RefreshCw className={loading ? 'animate-spin' : ''} size={18} />
-                        Refresh
+                        <span className="hidden sm:inline">Refresh</span>
                     </button>
                 </div>
-                {loading ? (
-                    <div className="text-center py-8">Loading meetings...</div>
-                ) : meetings.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">No meetings scheduled.</div>
+                {meetings.length === 0 ? (
+                    <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-blue-100/50 p-8 sm:p-12 text-center">
+                        <div className="flex justify-center mb-4">
+                            <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full p-6">
+                                <Calendar className="h-16 w-16 text-blue-600" />
+                            </div>
+                        </div>
+                        <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">No Meetings Scheduled</h3>
+                        <p className="text-gray-600">You don't have any meetings scheduled at the moment.</p>
+                    </div>
                 ) : (
-                    <div className="space-y-4">
+                    <div className="space-y-4 sm:space-y-6">
                         {meetings.map(meeting => (
-                            <div key={meeting._id} className="bg-white rounded-lg shadow p-4 flex flex-col gap-2">
-                                <div className="font-semibold text-gray-800">{meeting.title}</div>
-                                {/* Show meeting time in user's local timezone for clarity */}
-                                <div className="text-xs text-gray-500">{new Date(meeting.date).toLocaleString()}</div>
-                                <div className="text-sm text-gray-600">{meeting.description}</div>
-                                <JoinMeetingButton meetingDate={meeting.date} meetingLink={meeting.link} expireAfterMinutes={meeting.expireAfterMinutes} />
+                            <div key={meeting._id} className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 border border-blue-100/50 hover:shadow-xl transition-all duration-300">
+                                <div className="flex items-start gap-3 mb-4">
+                                    <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl p-3 flex-shrink-0">
+                                        <Video className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2">{meeting.title}</h3>
+                                        <div className="space-y-1 text-sm text-gray-600">
+                                            <div className="flex items-center gap-2">
+                                                <Calendar className="h-4 w-4 text-blue-500" />
+                                                <span>{new Date(meeting.date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Clock className="h-4 w-4 text-blue-500" />
+                                                <span>{new Date(meeting.date).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</span>
+                                            </div>
+                                        </div>
+                                        {meeting.description && (
+                                            <p className="text-sm text-gray-600 mt-3 line-clamp-2">{meeting.description}</p>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="mt-4">
+                                    <JoinMeetingButton meetingDate={meeting.date} meetingLink={meeting.link} expireAfterMinutes={meeting.expireAfterMinutes} />
+                                </div>
                             </div>
                         ))}
                     </div>

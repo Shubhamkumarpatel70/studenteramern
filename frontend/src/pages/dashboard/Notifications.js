@@ -52,43 +52,98 @@ const Notifications = () => {
     }
 
     return (
-        <div className="p-2 sm:p-4 md:p-8 bg-gradient-to-br from-primary-light via-background to-accent-light min-h-full font-sans font-medium">
-            <div className="max-w-lg mx-auto">
-                <div className="flex items-center gap-2 mb-6">
-                    <Bell className="h-7 w-7 text-primary" />
-                    <h1 className="text-2xl sm:text-3xl font-extrabold text-primary-dark font-sans">My Notifications</h1>
-                    <span className="ml-auto flex items-center gap-2">
-                        <span className="bg-primary-light text-primary-dark px-2 py-1 rounded-full text-xs font-semibold">{notifications.filter(n => !n.read).length} unread</span>
-                        <button onClick={fetchNotifications} className="ml-2 px-3 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg shadow transition text-xs sm:text-sm flex items-center gap-1" disabled={loading}>
-                            <RefreshCw className={loading ? 'animate-spin' : ''} size={16} /> Refresh
+        <div className="p-3 sm:p-4 md:p-6 lg:p-8 bg-gradient-to-br from-orange-50 via-yellow-50 to-amber-50 min-h-screen">
+            <div className="w-full max-w-2xl mx-auto">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
+                    <div className="flex items-center gap-3">
+                        <div className="bg-gradient-to-br from-orange-100 to-amber-100 rounded-xl p-3">
+                            <Bell className="h-6 w-6 sm:h-7 sm:w-7 text-orange-600" />
+                        </div>
+                        <div>
+                            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-800">My Notifications</h1>
+                            <p className="text-xs sm:text-sm text-gray-600 mt-1">Stay updated with your latest activities</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2 sm:gap-3">
+                        {notifications.filter(n => !n.read).length > 0 && (
+                            <span className="bg-red-100 text-red-800 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold">
+                                {notifications.filter(n => !n.read).length} unread
+                            </span>
+                        )}
+                        <button 
+                            onClick={fetchNotifications} 
+                            className="px-3 sm:px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-xl shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold flex items-center gap-2 disabled:opacity-50" 
+                            disabled={loading}
+                        >
+                            <RefreshCw className={loading ? 'animate-spin' : ''} size={16} /> 
+                            <span className="hidden sm:inline">Refresh</span>
                         </button>
-                    </span>
+                    </div>
                 </div>
                 {loading ? (
-                    <div className="text-center py-8">Loading notifications...</div>
-                ) : notifications.length === 0 ? (
-                    <div className="text-center py-8 text-primary-dark/70 bg-card rounded-2xl shadow-lg">No notifications yet.</div>
+                    <div className="flex justify-center items-center min-h-[40vh]">
+                        <div className="text-center">
+                            <Loader2 className="h-12 w-12 animate-spin text-orange-600 mx-auto mb-4" />
+                            <p className="text-gray-600">Loading notifications...</p>
+                        </div>
+                    </div>
+                ) : (notifications.length === 0 && localNotifications.length === 0) ? (
+                    <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-orange-100/50 p-8 sm:p-12 text-center">
+                        <div className="flex justify-center mb-4">
+                            <div className="bg-gradient-to-br from-orange-100 to-amber-100 rounded-full p-6">
+                                <Bell className="h-16 w-16 text-orange-600" />
+                            </div>
+                        </div>
+                        <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">No Notifications Yet</h3>
+                        <p className="text-gray-600">You're all caught up! New notifications will appear here.</p>
+                    </div>
                 ) : (
-                    <div className="space-y-4 font-sans font-medium">
+                    <div className="space-y-3 sm:space-y-4">
                         {/* Local notifications (login/registration) */}
                         {localNotifications.map(notification => (
-                            <div key={notification._id} className="bg-card rounded-2xl shadow p-4 flex flex-col sm:flex-row sm:items-center gap-2 border border-primary-light/30">
-                                <div className="flex-1">
-                                    <div className="font-semibold text-primary-dark">{notification.message}</div>
-                                    <div className="text-xs text-primary-dark/60 mt-1">{new Date(notification.createdAt).toLocaleString()}</div>
+                            <div key={notification._id} className="bg-white rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-5 border border-orange-100/50 hover:shadow-lg transition-all duration-200">
+                                <div className="flex items-start gap-3">
+                                    <div className="bg-green-100 rounded-full p-2 flex-shrink-0">
+                                        <Check className="h-4 w-4 text-green-600" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="font-semibold text-gray-800 text-sm sm:text-base break-words">{notification.message}</div>
+                                        <div className="text-xs text-gray-500 mt-1">{new Date(notification.createdAt).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+                                    </div>
                                 </div>
                             </div>
                         ))}
                         {/* Backend notifications */}
                         {notifications.map(notification => (
-                            <div key={notification._id} className={`bg-card rounded-2xl shadow p-4 flex flex-col sm:flex-row sm:items-center gap-2 border border-primary-light/30 transition-shadow duration-200 ${!notification.read ? 'hover:shadow-2xl' : ''}` }>
-                                <div className="flex-1">
-                                    <div className="font-semibold text-primary-dark">{notification.message}</div>
-                                    <div className="text-xs text-primary-dark/60 mt-1">{new Date(notification.createdAt).toLocaleString()}</div>
+                            <div 
+                                key={notification._id} 
+                                className={`bg-white rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-5 border transition-all duration-200 ${
+                                    !notification.read 
+                                        ? 'border-orange-300 shadow-lg hover:shadow-xl' 
+                                        : 'border-orange-100/50 hover:shadow-md'
+                                }`}
+                            >
+                                <div className="flex items-start gap-3">
+                                    <div className={`rounded-full p-2 flex-shrink-0 ${!notification.read ? 'bg-orange-100' : 'bg-gray-100'}`}>
+                                        <Bell className={`h-4 w-4 ${!notification.read ? 'text-orange-600' : 'text-gray-400'}`} />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className={`font-semibold text-sm sm:text-base break-words ${!notification.read ? 'text-gray-900' : 'text-gray-700'}`}>
+                                            {notification.message}
+                                        </div>
+                                        <div className="text-xs text-gray-500 mt-1">
+                                            {new Date(notification.createdAt).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                        </div>
+                                    </div>
+                                    {!notification.read && (
+                                        <button 
+                                            onClick={() => handleMarkAsRead(notification._id)} 
+                                            className="bg-green-100 hover:bg-green-200 text-green-800 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors duration-200 flex-shrink-0"
+                                        >
+                                            Mark as Read
+                                        </button>
+                                    )}
                                 </div>
-                                {!notification.read && (
-                                    <button onClick={() => handleMarkAsRead(notification._id)} className="bg-success/10 text-success px-3 py-1 rounded-full text-xs font-semibold hover:bg-success/20 transition">Mark as Read</button>
-                                )}
                             </div>
                         ))}
                     </div>

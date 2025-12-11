@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import api from '../../config/api';
 import AuthContext from "../../context/AuthContext";
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, Loader2, MessageSquare } from 'lucide-react';
 
 const Help = () => {
   const { user, isAuthenticated } = useContext(AuthContext);
@@ -104,74 +104,107 @@ const Help = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-light via-background to-accent-light flex flex-col items-center justify-center px-2">
-      <div className="bg-card bg-opacity-95 p-2 sm:p-6 rounded-2xl shadow-2xl max-w-lg w-full mt-8 mb-8 flex flex-col mx-auto font-sans font-medium border border-primary-light/30">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-3xl font-extrabold text-primary-dark text-center flex-1 font-sans">Help & Support Chat</h1>
-          <button
-            onClick={fetchQuery}
-            className="flex items-center gap-2 px-3 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg shadow transition disabled:opacity-50 ml-4"
-            title="Refresh chat"
-            disabled={loading}
-          >
-            <RefreshCw className={loading ? 'animate-spin' : ''} size={18} />
-            Refresh
-          </button>
-        </div>
-        <div className="flex justify-between mb-2">
-          <span className="text-sm bg-primary-light text-primary-dark px-2 py-1 rounded-full font-semibold">{allQueries.length} queries</span>
-          <span className="text-sm bg-accent-light text-primary-dark px-2 py-1 rounded-full font-semibold">{messages.length} messages</span>
-        </div>
-        {loading ? (
-          <div className="text-center py-8">Loading chat...</div>
-        ) : error ? (
-          <div className="text-center text-error py-4">{error}</div>
-        ) : (
-          <>
-            <div className="flex-1 overflow-y-auto mb-4 max-h-96 border rounded-2xl bg-background p-4">
-              {messages.length === 0 && (
-                <div className="text-primary-dark/40 text-center">No messages yet. Start the conversation!</div>
-              )}
-              {messages.map((msg, i) => (
-                <div key={i} className={`mb-2 flex ${msg.from === "user" ? "justify-end" : "justify-start"}`}>
-                  <div className={`px-4 py-2 rounded-2xl max-w-xs shadow ${msg.from === "user" ? "bg-primary text-white animate-fade-in-right" : "bg-card text-primary-dark animate-fade-in-left"}`}>
-                    {msg.text}
-                  </div>
-                </div>
-              ))}
-              <div ref={chatEndRef} />
+    <div className="p-3 sm:p-4 md:p-6 lg:p-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
+      <div className="max-w-2xl mx-auto">
+        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 border border-blue-100/50 flex flex-col h-[calc(100vh-8rem)] sm:h-[calc(100vh-10rem)]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 sm:mb-6">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-800 mb-1">Help & Support Chat</h1>
+              <p className="text-xs sm:text-sm text-gray-600">Get assistance from our support team</p>
             </div>
-            <form onSubmit={sendMessage} className="flex gap-2 mt-2">
-              <input
-                type="text"
-                value={input}
-                onChange={e => setInput(e.target.value)}
-                className="flex-1 p-3 rounded-lg border border-primary-light focus:outline-none focus:ring-2 focus:ring-primary text-lg font-sans"
-                placeholder="Type your message..."
-                required
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="flex items-center gap-2">
+                <span className="bg-blue-100 text-blue-800 px-2.5 py-1 rounded-full text-xs font-semibold">{allQueries.length} queries</span>
+                <span className="bg-purple-100 text-purple-800 px-2.5 py-1 rounded-full text-xs font-semibold">{messages.length} messages</span>
+              </div>
+              <button
+                onClick={fetchQuery}
+                className="px-3 sm:px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl shadow-md transition-all duration-200 disabled:opacity-50 flex items-center gap-2 text-sm font-semibold"
+                title="Refresh chat"
                 disabled={loading}
-              />
-              <button type="submit" className="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg font-semibold shadow transition-colors duration-200" disabled={loading}>Send</button>
-            </form>
+              >
+                <RefreshCw className={loading ? 'animate-spin' : ''} size={16} />
+                <span className="hidden sm:inline">Refresh</span>
+              </button>
+            </div>
+          </div>
+          {loading ? (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-center">
+                <Loader2 className="h-10 w-10 animate-spin text-blue-600 mx-auto mb-3" />
+                <p className="text-gray-600">Loading chat...</p>
+              </div>
+            </div>
+          ) : error ? (
+            <div className="bg-red-50 border border-red-200 text-red-800 rounded-xl p-4 text-center">{error}</div>
+          ) : (
+            <>
+              <div className="flex-1 overflow-y-auto mb-4 border-2 border-gray-200 rounded-xl bg-gray-50 p-4 space-y-3">
+                {messages.length === 0 && (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center">
+                      <div className="bg-blue-100 rounded-full p-4 w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+                        <MessageSquare className="h-8 w-8 text-blue-600" />
+                      </div>
+                      <p className="text-gray-500 font-medium">No messages yet. Start the conversation!</p>
+                    </div>
+                  </div>
+                )}
+                {messages.map((msg, i) => (
+                  <div key={i} className={`flex ${msg.from === "user" ? "justify-end" : "justify-start"}`}>
+                    <div className={`px-4 py-2.5 rounded-2xl max-w-[85%] sm:max-w-xs shadow-md ${
+                      msg.from === "user" 
+                        ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white" 
+                        : "bg-white text-gray-800 border border-gray-200"
+                    }`}>
+                      <p className="text-sm sm:text-base break-words">{msg.text}</p>
+                    </div>
+                  </div>
+                ))}
+                <div ref={chatEndRef} />
+              </div>
+              <form onSubmit={sendMessage} className="flex gap-2">
+                <input
+                  type="text"
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                  className="flex-1 px-4 py-3 rounded-xl border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base bg-white"
+                  placeholder="Type your message..."
+                  required
+                  disabled={loading}
+                />
+                <button 
+                  type="submit" 
+                  className="px-4 sm:px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl font-semibold shadow-lg transition-all duration-200 disabled:opacity-50 flex items-center gap-2" 
+                  disabled={loading}
+                >
+                  <span className="hidden sm:inline">Send</span>
+                  <span className="sm:hidden">→</span>
+                </button>
+              </form>
             {resolvedQueries.length > 0 && (
-              <div className="mt-8">
-                <h2 className="text-xl font-bold mb-2 text-primary-dark">Resolved Queries</h2>
-                <div className="space-y-3">
+              <div className="mt-6 border-t border-gray-200 pt-6">
+                <h2 className="text-lg sm:text-xl font-bold mb-4 text-gray-800">Resolved Queries</h2>
+                <div className="space-y-3 max-h-64 overflow-y-auto">
                   {resolvedQueries.map(q => (
-                    <div key={q._id} className="border rounded-2xl bg-background">
+                    <div key={q._id} className="border border-gray-200 rounded-xl bg-gray-50">
                       <button
-                        className="w-full text-left px-4 py-2 font-semibold flex justify-between items-center focus:outline-none"
+                        className="w-full text-left px-4 py-3 font-semibold flex justify-between items-center focus:outline-none hover:bg-gray-100 rounded-xl transition-colors"
                         onClick={() => setExpanded(exp => ({ ...exp, [q._id]: !exp[q._id] }))}
                       >
-                        <span>Resolved on {new Date(q.updatedAt).toLocaleString()}</span>
-                        <span className="text-xs text-success">{expanded[q._id] ? 'Hide' : 'View'}</span>
+                        <span className="text-sm text-gray-700">Resolved on {new Date(q.updatedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                        <span className="text-xs text-green-600 font-semibold">{expanded[q._id] ? 'Hide' : 'View'}</span>
                       </button>
                       {expanded[q._id] && (
-                        <div className="px-4 pb-3">
-                          {q.messages.length === 0 && <div className="text-primary-dark/40">No messages in this query.</div>}
+                        <div className="px-4 pb-4 space-y-2">
+                          {q.messages.length === 0 && <div className="text-gray-400 text-sm text-center py-2">No messages in this query.</div>}
                           {q.messages.map((msg, i) => (
-                            <div key={i} className={`mb-2 flex ${msg.from === "user" ? "justify-end" : "justify-start"}`}>
-                              <div className={`px-3 py-2 rounded-2xl max-w-xs text-sm shadow ${msg.from === "user" ? "bg-primary-light text-primary-dark animate-fade-in-right" : "bg-card text-primary-dark animate-fade-in-left"}`}>
+                            <div key={i} className={`flex ${msg.from === "user" ? "justify-end" : "justify-start"}`}>
+                              <div className={`px-3 py-2 rounded-xl max-w-[80%] text-sm ${
+                                msg.from === "user" 
+                                  ? "bg-blue-100 text-blue-900" 
+                                  : "bg-white text-gray-800 border border-gray-200"
+                              }`}>
                                 {msg.text}
                               </div>
                             </div>
@@ -185,6 +218,7 @@ const Help = () => {
             )}
           </>
         )}
+        </div>
       </div>
     </div>
   );
