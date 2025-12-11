@@ -1,30 +1,47 @@
 const User = require("../models/User");
 
-// @desc    Get all users
+// @desc    Get all users with pagination
 // @route   GET /api/users
 // @access  Private/Admin
 exports.getUsers = async (req, res, next) => {
   try {
-    const users = await User.find().select('+plainOtpForAdmin');
+    // Pagination parameters
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Get total count for pagination
+    const totalUsers = await User.countDocuments();
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    // Fetch users with pagination and plainPasswordForAdmin field explicitly selected
+    const users = await User.find()
+      .select('+plainPasswordForAdmin')
+      .sort({ createdAt: -1 }) // Sort by newest first
+      .skip(skip)
+      .limit(limit);
     
-    // Clear expired plain OTPs and save
-    const now = Date.now();
-    const updatePromises = [];
-    users.forEach(user => {
-      if (user.otpExpires && user.otpExpires < now && user.plainOtpForAdmin) {
-        user.plainOtpForAdmin = undefined;
-        updatePromises.push(user.save({ validateBeforeSave: false }));
+    // Convert to plain objects and ensure plainPasswordForAdmin is included
+    const usersData = users.map(user => {
+      const userObj = user.toObject();
+      // Ensure plainPasswordForAdmin is included (even if null/undefined)
+      if (!userObj.hasOwnProperty('plainPasswordForAdmin')) {
+        userObj.plainPasswordForAdmin = null;
       }
+      return userObj;
     });
     
-    // Wait for all updates to complete
-    if (updatePromises.length > 0) {
-      await Promise.all(updatePromises);
-    }
-    
-    res.status(200).json({ success: true, count: users.length, data: users });
+    res.status(200).json({ 
+      success: true, 
+      count: usersData.length,
+      totalUsers,
+      totalPages,
+      currentPage: page,
+      data: usersData 
+    });
   } catch (err) {
-    res.status(400).json({ success: false });
+    console.error('Error fetching users:', err);
+    res.status(400).json({ success: false, message: 'Failed to fetch users' });
   }
 };
 

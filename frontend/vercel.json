@@ -31,10 +31,6 @@
       "dest": "/$1"
     },
     {
-      "src": "/otp-verify",
-      "dest": "/index.html"
-    },
-    {
       "src": "/(.*)",
       "dest": "/index.html"
     }

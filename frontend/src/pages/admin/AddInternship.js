@@ -21,6 +21,10 @@ const AddInternship = () => {
         isAccepting: true,
         features: [],
         totalPositions: 1,
+        registrationFee: 149,
+        tag: '',
+        tagColor: '#3B82F6',
+        order: 999,
     });
 
     const [error, setError] = useState('');
@@ -63,6 +67,10 @@ const AddInternship = () => {
         isAccepting,
         features,
         totalPositions,
+        registrationFee,
+        tag,
+        tagColor,
+        order,
     } = formData;
 
     const handleStipendCheck = (e) => {
@@ -89,6 +97,7 @@ const AddInternship = () => {
             technologies: technologies.split(',').map(s => s.trim()),
             stipendType: stipendType || 'month',
             totalPositions: Number(totalPositions) || 1,
+            order: order !== undefined && order !== '' ? Number(order) : 999,
         };
         
         try {
@@ -118,6 +127,10 @@ const AddInternship = () => {
                 isAccepting: true,
                 features: [],
                 totalPositions: 1,
+                registrationFee: 149,
+                tag: '',
+                tagColor: '#3B82F6',
+                order: 999,
             });
 
         } catch (err) {
@@ -228,6 +241,63 @@ const AddInternship = () => {
                         <input type="number" name="totalPositions" value={totalPositions} onChange={onChange} min="1" required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
                     </div>
 
+                    {/* Registration Fee */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Registration Fee (₹)</label>
+                        <input type="number" name="registrationFee" value={formData.registrationFee || 149} onChange={onChange} min="0" required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="149" />
+                        <p className="mt-1 text-xs text-gray-500">This fee will be shown as "Application Fee" on the payment page</p>
+                    </div>
+
+                    {/* Tag (Optional) */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Tag (Optional)</label>
+                        <div className="mt-1 flex gap-2">
+                            <input 
+                                type="text" 
+                                name="tag" 
+                                value={tag || ''} 
+                                onChange={onChange} 
+                                placeholder="e.g., New, Popular, Featured" 
+                                className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
+                            />
+                            <input 
+                                type="color" 
+                                name="tagColor" 
+                                value={tagColor || '#3B82F6'} 
+                                onChange={onChange} 
+                                className="h-10 w-16 border border-gray-300 rounded-md cursor-pointer" 
+                                title="Tag background color"
+                            />
+                        </div>
+                        <p className="mt-1 text-xs text-gray-500">Tag will appear in the top right corner of the internship card</p>
+                        {tag && (
+                            <div className="mt-2 flex items-center gap-2">
+                                <span className="text-xs text-gray-600">Preview:</span>
+                                <span 
+                                    className="px-3 py-1 rounded-full text-xs font-semibold text-white"
+                                    style={{ backgroundColor: tagColor || '#3B82F6' }}
+                                >
+                                    {tag}
+                                </span>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Order */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Display Order</label>
+                        <input 
+                            type="number" 
+                            name="order" 
+                            value={order !== undefined && order !== '' ? order : 999} 
+                            onChange={onChange} 
+                            min="1" 
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
+                            placeholder="999"
+                        />
+                        <p className="mt-1 text-xs text-gray-500">Lower numbers appear first (1 = top, 2 = second, etc.). Default: 999 (appears last)</p>
+                    </div>
+
                     {/* Stipend Toggle and Input */}
                     <div className="flex items-center space-x-4">
                         <div className="flex items-center">
@@ -300,6 +370,7 @@ const AddInternship = () => {
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Company</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
@@ -309,6 +380,11 @@ const AddInternship = () => {
                         <tbody className="bg-white divide-y divide-gray-200">
                             {internships.map(internship => (
                                 <tr key={internship._id}>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <span className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs font-semibold">
+                                            {internship.order || 999}
+                                        </span>
+                                    </td>
                                     <td className="px-6 py-4 whitespace-nowrap">{internship.title}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{internship.company}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">

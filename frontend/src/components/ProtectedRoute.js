@@ -1,10 +1,23 @@
 import React, { useContext } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
+import { Loader2 } from 'lucide-react';
 
 const ProtectedRoute = ({ roles }) => {
-    const { isAuthenticated, user } = useContext(AuthContext);
+    const { isAuthenticated, user, loading } = useContext(AuthContext);
     const location = useLocation();
+
+    // Show loading spinner while checking authentication
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-center">
+                    <Loader2 className="animate-spin h-12 w-12 text-blue-600 mx-auto mb-4" />
+                    <p className="text-gray-600">Loading...</p>
+                </div>
+            </div>
+        );
+    }
 
     if (!isAuthenticated) {
         // Redirect them to the /login page, but save the current location they were

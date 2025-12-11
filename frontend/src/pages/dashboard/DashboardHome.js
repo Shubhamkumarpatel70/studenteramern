@@ -14,7 +14,8 @@ import {
     TrendingUp,
     ArrowRight,
     Loader2,
-    Sparkles
+    Sparkles,
+    MessageCircle
 } from 'lucide-react';
 
 // Loading Skeleton Component
@@ -98,6 +99,7 @@ const QuickActionCard = ({ title, description, icon, linkTo, color = 'blue' }) =
 const DashboardHome = () => {
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
+    const [whatsappLink, setWhatsappLink] = useState(null);
     const [stats, setStats] = useState({
         meetings: 0,
         notifications: 0,
@@ -115,6 +117,7 @@ const DashboardHome = () => {
     const [error, setError] = useState('');
 
     useEffect(() => {
+        fetchWhatsAppLink();
         const fetchStats = async () => {
             if (localStorage.token) {
                 setAuthToken(localStorage.token);
@@ -133,6 +136,27 @@ const DashboardHome = () => {
 
         fetchStats();
     }, []);
+
+    const fetchWhatsAppLink = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const config = token ? {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            } : {};
+            
+            const res = await api.get('/social-links', config);
+            const links = res.data.data;
+            
+            const whatsapp = links.find(link => link.platform === 'whatsapp' && link.isActive);
+            if (whatsapp) {
+                setWhatsappLink(whatsapp.url);
+            }
+        } catch (err) {
+            console.error('Failed to fetch WhatsApp link', err);
+        }
+    };
 
     if (!user) {
         return (
@@ -280,6 +304,34 @@ const DashboardHome = () => {
                             </div>
                         </div>
                     </div>
+
+                    {/* WhatsApp Group Card */}
+                    {whatsappLink && (
+                        <div className="mb-6">
+                            <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-xl shadow-lg p-6 text-white">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <div className="bg-white/20 p-4 rounded-full">
+                                            <MessageCircle className="h-8 w-8" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-bold mb-1">Join WhatsApp Group</h3>
+                                            <p className="text-green-100 text-sm">Connect with our community and get updates</p>
+                                        </div>
+                                    </div>
+                                    <a
+                                        href={whatsappLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="bg-white text-green-600 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2"
+                                    >
+                                        Join Now
+                                        <ArrowRight className="h-5 w-5" />
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Quick Actions */}
                     <div>

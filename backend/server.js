@@ -76,7 +76,7 @@ app.use(
       return callback(null, true);
     },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   })
 );
@@ -258,6 +258,10 @@ app.use(
   "/api/account-deletion-requests",
   require("./routes/accountDeletionRequests")
 );
+app.use("/api/hr", require("./routes/hr"));
+app.use("/api/captcha", require("./routes/captcha"));
+app.use("/api/feedback", require("./routes/feedback"));
+app.use("/api/social-links", require("./routes/socialLinks"));
 
 // Root route
 app.get("/", (req, res) => {

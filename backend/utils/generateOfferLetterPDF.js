@@ -47,7 +47,9 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
     // Stipend (if present) - after intro paragraph, clear and bold
     if (offerLetter.stipend && offerLetter.stipend > 0) {
       contentY += 18;
-      doc.font('Helvetica-Bold').fontSize(13).fillColor('#1976d2').text(`Stipend: ₹${offerLetter.stipend} /${offerLetter.stipendType || 'month'}`.replace(/\s+/g, ' '), 60, contentY, { align: 'left' });
+      // Use Unicode for Indian Rupee symbol (U+20B9) to ensure proper rendering
+      const rupeeSymbol = '\u20B9';
+      doc.font('Helvetica-Bold').fontSize(13).fillColor('#1976d2').text(`Stipend: ${rupeeSymbol}${offerLetter.stipend} /${offerLetter.stipendType || 'month'}`.replace(/\s+/g, ' '), 60, contentY, { align: 'left' });
       contentY += 18;
     }
     const terms = [

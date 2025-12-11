@@ -1,7 +1,6 @@
 const User = require("../models/User");
 const crypto = require("crypto");
 const sendEmail = require("../utils/sendEmail");
-const { getOTPEmailTemplate } = require("../utils/emailTemplates");
 
 // @desc    Register user
 // @route   POST /api/auth/register
@@ -43,10 +42,6 @@ exports.register = async (req, res, next) => {
       user.password = password; // This will trigger the pre-save hook to re-hash
       user.mobile = mobile; // Update mobile number
       user.isVerified = true; // Auto-verify on registration
-      // Clear any existing OTP data
-      user.otp = undefined;
-      user.otpExpires = undefined;
-      user.plainOtpForAdmin = undefined;
       await user.save();
     } else {
       // Create new user and verify them automatically
@@ -105,141 +100,12 @@ exports.register = async (req, res, next) => {
   }
 };
 
-async function sendEmailToUser(user, otp) {
-  try {
-    if (!user || !user.email) {
-      throw new Error("User or user email is missing");
-    }
-    
-    if (!otp || typeof otp !== 'string') {
-      throw new Error("OTP is missing or invalid");
-    }
-    
-    // Generate email template with error handling
-    let emailTemplate;
-    try {
-      emailTemplate = getOTPEmailTemplate(user.name || "User", otp, 10);
-    } catch (templateError) {
-      console.error("Email template generation error:", templateError);
-      throw new Error("Failed to generate email template: " + templateError.message);
-    }
-    
-    if (!emailTemplate || !emailTemplate.subject || !emailTemplate.html) {
-      throw new Error("Invalid email template generated");
-    }
-    
-    // Let errors bubble up to the caller so registration can respond appropriately
-    await sendEmail({
-      email: user.email,
-      subject: emailTemplate.subject,
-      message: emailTemplate.text || emailTemplate.html,
-      html: emailTemplate.html,
-    });
-  } catch (error) {
-    console.error("sendEmailToUser error:", error);
-    console.error("Error stack:", error.stack);
-    throw error; // Re-throw to be handled by caller
-  }
-}
-
-// @desc    Verify OTP
-// @route   POST /api/auth/verify-otp
-// @access  Public
-exports.verifyOtp = async (req, res, next) => {
-  const { email, otp } = req.body;
-  const normalizedEmail = email.toLowerCase();
-  
-  if (!normalizedEmail || !otp) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Please provide email and OTP." });
-  }
-
-  // Validate OTP format (6 digits)
-  if (!/^\d{6}$/.test(otp)) {
-    return res
-      .status(400)
-      .json({ success: false, message: "OTP must be a 6-digit number." });
-  }
-
-  try {
-    const user = await User.findOne({ email: normalizedEmail });
-
-    if (!user) {
-      // Don't reveal if user exists for security
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid or expired OTP." });
-    }
-
-    // Check if user can attempt OTP verification
-    if (!user.canAttemptOtp()) {
-      const remainingTime = Math.ceil(
-        (user.otpAttemptsResetAt - Date.now()) / 60000
-      );
-      return res.status(429).json({
-        success: false,
-        message: `Too many failed attempts. Please try again after ${remainingTime} minute(s).`,
-        retryAfter: remainingTime,
-      });
-    }
-
-    // Verify OTP using the secure matching method
-    const isOtpValid = await user.matchOtp(otp);
-
-    if (!isOtpValid) {
-      // Increment attempt counter
-      user.incrementOtpAttempts();
-      await user.save({ validateBeforeSave: false });
-
-      const remainingAttempts = 5 - user.otpAttempts;
-      
-      if (remainingAttempts > 0) {
-        return res.status(400).json({
-          success: false,
-          message: `Invalid OTP. ${remainingAttempts} attempt(s) remaining.`,
-          remainingAttempts,
-        });
-      } else {
-        const remainingTime = Math.ceil(
-          (user.otpAttemptsResetAt - Date.now()) / 60000
-        );
-        return res.status(429).json({
-          success: false,
-          message: `Too many failed attempts. Please request a new OTP or try again after ${remainingTime} minute(s).`,
-          retryAfter: remainingTime,
-        });
-      }
-    }
-
-    // OTP is valid - verify user and clear OTP data
-    user.isVerified = true;
-    user.otp = undefined;
-    user.otpExpires = undefined;
-    user.plainOtpForAdmin = undefined; // Clear plain OTP after verification
-    user.otpAttempts = 0;
-    user.otpAttemptsResetAt = undefined;
-    user.otpLastAttemptAt = undefined;
-    await user.save();
-
-    res.status(200).json({
-      success: true,
-      message: "Email verified successfully. Please log in.",
-    });
-  } catch (err) {
-    console.error("OTP verification error:", err);
-    res.status(500).json({
-      success: false,
-      message: "Server error during OTP verification.",
-    });
-  }
-};
 
 // @desc    Login user
 // @route   POST /api/auth/login
 // @access  Public
 exports.login = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password, captchaId, captchaCode } = req.body;
   const normalizedEmail = email.toLowerCase();
 
   // Validate email & password
@@ -247,6 +113,59 @@ exports.login = async (req, res, next) => {
     return res.status(400).json({
       success: false,
       message: "Please provide an email and password",
+    });
+  }
+
+  // Verify CAPTCHA
+  if (!captchaId || !captchaCode) {
+    return res.status(400).json({
+      success: false,
+      message: "Please complete the CAPTCHA verification",
+    });
+  }
+
+  const Captcha = require("../models/Captcha");
+  try {
+    const captcha = await Captcha.findById(captchaId);
+    
+    if (!captcha) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired CAPTCHA. Please refresh and try again.",
+      });
+    }
+
+    if (captcha.used) {
+      return res.status(400).json({
+        success: false,
+        message: "CAPTCHA has already been used. Please refresh and try again.",
+      });
+    }
+
+    if (captcha.expiresAt < new Date()) {
+      await captcha.deleteOne();
+      return res.status(400).json({
+        success: false,
+        message: "CAPTCHA has expired. Please refresh and try again.",
+      });
+    }
+
+    // Verify CAPTCHA code (case-insensitive)
+    if (captcha.code.toUpperCase() !== captchaCode.toUpperCase().trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid CAPTCHA code. Please try again.",
+      });
+    }
+
+    // Mark CAPTCHA as used
+    captcha.used = true;
+    await captcha.save();
+  } catch (captchaError) {
+    console.error("CAPTCHA verification error:", captchaError);
+    return res.status(400).json({
+      success: false,
+      message: "CAPTCHA verification failed. Please refresh and try again.",
     });
   }
 
@@ -281,6 +200,27 @@ exports.login = async (req, res, next) => {
       .json({ success: false, message: "Invalid credentials" });
   }
 
+  // Generate new CAPTCHA for next login attempt
+  const generateRandomCaptcha = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    for (let i = 0; i < 4; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  };
+
+  try {
+    const newCaptchaCode = generateRandomCaptcha();
+    await Captcha.create({
+      code: newCaptchaCode,
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000) // 10 minutes
+    });
+  } catch (captchaGenError) {
+    console.error("Failed to generate new CAPTCHA after login:", captchaGenError);
+    // Don't fail login if CAPTCHA generation fails
+  }
+
   // Admin login is now simple - no OTP required
   sendTokenResponse(user, 200, res);
 };
@@ -308,6 +248,85 @@ const sendTokenResponse = (user, statusCode, res) => {
     token,
     user: userObj,
   });
+};
+
+// @desc    Check email and return user name
+// @route   POST /api/auth/check-email
+// @access  Public
+exports.checkEmail = async (req, res, next) => {
+  try {
+    const normalizedEmail = req.body.email.toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail }).select('name email');
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found with this email address.",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (err) {
+    console.error("Check email error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+};
+
+// @desc    Reset password directly with email
+// @route   PUT /api/auth/reset-password-direct
+// @access  Public
+exports.resetPasswordDirect = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide email and password.",
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 6 characters long.",
+      });
+    }
+
+    const normalizedEmail = email.toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail }).select('+password');
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found with this email address.",
+      });
+    }
+
+    // Update password (plainPasswordForAdmin will be set in pre-save hook)
+    user.password = password;
+    await user.save({ validateBeforeSave: false });
+
+    res.status(200).json({
+      success: true,
+      message: "Password updated successfully.",
+    });
+  } catch (err) {
+    console.error("Reset password direct error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
 };
 
 // @desc    Forgot password
@@ -500,200 +519,6 @@ exports.getResetPassword = async (req, res, next) => {
   }
 };
 
-// @desc    Verify admin OTP and issue token
-// @route   POST /api/auth/admin-verify-otp
-// @access  Public
-exports.verifyAdminOtp = async (req, res, next) => {
-  const { email, otp } = req.body;
-  const normalizedEmail = email.toLowerCase();
-  if (!normalizedEmail || !otp) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Please provide email and OTP." });
-  }
-
-  try {
-    const user = await User.findOne({
-      email: normalizedEmail,
-    }).select("+password");
-    
-    if (!user) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid or expired OTP." });
-    }
-
-    // Check if user can attempt OTP verification
-    if (!user.canAttemptOtp()) {
-      const remainingTime = Math.ceil(
-        (user.otpAttemptsResetAt - Date.now()) / 60000
-      );
-      return res.status(429).json({
-        success: false,
-        message: `Too many failed attempts. Please try again after ${remainingTime} minute(s).`,
-        retryAfter: remainingTime,
-      });
-    }
-
-    // Verify OTP using the secure matching method
-    const isOtpValid = await user.matchOtp(otp);
-
-    if (!isOtpValid) {
-      // Increment attempt counter
-      user.incrementOtpAttempts();
-      await user.save({ validateBeforeSave: false });
-
-      const remainingAttempts = 5 - user.otpAttempts;
-      
-      if (remainingAttempts > 0) {
-        return res.status(400).json({
-          success: false,
-          message: `Invalid OTP. ${remainingAttempts} attempt(s) remaining.`,
-          remainingAttempts,
-        });
-      } else {
-        const remainingTime = Math.ceil(
-          (user.otpAttemptsResetAt - Date.now()) / 60000
-        );
-        return res.status(429).json({
-          success: false,
-          message: `Too many failed attempts. Please request a new OTP or try again after ${remainingTime} minute(s).`,
-          retryAfter: remainingTime,
-        });
-      }
-    }
-
-    // Clear OTP fields
-    user.otp = undefined;
-    user.otpExpires = undefined;
-    user.plainOtpForAdmin = undefined; // Clear plain OTP
-    user.otpAttempts = 0;
-    user.otpAttemptsResetAt = undefined;
-    user.otpLastAttemptAt = undefined;
-    await user.save({ validateBeforeSave: false });
-
-    // Issue token
-    sendTokenResponse(user, 200, res);
-  } catch (err) {
-    console.error("Admin OTP verification error:", err);
-    return res.status(500).json({ success: false, message: "Server error" });
-  }
-};
-
-// @desc    Resend OTP
-// @route   POST /api/auth/resend-otp
-// @access  Public
-exports.resendOtp = async (req, res, next) => {
-  const { email } = req.body;
-  
-  // Validate email format
-  if (!email) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Please provide an email address." });
-  }
-
-  const normalizedEmail = email.toLowerCase().trim();
-  
-  // Basic email format validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(normalizedEmail)) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Please provide a valid email address." });
-  }
-
-  try {
-    const user = await User.findOne({ email: normalizedEmail });
-
-    if (!user) {
-      // Don't want to reveal if a user exists or not for security reasons
-      // Return success to prevent email enumeration
-      return res
-        .status(200)
-        .json({ 
-          success: true, 
-          message: "If an account exists with this email, a new OTP has been sent." 
-        });
-    }
-
-    if (user.isVerified) {
-      return res
-        .status(400)
-        .json({ 
-          success: false, 
-          message: "This account is already verified. Please log in instead." 
-        });
-    }
-
-    // Check per-user cooldown (60 seconds minimum between resends)
-    const cooldownCheck = user.canResendOtp(60);
-    if (!cooldownCheck.canResend) {
-      return res.status(429).json({
-        success: false,
-        message: `Please wait ${cooldownCheck.remainingSeconds} second(s) before requesting a new OTP.`,
-        retryAfter: cooldownCheck.remainingSeconds,
-        retryAfterMinutes: cooldownCheck.remainingMinutes,
-      });
-    }
-
-    // Check if user had exceeded attempts before resetting
-    const hadExceededAttempts = !user.canAttemptOtp();
-    const previousResendCount = user.otpResendCount || 0;
-
-    // Generate new OTP (this will reset attempts and track resend)
-    const otp = await user.getOtp();
-    await user.save({ validateBeforeSave: false });
-
-    // Send OTP via email
-    try {
-      await sendEmailToUser(user, otp);
-      
-      // Log successful resend for monitoring
-      console.log(`OTP resent successfully to ${normalizedEmail} (Resend #${user.otpResendCount})`);
-      
-      // Build response message
-      let message = `A new OTP has been sent to ${email}.`;
-      
-      if (hadExceededAttempts) {
-        message += " Your previous OTP attempts have been reset.";
-      }
-      
-      if (previousResendCount > 0) {
-        message += ` This is your ${previousResendCount === 1 ? '2nd' : `${previousResendCount + 1}th`} OTP.`;
-      }
-      
-      message += " Please check your inbox and spam folder.";
-      
-      res.status(200).json({
-        success: true,
-        message: message,
-        resendCount: user.otpResendCount,
-        expiresIn: 10, // minutes
-      });
-    } catch (emailError) {
-      console.error("Failed to send OTP email:", emailError);
-      
-      // Revert the OTP generation if email failed
-      user.otpResendCount = Math.max(0, (user.otpResendCount || 0) - 1);
-      if (previousResendCount === 0) {
-        user.lastOtpSentAt = undefined;
-      }
-      await user.save({ validateBeforeSave: false });
-      
-      return res.status(500).json({
-        success: false,
-        message: "Failed to send OTP email. Please check your email address and try again later. If the problem persists, contact support.",
-      });
-    }
-  } catch (err) {
-    console.error("Resend OTP error:", err);
-    res.status(500).json({ 
-      success: false, 
-      message: "An error occurred while resending OTP. Please try again later." 
-    });
-  }
-};
 
 // @desc    Send email token for verification
 // @route   POST /api/auth/send-email-token

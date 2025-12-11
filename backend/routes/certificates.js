@@ -1,5 +1,5 @@
 const express = require('express');
-const { generateCertificate, getAllCertificates, verifyCertificate, generateSelfCertificate } = require('../controllers/certificates');
+const { generateCertificate, getAllCertificates, verifyCertificate, generateSelfCertificate, getCertificateById, updateCertificate, deleteCertificate } = require('../controllers/certificates');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
 const { getMyCertificates } = require('../controllers/certificates');
@@ -21,6 +21,8 @@ router.post('/generate-self', protect, generateSelfCertificate);
 
 router
     .route('/:id')
-    .delete(protect, authorize('admin'), require('../controllers/certificates').deleteCertificate);
+    .get(protect, authorize('admin'), getCertificateById)
+    .put(protect, authorize('admin'), updateCertificate)
+    .delete(protect, authorize('admin'), deleteCertificate);
 
 module.exports = router;

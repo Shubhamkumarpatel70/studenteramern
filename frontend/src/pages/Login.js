@@ -1,20 +1,28 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { LogIn, Mail, Lock, Eye, EyeOff, AlertCircle, X } from 'lucide-react';
+import { LogIn, Mail, Lock, Eye, EyeOff, AlertCircle, X, RefreshCw } from 'lucide-react';
 import AuthContext from '../context/AuthContext';
+import api from '../config/api';
 
 const Login = () => {
-    const [formData, setFormData] = useState({ email: '', password: '' });
+    const [formData, setFormData] = useState({ email: '', password: '', captcha: '' });
     const [showPassword, setShowPassword] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [countdown, setCountdown] = useState(5);
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [captchaData, setCaptchaData] = useState(null);
+    const [loadingCaptcha, setLoadingCaptcha] = useState(false);
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || '/';
+
+    // Fetch CAPTCHA on component mount
+    useEffect(() => {
+        fetchCaptcha();
+    }, []);
 
     // Show success message if redirected from registration
     useEffect(() => {
@@ -24,6 +32,22 @@ const Login = () => {
             setTimeout(() => setSuccessMessage(''), 5000);
         }
     }, [location.state]);
+
+    // Fetch CAPTCHA from backend
+    const fetchCaptcha = async () => {
+        setLoadingCaptcha(true);
+        try {
+            const res = await api.get('/captcha/generate');
+            if (res.data.success) {
+                setCaptchaData(res.data.data);
+            }
+        } catch (err) {
+            console.error('Failed to fetch CAPTCHA:', err);
+            setError('Failed to load CAPTCHA. Please refresh the page.');
+        } finally {
+            setLoadingCaptcha(false);
+        }
+    };
 
     const getRedirectPath = (role) => {
         switch (role) {
@@ -38,24 +62,39 @@ const Login = () => {
         }
     };
 
-    const { email, password } = formData;
+    const { email, password, captcha } = formData;
 
     const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const onSubmit = async e => {
         e.preventDefault();
         setError('');
+        
+        // Validate CAPTCHA
+        if (!captcha || !captchaData) {
+            setError('Please enter the CAPTCHA code');
+            return;
+        }
+
         setIsSubmitting(true);
         try {
-            const result = await login(email.toLowerCase(), password);
+            const result = await login(email.toLowerCase(), password, captchaData.captchaId, captcha);
             if (result && !result.error) {
                 // For all users (admin and regular), redirect to dashboard after login
                 const redirectPath = from !== '/' ? from : getRedirectPath(result.role);
                 navigate(redirectPath, { replace: true });
             } else {
                 const errorMessage = result?.error || 'Login failed';
-                if (errorMessage === 'Invalid credentials') {
+                if (errorMessage.includes('CAPTCHA')) {
+                    setError(errorMessage);
+                    // Refresh CAPTCHA on error
+                    fetchCaptcha();
+                    setFormData({ ...formData, captcha: '' });
+                } else if (errorMessage === 'Invalid credentials') {
                     setError('Invalid email or password. Please check your credentials and try again.');
+                    // Refresh CAPTCHA on error
+                    fetchCaptcha();
+                    setFormData({ ...formData, captcha: '' });
                 } else if (errorMessage === 'Your account is pending deletion and cannot be accessed. Please contact support if this is a mistake.') {
                     setError('Your account is pending deletion. Please contact support for assistance.');
                 } else {
@@ -148,6 +187,46 @@ const Login = () => {
                         </div>
                     </div>
 
+                    {/* CAPTCHA Section */}
+                    <div>
+                        <label htmlFor="captcha" className="block text-sm font-medium text-[#212529] mb-2">
+                            Enter CAPTCHA
+                        </label>
+                        <div className="flex items-center gap-3">
+                            <div className="flex-1 flex items-center gap-2 bg-white border-2 border-[#0A2463] rounded-lg p-3 font-mono text-2xl font-bold text-[#0A2463] tracking-wider justify-center min-h-[50px]">
+                                {loadingCaptcha ? (
+                                    <RefreshCw className="w-6 h-6 animate-spin text-[#0A2463]" />
+                                ) : captchaData ? (
+                                    captchaData.code
+                                ) : (
+                                    '----'
+                                )}
+                            </div>
+                            <button
+                                type="button"
+                                onClick={fetchCaptcha}
+                                disabled={loadingCaptcha}
+                                className="p-2 border border-[#0A2463] rounded-lg hover:bg-[#0A2463] hover:text-white transition-colors disabled:opacity-50"
+                                title="Refresh CAPTCHA"
+                            >
+                                <RefreshCw className={`w-5 h-5 ${loadingCaptcha ? 'animate-spin' : ''}`} />
+                            </button>
+                        </div>
+                        <input
+                            id="captcha"
+                            name="captcha"
+                            type="text"
+                            required
+                            value={captcha}
+                            onChange={onChange}
+                            maxLength={4}
+                            className="mt-2 appearance-none block w-full px-4 py-3 border border-[#0A2463] rounded-lg shadow-sm placeholder-[#6C757D] focus:outline-none focus:ring-2 focus:ring-[#28A745] focus:border-[#28A745] sm:text-sm bg-[#FFFFFF] uppercase"
+                            placeholder="Enter CAPTCHA"
+                            style={{ textTransform: 'uppercase' }}
+                        />
+                        <p className="mt-1 text-xs text-[#6C757D]">Enter the 4-character code shown above</p>
+                    </div>
+
                     <div className="flex items-center justify-between">
                         <div className="text-sm">
                             <Link to="/forgot-password" className="font-medium text-[#28A745] hover:text-[#218838] underline">
@@ -162,16 +241,6 @@ const Login = () => {
                                 <AlertCircle className="w-5 h-5 text-red-500 mr-2" />
                                 <p className="text-sm text-red-700">{error}</p>
                             </div>
-                            {error === 'Please verify your email before logging in. Check your email for the verification link.' && (
-                                <div className="mt-3 text-sm">
-                                    <button
-                                        onClick={() => navigate(`/otp-verify?email=${encodeURIComponent(email)}`)}
-                                        className="text-[#0A84FF] underline"
-                                    >
-                                        Resend verification code / Verify now
-                                    </button>
-                                </div>
-                            )}
                         </div>
                     )}
 

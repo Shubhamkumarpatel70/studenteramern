@@ -28,10 +28,10 @@ const Navbar = () => {
     
     const navLinks = (
         <>
-            <Link to="/" className="block py-2 px-3 text-white hover:text-[#28A745] transition-colors duration-200" onClick={() => setMenuOpen(false)}>Home</Link>
-            <Link to="/internships" className="block py-2 px-3 text-white hover:text-[#28A745] transition-colors duration-200" onClick={() => setMenuOpen(false)}>Internships</Link>
-            <Link to="/about" className="block py-2 px-3 text-white hover:text-[#28A745] transition-colors duration-200" onClick={() => setMenuOpen(false)}>About Us</Link>
-            <Link to="/verify-certificate" className="block py-2 px-3 text-white hover:text-[#28A745] transition-colors duration-200" onClick={() => setMenuOpen(false)}>Verify Certificate</Link>
+            <Link to="/" className="block py-2 px-3 text-white hover:text-[#0A84FF] transition-colors duration-200" onClick={() => setMenuOpen(false)}>Home</Link>
+            <Link to="/internships" className="block py-2 px-3 text-white hover:text-[#0A84FF] transition-colors duration-200" onClick={() => setMenuOpen(false)}>Internships</Link>
+            <Link to="/about" className="block py-2 px-3 text-white hover:text-[#0A84FF] transition-colors duration-200" onClick={() => setMenuOpen(false)}>About Us</Link>
+            <Link to="/verify-certificate" className="block py-2 px-3 text-white hover:text-[#0A84FF] transition-colors duration-200" onClick={() => setMenuOpen(false)}>Verify Certificate</Link>
         </>
     );
 
@@ -51,37 +51,39 @@ const Navbar = () => {
     );
 
     return (
-        <nav className="bg-[#0A2463] shadow-lg sticky top-0 z-50 font-bold font-[Inter,sans-serif]">
-            <div className="max-w-7xl mx-auto px-4">
-                <div className="flex justify-between items-center h-20">
-                    {/* Logo */}
-                    <Link to="/" className="flex items-center gap-3 group">
-                        <img src="/logo192.png" alt="Student Era Logo" className="w-12 h-12 rounded-full bg-white shadow-md group-hover:scale-105 transition-transform duration-200" />
-                        <span className="font-extrabold text-2xl md:text-3xl text-[#0A84FF] tracking-tight font-sans drop-shadow">Student Era</span>
-                    </Link>
-                    {/* Desktop Menu */}
-                    <div className="hidden md:flex items-center space-x-8 text-lg font-bold font-[Inter,sans-serif]">
-                        {navLinks}
-                        {authLinks}
+        <nav className="sticky top-0 z-50 font-bold font-[Inter,sans-serif]">
+            <div className="max-w-7xl mx-auto px-4 py-2">
+                <div className="bg-[#0A2463]/50 backdrop-blur-md shadow-lg rounded-[15px] border border-white/10">
+                    <div className="flex justify-between items-center h-20 px-6">
+                        {/* Logo */}
+                        <Link to="/" className="flex items-center gap-3 group">
+                            <img src="/logo192.png" alt="Student Era Logo" className="w-12 h-12 rounded-full bg-white shadow-md group-hover:scale-105 transition-transform duration-200" />
+                            <span className="font-extrabold text-2xl md:text-3xl text-[#0A84FF] tracking-tight font-sans drop-shadow">Student Era</span>
+                        </Link>
+                        {/* Desktop Menu */}
+                        <div className="hidden md:flex items-center space-x-8 text-lg font-bold font-[Inter,sans-serif]">
+                            {navLinks}
+                            {authLinks}
+                        </div>
+                        {/* Hamburger Button - only on small screens */}
+                        <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle Menu" className="md:hidden p-2 hover:bg-white/10 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#0A84FF]">
+                            <svg className={`h-7 w-7 transition-transform duration-300 ${menuOpen ? 'rotate-90' : ''}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="white">
+                                {menuOpen ? (
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                ) : (
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                )}
+                            </svg>
+                        </button>
                     </div>
-                    {/* Hamburger Button - only on small screens */}
-                    <button onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle Menu" className="md:hidden p-2 hover:bg-[#8E8E93]/20 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#0A84FF]">
-                        <svg className={`h-7 w-7 transition-transform duration-300 ${menuOpen ? 'rotate-90' : ''}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#28A745">
-                            {menuOpen ? (
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            ) : (
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                            )}
-                        </svg>
-                    </button>
-                </div>
-            </div>
-            {/* Mobile Menu */}
-            <div className={`md:hidden transition-all duration-300 ${menuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}> 
-                <div className="flex flex-col items-center space-y-2 py-4 bg-[#0A2463] backdrop-blur-md shadow-md rounded-b-xl">
-                    {navLinks}
-                    <div className="w-full border-t border-[#8E8E93] my-2"></div>
-                    {authLinks}
+                    {/* Mobile Menu */}
+                    <div className={`md:hidden transition-all duration-300 ${menuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}> 
+                        <div className="flex flex-col items-center space-y-2 py-4 px-6 border-t border-white/10">
+                            {navLinks}
+                            <div className="w-full border-t border-white/10 my-2"></div>
+                            {authLinks}
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>

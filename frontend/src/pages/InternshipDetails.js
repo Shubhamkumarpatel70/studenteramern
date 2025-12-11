@@ -64,9 +64,27 @@ const InternshipDetails = () => {
                         Back
                     </button>
                 </div>
-                <div className="max-w-4xl mx-auto bg-white bg-opacity-95 rounded-2xl shadow-xl overflow-hidden border border-indigo-100">
+                <div className="max-w-4xl mx-auto bg-white bg-opacity-95 rounded-2xl shadow-xl overflow-hidden border border-indigo-100 relative">
                     {internship.image && (
-                        <img src={internship.image} alt={internship.title} className="w-full h-64 object-cover" />
+                        <div className="relative">
+                            <img src={internship.image} alt={internship.title} className="w-full h-64 object-cover" />
+                            {internship.tag && (
+                                <span 
+                                    className="absolute top-3 right-3 px-4 py-1.5 rounded-full text-sm font-semibold text-white shadow-lg z-10"
+                                    style={{ backgroundColor: internship.tagColor || '#3B82F6' }}
+                                >
+                                    {internship.tag}
+                                </span>
+                            )}
+                        </div>
+                    )}
+                    {!internship.image && internship.tag && (
+                        <span 
+                            className="absolute top-3 right-3 px-4 py-1.5 rounded-full text-sm font-semibold text-white shadow-lg z-10"
+                            style={{ backgroundColor: internship.tagColor || '#3B82F6' }}
+                        >
+                            {internship.tag}
+                        </span>
                     )}
                     <div className="p-8">
                         <h1 className="text-4xl font-extrabold text-indigo-800 mb-3 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{internship.title}</h1>

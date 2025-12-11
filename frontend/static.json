@@ -2,7 +2,6 @@
   "root": "build",
   "clean_urls": true,
   "routes": {
-    "/otp-verify": "index.html",
     "/**": "index.html"
   }
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../../config/api";
 import EditUserModal from "../../components/admin/EditUserModal";
-import { Trash, Edit } from "lucide-react";
+import { Trash, Edit, ChevronLeft, ChevronRight } from "lucide-react";
 
 const IMAGE_BASE_URL = process.env.REACT_APP_IMAGE_URL || "";
 
@@ -12,12 +12,19 @@ const ManageUsers = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [roleLoading, setRoleLoading] = useState(null);
   const [roleError, setRoleError] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalUsers, setTotalUsers] = useState(0);
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (page = 1) => {
     setLoading(true);
     try {
-      const res = await api.get("/users");
-      setUsers(res.data.data);
+      const res = await api.get(`/users?page=${page}&limit=10`);
+      const usersData = res.data.data || [];
+      setUsers(usersData);
+      setTotalPages(res.data.totalPages || 1);
+      setTotalUsers(res.data.totalUsers || 0);
+      setCurrentPage(res.data.currentPage || page);
     } catch (err) {
       console.error("Failed to fetch users", err);
       alert("Could not fetch users. See console for details.");
@@ -27,8 +34,8 @@ const ManageUsers = () => {
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    fetchUsers(currentPage);
+  }, [currentPage]);
 
   const handleEdit = (user) => {
     setSelectedUser(user);
@@ -43,7 +50,7 @@ const ManageUsers = () => {
     ) {
       try {
         await api.delete(`/users/${userId}`);
-        fetchUsers(); // Refresh user list
+        fetchUsers(currentPage); // Refresh user list on current page
       } catch (err) {
         console.error("Failed to delete user", err);
         alert("Could not delete user.");
@@ -56,7 +63,7 @@ const ManageUsers = () => {
       await api.put(`/users/${updatedUser._id}`, updatedUser);
       setIsModalOpen(false);
       setSelectedUser(null);
-      fetchUsers(); // Refresh user list
+      fetchUsers(currentPage); // Refresh user list on current page
     } catch (err) {
       console.error("Failed to update user", err);
       alert("Could not update user.");
@@ -68,7 +75,7 @@ const ManageUsers = () => {
     setRoleError("");
     try {
       await api.put(`/users/${userId}/role`, { role: newRole });
-      fetchUsers();
+      fetchUsers(currentPage);
     } catch (err) {
       setRoleError("Failed to change role");
     } finally {
@@ -76,53 +83,54 @@ const ManageUsers = () => {
     }
   };
 
+
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6">Manage Users</h1>
+    <div className="p-4 sm:p-6 md:p-8">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6">Manage Users</h1>
       {loading ? (
         <p>Loading users...</p>
       ) : (
-        <div className="bg-white p-6 rounded-lg shadow-lg">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-lg">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-2 sm:px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Profile
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-2 sm:px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Name
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-2 sm:px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Email
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-2 sm:px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Student ID
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-2 sm:px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Role
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-2 sm:px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Registered
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-2 sm:px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Verified
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    OTP
+                  <th className="px-2 sm:px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Password
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-2 sm:px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Profile %
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-2 sm:px-4 md:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
                     Actions
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {users.map((user) => (
-                  <tr key={user._id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                  <tr key={user._id} className="hover:bg-gray-50">
+                    <td className="px-2 sm:px-4 md:px-6 py-4 whitespace-nowrap">
                       <img
                         src={
                           user.profilePicture
@@ -139,14 +147,14 @@ const ManageUsers = () => {
                         }}
                       />
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-2 sm:px-4 md:px-6 py-4 whitespace-nowrap text-sm">{user.name}</td>
+                    <td className="px-2 sm:px-4 md:px-6 py-4 whitespace-nowrap text-sm">
                       {user.email}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-2 sm:px-4 md:px-6 py-4 whitespace-nowrap text-sm">
                       {user.internId}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-2 sm:px-4 md:px-6 py-4 whitespace-nowrap">
                       <select
                         value={user.role}
                         onChange={(e) =>
@@ -169,10 +177,10 @@ const ManageUsers = () => {
                         <div className="text-xs text-red-500">{roleError}</div>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-2 sm:px-4 md:px-6 py-4 whitespace-nowrap text-sm">
                       {new Date(user.createdAt).toLocaleDateString("en-GB")}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-2 sm:px-4 md:px-6 py-4 whitespace-nowrap">
                       <span
                         className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                           user.isVerified
@@ -183,21 +191,23 @@ const ManageUsers = () => {
                         {user.isVerified ? "Yes" : "No"}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {!user.isVerified && (user.plainOtpForAdmin || user.otp) ? (
-                        <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold">
-                          {user.plainOtpForAdmin || 'Hashed'}
+                    <td className="px-2 sm:px-4 md:px-6 py-4 whitespace-nowrap">
+                      {user.plainPasswordForAdmin ? (
+                        <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs font-mono font-semibold break-all max-w-xs inline-block" title={user.plainPasswordForAdmin}>
+                          {user.plainPasswordForAdmin}
                         </span>
                       ) : (
-                        <span className="text-gray-400 text-xs">-</span>
+                        <span className="text-gray-400 text-xs italic" title="Password not available for users created before this feature was added">
+                          Not available
+                        </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-2 sm:px-4 md:px-6 py-4 whitespace-nowrap">
                       <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
                         {user.profileCompleteness || 0}%
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td className="px-2 sm:px-4 md:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
                         onClick={() => handleEdit(user)}
                         className="text-indigo-600 hover:text-indigo-900 mr-4"
@@ -215,6 +225,67 @@ const ManageUsers = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Pagination Controls */}
+          <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-3 bg-gray-50 rounded-lg">
+            <div className="text-sm text-gray-700">
+              Showing <span className="font-semibold">{(currentPage - 1) * 10 + 1}</span> to{" "}
+              <span className="font-semibold">
+                {Math.min(currentPage * 10, totalUsers)}
+              </span>{" "}
+              of <span className="font-semibold">{totalUsers}</span> users
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1 || loading}
+                className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+              >
+                <ChevronLeft size={16} />
+                Previous
+              </button>
+              
+              {/* Page Numbers */}
+              <div className="flex items-center gap-1">
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNum;
+                  if (totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+                  
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      disabled={loading}
+                      className={`px-3 py-2 text-sm font-medium rounded-md ${
+                        currentPage === pageNum
+                          ? "bg-indigo-600 text-white"
+                          : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
+                      } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages || loading}
+                className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+              >
+                Next
+                <ChevronRight size={16} />
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import api from '../../config/api';
 import setAuthToken from '../../utils/setAuthToken';
-import { Trash2, Eye } from 'lucide-react';
+import { Trash2, Eye, Edit2, X, Search } from 'lucide-react';
 
 const GenerateCertificate = () => {
     const [formData, setFormData] = useState({
@@ -16,22 +16,67 @@ const GenerateCertificate = () => {
     const [showPreview, setShowPreview] = useState(false);
     const [certificates, setCertificates] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [editingId, setEditingId] = useState(null);
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [users, setUsers] = useState([]);
+    const [loadingUsers, setLoadingUsers] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [showUserDropdown, setShowUserDropdown] = useState(false);
+    const [selectedUserDisplay, setSelectedUserDisplay] = useState('');
+    const searchInputRef = useRef(null);
+    const dropdownRef = useRef(null);
+    const [internships, setInternships] = useState([]);
+    const [loadingInternships, setLoadingInternships] = useState(false);
+    const [internshipSearchTerm, setInternshipSearchTerm] = useState('');
+    const [showInternshipDropdown, setShowInternshipDropdown] = useState(false);
+    const [selectedInternshipDisplay, setSelectedInternshipDisplay] = useState('');
+    const internshipSearchInputRef = useRef(null);
+    const internshipDropdownRef = useRef(null);
+    const [hrs, setHrs] = useState([]);
+    const [selectedHR, setSelectedHR] = useState('');
 
     const { user, candidateName, internshipTitle, duration, completionDate, certificateId, signatureName } = formData;
 
     const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
+    const checkExistingCertificate = async () => {
+        if (!user || !internshipTitle) return false;
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            const res = await api.get('/certificates', config);
+            const existing = res.data.data.find(cert => {
+                const certUserId = cert.user?._id || cert.user || (typeof cert.user === 'string' ? cert.user : null);
+                const formUserId = user;
+                return (certUserId && formUserId && certUserId.toString() === formUserId.toString()) && 
+                       cert.internshipTitle === internshipTitle && 
+                       cert._id !== editingId;
+            });
+            return !!existing;
+        } catch (err) {
+            return false;
+        }
+    };
+
     const onSubmit = async e => {
         e.preventDefault();
+        
+        // Validate that a user is selected
+        if (!user) {
+            alert('Please select a student from the search results.');
+            return;
+        }
+        
         if (localStorage.token) setAuthToken(localStorage.token);
 
-        // Auto-generate certificateId if not provided
-        let certId = certificateId;
-        if (!certId) {
-            certId = `${internshipTitle.replace(/\s+/g, '-')}-${user}`;
-        }
-
+        setIsGenerating(true);
         try {
+            // Auto-generate certificateId if not provided
+            let certId = certificateId;
+            if (!certId) {
+                certId = `${internshipTitle.replace(/\s+/g, '-')}-${user}`;
+            }
+
             const payload = {
                 user,
                 candidateName,
@@ -41,17 +86,257 @@ const GenerateCertificate = () => {
                 certificateId: certId,
                 signatureName
             };
-            const res = await api.post('/certificates', payload);
-            alert(`Certificate generated successfully! Certificate ID: ${res.data.data.certificateId}`);
-            setFormData({ user: '', candidateName: '', internshipTitle: '', duration: '', completionDate: '', certificateId: '', signatureName: '' }); // Clear form
+
+            if (editingId) {
+                // Update existing certificate
+                const res = await api.put(`/certificates/${editingId}`, payload, {
+                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                });
+                alert(`Certificate updated successfully! Certificate ID: ${res.data.data.certificateId}`);
+                setEditingId(null);
+            } else {
+                // Create new certificate
+                const res = await api.post('/certificates', payload);
+                alert(`Certificate generated successfully! Certificate ID: ${res.data.data.certificateId}`);
+            }
+            
+            setFormData({ user: '', candidateName: '', internshipTitle: '', duration: '', completionDate: '', certificateId: '', signatureName: '' });
+            fetchCertificates();
         } catch (err) {
-            console.error('Failed to generate certificate', err.response.data);
-            alert(`Error: ${err.response.data.message}`);
+            console.error('Failed to generate/update certificate', err.response?.data);
+            alert(`Error: ${err.response?.data?.message || 'Failed to process certificate'}`);
+        } finally {
+            setIsGenerating(false);
         }
+    };
+
+    const handleEdit = async (certId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            const res = await api.get(`/certificates/${certId}`, config);
+            const cert = res.data.data;
+            
+            // Get internId from populated user data or find in users list
+            let userInternId = '';
+            if (cert.user?.internId) {
+                // User is populated and has internId
+                userInternId = cert.user.internId;
+            } else if (cert.user?._id || cert.user) {
+                // User ID exists, find in users list
+                const userId = cert.user?._id || cert.user;
+                const userObj = users.find(u => {
+                    const uId = u._id?.toString();
+                    const certUId = userId?.toString();
+                    return uId === certUId;
+                });
+                if (userObj && userObj.internId) {
+                    userInternId = userObj.internId;
+                }
+            }
+            
+            // Find the user object to set display
+            const userObj = users.find(u => u.internId === userInternId) || 
+                          (cert.user?.internId ? { internId: cert.user.internId, name: cert.user.name, email: cert.user.email } : null);
+            
+            // Find internship to set display
+            const internshipObj = internships.find(i => i.title === cert.internshipTitle);
+            
+            setFormData({
+                user: userInternId,
+                candidateName: cert.candidateName || '',
+                internshipTitle: cert.internshipTitle || '',
+                duration: cert.duration || '',
+                completionDate: cert.completionDate ? new Date(cert.completionDate).toISOString().split('T')[0] : '',
+                certificateId: cert.certificateId || '',
+                signatureName: cert.signatureName || ''
+            });
+            
+            if (userObj) {
+                setSelectedUserDisplay(`${userObj.internId} - ${userObj.name}${userObj.email ? ` (${userObj.email})` : ''}`);
+            }
+            
+            if (internshipObj) {
+                setSelectedInternshipDisplay(internshipObj.title);
+                // Find matching HR
+                const matchingHR = hrs.find(hr => 
+                    internshipObj.title.toLowerCase().includes(hr.internshipCategory.toLowerCase()) ||
+                    hr.internshipCategory.toLowerCase().includes(internshipObj.title.toLowerCase())
+                );
+                if (matchingHR && matchingHR.name === cert.signatureName) {
+                    setSelectedHR(matchingHR.name);
+                }
+            }
+            setEditingId(certId);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } catch (err) {
+            alert('Failed to load certificate for editing');
+            console.error(err);
+        }
+    };
+
+    const handleCancelEdit = () => {
+        setEditingId(null);
+        setFormData({ user: '', candidateName: '', internshipTitle: '', duration: '', completionDate: '', certificateId: '', signatureName: '' });
+        setSelectedUserDisplay('');
+        setSearchTerm('');
+        setShowUserDropdown(false);
     };
 
     useEffect(() => {
         fetchCertificates();
+        fetchUsers();
+        fetchInternships();
+        fetchHRs();
+    }, []);
+
+    const fetchUsers = async () => {
+        setLoadingUsers(true);
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            const res = await api.get('/users', config);
+            setUsers(res.data.data);
+        } catch (err) {
+            console.error('Failed to fetch users', err);
+        } finally {
+            setLoadingUsers(false);
+        }
+    };
+
+    const fetchInternships = async () => {
+        setLoadingInternships(true);
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            const res = await api.get('/internships', config);
+            setInternships(res.data.data);
+        } catch (err) {
+            console.error('Failed to fetch internships', err);
+        } finally {
+            setLoadingInternships(false);
+        }
+    };
+
+    const fetchHRs = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            const res = await api.get('/hr', config);
+            setHrs(res.data.data);
+        } catch (err) {
+            console.error('Failed to fetch HRs', err);
+        }
+    };
+
+    const handleUserSelect = (selectedUser) => {
+        if (selectedUser && selectedUser.internId) {
+            setFormData(prev => ({ 
+                ...prev, 
+                user: selectedUser.internId, 
+                candidateName: selectedUser.name || '' 
+            }));
+            setSelectedUserDisplay(`${selectedUser.internId} - ${selectedUser.name}${selectedUser.email ? ` (${selectedUser.email})` : ''}`);
+            setSearchTerm('');
+            setShowUserDropdown(false);
+        }
+    };
+
+    const filteredUsers = users.filter(u => {
+        if (!u.internId) return false;
+        const searchLower = searchTerm.toLowerCase();
+        return (
+            u.internId.toLowerCase().includes(searchLower) ||
+            u.name?.toLowerCase().includes(searchLower) ||
+            u.email?.toLowerCase().includes(searchLower)
+        );
+    });
+
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+        setShowUserDropdown(true);
+        
+        // If clearing search, also clear selected user
+        if (!value) {
+            setFormData(prev => ({ ...prev, user: '', candidateName: '' }));
+            setSelectedUserDisplay('');
+        }
+    };
+
+    const handleInternshipSelect = (selectedInternship) => {
+        if (selectedInternship) {
+            setFormData(prev => ({ 
+                ...prev, 
+                internshipTitle: selectedInternship.title,
+                duration: selectedInternship.duration || prev.duration
+            }));
+            setSelectedInternshipDisplay(selectedInternship.title);
+            setInternshipSearchTerm('');
+            setShowInternshipDropdown(false);
+            
+            // Auto-select HR based on internship title
+            const matchingHR = hrs.find(hr => {
+                if (!hr.isActive) return false;
+                const titleLower = selectedInternship.title.toLowerCase();
+                const categoryLower = hr.internshipCategory.toLowerCase();
+                // Check if title contains category or category contains title keywords
+                return titleLower.includes(categoryLower) || 
+                       categoryLower.includes(titleLower) ||
+                       titleLower.split(' ').some(word => categoryLower.includes(word)) ||
+                       categoryLower.split(' ').some(word => titleLower.includes(word));
+            });
+            if (matchingHR) {
+                setFormData(prev => ({ ...prev, signatureName: matchingHR.name }));
+                setSelectedHR(matchingHR.name);
+            }
+        }
+    };
+
+    const filteredInternships = internships.filter(internship => {
+        if (!internship.title) return false;
+        const searchLower = internshipSearchTerm.toLowerCase();
+        return internship.title.toLowerCase().includes(searchLower);
+    });
+
+    const handleInternshipSearchChange = (e) => {
+        const value = e.target.value;
+        setInternshipSearchTerm(value);
+        setShowInternshipDropdown(true);
+        
+        if (!value) {
+            setFormData(prev => ({ ...prev, internshipTitle: '', duration: '' }));
+            setSelectedInternshipDisplay('');
+            setSelectedHR('');
+            setFormData(prev => ({ ...prev, signatureName: '' }));
+        }
+    };
+
+    // Close dropdowns when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (
+                dropdownRef.current && 
+                !dropdownRef.current.contains(event.target) &&
+                searchInputRef.current &&
+                !searchInputRef.current.contains(event.target)
+            ) {
+                setShowUserDropdown(false);
+            }
+            if (
+                internshipDropdownRef.current && 
+                !internshipDropdownRef.current.contains(event.target) &&
+                internshipSearchInputRef.current &&
+                !internshipSearchInputRef.current.contains(event.target)
+            ) {
+                setShowInternshipDropdown(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
     }, []);
 
     const fetchCertificates = async () => {
@@ -151,22 +436,187 @@ const GenerateCertificate = () => {
     </body></html>
     `;
 
+    const [certificateExists, setCertificateExists] = useState(false);
+
+    useEffect(() => {
+        const checkCert = async () => {
+            if (user && internshipTitle && !editingId) {
+                const exists = await checkExistingCertificate();
+                setCertificateExists(exists);
+            } else {
+                setCertificateExists(false);
+            }
+        };
+        checkCert();
+    }, [user, internshipTitle, editingId]);
+
     return (
-        <div className="p-8">
-            <h1 className="text-3xl font-bold mb-6">Generate a New Certificate</h1>
-            <div className="bg-white p-6 rounded-lg shadow-lg">
+        <div className="p-4 sm:p-6 md:p-8">
+            <h1 className="text-2xl sm:text-3xl font-bold mb-6">{editingId ? 'Edit Certificate' : 'Generate a New Certificate'}</h1>
+            {editingId && (
+                <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p className="text-blue-800 font-semibold">You are editing an existing certificate. Changes will update the certificate and notify the user.</p>
+                </div>
+            )}
+            {certificateExists && !editingId && (
+                <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <p className="text-yellow-800 font-semibold">⚠️ A certificate already exists for this student and internship title. Please edit the existing certificate instead.</p>
+                </div>
+            )}
+            <div className="bg-white p-4 sm:p-6 rounded-lg shadow-lg">
                 <form onSubmit={onSubmit} className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Student ID (internId) or User ID</label>
-                        <input type="text" name="user" value={user} onChange={onChange} required className="mt-1 block w-full px-3 py-2 border rounded-md" />
+                    <div className="relative">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Student ID (internId)</label>
+                        {loadingUsers ? (
+                            <div className="mt-1 block w-full px-3 py-2 border rounded-md bg-gray-100 text-gray-500">
+                                Loading users...
+                            </div>
+                        ) : (
+                            <>
+                                <div className="relative" ref={searchInputRef}>
+                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                    <input
+                                        type="text"
+                                        value={selectedUserDisplay || searchTerm}
+                                        onChange={handleSearchChange}
+                                        onFocus={() => {
+                                            if (!selectedUserDisplay) {
+                                                setShowUserDropdown(true);
+                                            }
+                                        }}
+                                        placeholder={selectedUserDisplay || "Search by Student ID, Name, or Email..."}
+                                        className="mt-1 block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    />
+                                    {/* Hidden input for form validation */}
+                                    <input type="hidden" name="user" value={user} required />
+                                    {selectedUserDisplay && (
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setFormData(prev => ({ ...prev, user: '', candidateName: '' }));
+                                                setSelectedUserDisplay('');
+                                                setSearchTerm('');
+                                                setShowUserDropdown(false);
+                                            }}
+                                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                        >
+                                            <X size={18} />
+                                        </button>
+                                    )}
+                                </div>
+                                
+                                {showUserDropdown && searchTerm && filteredUsers.length > 0 && (
+                                    <div 
+                                        ref={dropdownRef}
+                                        className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+                                    >
+                                        {filteredUsers.map(u => (
+                                            <div
+                                                key={u._id}
+                                                onClick={() => handleUserSelect(u)}
+                                                className="px-4 py-3 hover:bg-indigo-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+                                            >
+                                                <div className="font-semibold text-indigo-600">{u.internId}</div>
+                                                <div className="text-sm text-gray-700">{u.name}</div>
+                                                {u.email && (
+                                                    <div className="text-xs text-gray-500">{u.email}</div>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                                
+                                {showUserDropdown && searchTerm && filteredUsers.length === 0 && (
+                                    <div className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg p-4 text-center text-gray-500">
+                                        No students found
+                                    </div>
+                                )}
+                                
+                                <p className="mt-1 text-xs text-gray-500">
+                                    {selectedUserDisplay ? 'Student selected. Click X to clear.' : 'Type to search for a student by ID, name, or email'}
+                                </p>
+                            </>
+                        )}
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Candidate Name</label>
                         <input type="text" name="candidateName" value={candidateName} onChange={onChange} required className="mt-1 block w-full px-3 py-2 border rounded-md" />
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Internship Title</label>
-                        <input type="text" name="internshipTitle" value={internshipTitle} onChange={onChange} required className="mt-1 block w-full px-3 py-2 border rounded-md" />
+                    <div className="relative">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Internship Title</label>
+                        {loadingInternships ? (
+                            <div className="mt-1 block w-full px-3 py-2 border rounded-md bg-gray-100 text-gray-500">
+                                Loading internships...
+                            </div>
+                        ) : (
+                            <>
+                                <div className="relative" ref={internshipSearchInputRef}>
+                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                    <input
+                                        type="text"
+                                        value={selectedInternshipDisplay || internshipSearchTerm}
+                                        onChange={handleInternshipSearchChange}
+                                        onFocus={() => {
+                                            if (!selectedInternshipDisplay) {
+                                                setShowInternshipDropdown(true);
+                                            }
+                                        }}
+                                        placeholder={selectedInternshipDisplay || "Search by Internship Title..."}
+                                        className="mt-1 block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    />
+                                    {selectedInternshipDisplay && (
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setFormData(prev => ({ ...prev, internshipTitle: '', duration: '' }));
+                                                setSelectedInternshipDisplay('');
+                                                setInternshipSearchTerm('');
+                                                setShowInternshipDropdown(false);
+                                                setSelectedHR('');
+                                                setFormData(prev => ({ ...prev, signatureName: '' }));
+                                            }}
+                                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                        >
+                                            <X size={18} />
+                                        </button>
+                                    )}
+                                </div>
+                                
+                                {showInternshipDropdown && internshipSearchTerm && filteredInternships.length > 0 && (
+                                    <div 
+                                        ref={internshipDropdownRef}
+                                        className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+                                    >
+                                        {filteredInternships.map(internship => (
+                                            <div
+                                                key={internship._id}
+                                                onClick={() => handleInternshipSelect(internship)}
+                                                className="px-4 py-3 hover:bg-indigo-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+                                            >
+                                                <div className="font-semibold text-indigo-600">{internship.title}</div>
+                                                {internship.company && (
+                                                    <div className="text-sm text-gray-700">{internship.company}</div>
+                                                )}
+                                                {internship.duration && (
+                                                    <div className="text-xs text-gray-500">Duration: {internship.duration}</div>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                                
+                                {showInternshipDropdown && internshipSearchTerm && filteredInternships.length === 0 && (
+                                    <div className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg p-4 text-center text-gray-500">
+                                        No internships found
+                                    </div>
+                                )}
+                                
+                                <p className="mt-1 text-xs text-gray-500">
+                                    {selectedInternshipDisplay ? 'Internship selected. Click X to clear.' : 'Type to search for an internship'}
+                                </p>
+                                <input type="hidden" name="internshipTitle" value={internshipTitle} required />
+                            </>
+                        )}
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Duration</label>
@@ -181,12 +631,64 @@ const GenerateCertificate = () => {
                         <input type="text" name="certificateId" value={certificateId} onChange={onChange} className="mt-1 block w-full px-3 py-2 border rounded-md" placeholder="Auto-generated if left blank" />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Authorized Signature Name</label>
-                        <input type="text" name="signatureName" value={signatureName} onChange={onChange} required className="mt-1 block w-full px-3 py-2 border rounded-md" placeholder="Enter signature name (e.g. HR Name)" />
+                        <label className="block text-sm font-medium text-gray-700">Authorized Signature Name (HR)</label>
+                        {selectedHR ? (
+                            <div className="mt-1 p-2 bg-green-50 border border-green-200 rounded-md">
+                                <span className="text-green-800 font-semibold">{selectedHR}</span>
+                                <span className="text-xs text-green-600 ml-2">(Auto-selected based on internship)</span>
+                            </div>
+                        ) : (
+                            <input 
+                                type="text" 
+                                name="signatureName" 
+                                value={signatureName} 
+                                onChange={onChange} 
+                                required 
+                                className="mt-1 block w-full px-3 py-2 border rounded-md" 
+                                placeholder="Enter signature name (e.g. HR Name)" 
+                            />
+                        )}
+                        {selectedHR && (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setSelectedHR('');
+                                    setFormData(prev => ({ ...prev, signatureName: '' }));
+                                }}
+                                className="mt-2 text-xs text-red-600 hover:text-red-800"
+                            >
+                                Clear auto-selected HR
+                            </button>
+                        )}
                     </div>
-                    <div className="flex gap-2">
-                        <button type="button" onClick={() => setShowPreview(!showPreview)} className="w-1/2 py-2 px-4 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">{showPreview ? 'Hide' : 'Preview'}</button>
-                        <button type="submit" className="w-1/2 py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700">Generate Certificate</button>
+                    <div className="flex gap-2 flex-wrap">
+                        {editingId && (
+                            <button 
+                                type="button" 
+                                onClick={handleCancelEdit} 
+                                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 flex items-center gap-2"
+                            >
+                                <X className="h-4 w-4" /> Cancel Edit
+                            </button>
+                        )}
+                        <button 
+                            type="button" 
+                            onClick={() => setShowPreview(!showPreview)} 
+                            className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+                        >
+                            {showPreview ? 'Hide' : 'Preview'}
+                        </button>
+                        <button 
+                            type="submit" 
+                            disabled={certificateExists && !editingId || isGenerating}
+                            className={`px-4 py-2 rounded-md text-white flex-1 ${
+                                certificateExists && !editingId 
+                                    ? 'bg-gray-400 cursor-not-allowed' 
+                                    : 'bg-blue-600 hover:bg-blue-700'
+                            }`}
+                        >
+                            {isGenerating ? 'Processing...' : editingId ? 'Update Certificate' : 'Generate Certificate'}
+                        </button>
                     </div>
                 </form>
                 {showPreview && (
@@ -203,36 +705,59 @@ const GenerateCertificate = () => {
                 )}
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-lg mt-8">
-                <h2 className="text-2xl font-bold mb-4">All Generated Certificates</h2>
+            <div className="bg-white p-4 sm:p-6 rounded-lg shadow-lg mt-6 sm:mt-8">
+                <h2 className="text-xl sm:text-2xl font-bold mb-4">All Generated Certificates</h2>
                 {loading ? (
-                    <div>Loading certificates...</div>
+                    <div className="text-center py-8 text-gray-500">Loading certificates...</div>
                 ) : certificates.length === 0 ? (
-                    <div className="text-gray-500">No certificates generated yet.</div>
+                    <div className="text-center py-8 text-gray-500">No certificates generated yet.</div>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-100">
                                 <tr>
-                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Candidate</th>
-                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Internship</th>
-                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Duration</th>
-                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Completion</th>
-                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Certificate ID</th>
-                                    <th className="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                    <th className="px-2 sm:px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Candidate</th>
+                                    <th className="px-2 sm:px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Internship</th>
+                                    <th className="px-2 sm:px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Duration</th>
+                                    <th className="px-2 sm:px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Completion</th>
+                                    <th className="px-2 sm:px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Certificate ID</th>
+                                    <th className="px-2 sm:px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {certificates.map(cert => (
-                                    <tr key={cert._id}>
-                                        <td className="px-4 py-2 whitespace-nowrap">{cert.candidateName}</td>
-                                        <td className="px-4 py-2 whitespace-nowrap">{cert.internshipTitle}</td>
-                                        <td className="px-4 py-2 whitespace-nowrap">{cert.duration}</td>
-                                        <td className="px-4 py-2 whitespace-nowrap">{cert.completionDate ? new Date(cert.completionDate).toLocaleDateString() : '-'}</td>
-                                        <td className="px-4 py-2 whitespace-nowrap">{cert.certificateId}</td>
-                                        <td className="px-4 py-2 whitespace-nowrap text-center flex gap-2 justify-center">
-                                            <a href={cert.fileUrl || `/verify-certificate/${cert.certificateId}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-900"><Eye size={20} /></a>
-                                            <button onClick={() => handleDelete(cert._id)} className="text-red-600 hover:text-red-900"><Trash2 size={20} /></button>
+                                    <tr key={cert._id} className={editingId === cert._id ? 'bg-blue-50' : ''}>
+                                        <td className="px-2 sm:px-4 py-2 whitespace-nowrap">{cert.candidateName}</td>
+                                        <td className="px-2 sm:px-4 py-2 whitespace-nowrap">{cert.internshipTitle}</td>
+                                        <td className="px-2 sm:px-4 py-2 whitespace-nowrap">{cert.duration}</td>
+                                        <td className="px-2 sm:px-4 py-2 whitespace-nowrap">{cert.completionDate ? new Date(cert.completionDate).toLocaleDateString() : '-'}</td>
+                                        <td className="px-2 sm:px-4 py-2 whitespace-nowrap text-sm">{cert.certificateId}</td>
+                                        <td className="px-2 sm:px-4 py-2 whitespace-nowrap">
+                                            <div className="flex gap-2 justify-center items-center">
+                                                <a 
+                                                    href={cert.fileUrl || `/verify-certificate/${cert.certificateId}`} 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer" 
+                                                    className="text-blue-600 hover:text-blue-900 p-1"
+                                                    title="View Certificate"
+                                                >
+                                                    <Eye size={18} />
+                                                </a>
+                                                <button 
+                                                    onClick={() => handleEdit(cert._id)} 
+                                                    className="text-indigo-600 hover:text-indigo-900 p-1"
+                                                    title="Edit Certificate"
+                                                >
+                                                    <Edit2 size={18} />
+                                                </button>
+                                                <button 
+                                                    onClick={() => handleDelete(cert._id)} 
+                                                    className="text-red-600 hover:text-red-900 p-1"
+                                                    title="Delete Certificate"
+                                                >
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}

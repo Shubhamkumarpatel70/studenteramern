@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import {
-  HashRouter as Router,
+  BrowserRouter as Router,
   Routes,
   Route,
   useNavigate,
@@ -12,7 +12,6 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-import OTPVerify from "./pages/OTPVerify";
 import VerifyEmail from "./pages/VerifyEmail";
 import VerifyEmailToken from "./pages/VerifyEmailToken";
 
@@ -43,6 +42,9 @@ import InternshipDetails from "./pages/InternshipDetails";
 import Internships from "./pages/Internships";
 import Help from "./pages/dashboard/Help";
 import HelpQueries from "./pages/admin/HelpQueries";
+import Feedback from "./pages/dashboard/Feedback";
+import ManageFeedback from "./pages/admin/ManageFeedback";
+import ManageSocialLinks from "./pages/admin/ManageSocialLinks";
 
 // Admin Pages
 import AdminHome from "./pages/admin/AdminHome";
@@ -62,6 +64,7 @@ import Analytics from "./pages/admin/Analytics";
 import Queries from "./pages/admin/Queries";
 import DeletionRequests from "./pages/admin/DeletionRequests";
 import ManagePayments from "./pages/admin/ManagePayments";
+import ManageHR from "./pages/admin/ManageHR";
 import ScheduleMeeting from "./pages/coadmin/ScheduleMeeting";
 
 // Co-Admin Pages
@@ -178,13 +181,11 @@ const AppContent = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/otp-verify" element={<OTPVerify />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route
             path="/verify-email-token/:token"
             element={<VerifyEmailToken />}
           />
-          <Route path="/verify-account-pending" element={<OTPVerify />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route
             path="/reset-password/:resettoken"
@@ -220,6 +221,7 @@ const AppContent = () => {
               <Route path="upload-task" element={<UploadTask />} />
               <Route path="my-tasks" element={<MyTasks />} />
               <Route path="help" element={<Help />} />
+              <Route path="feedback" element={<Feedback />} />
               <Route path="delete-account" element={<DeleteAccount />} />
             </Route>
           </Route>
@@ -257,9 +259,12 @@ const AppContent = () => {
                 path="generate-offer-letter"
                 element={<GenerateOfferLetter />}
               />
+              <Route path="manage-hr" element={<ManageHR />} />
               <Route path="queries" element={<Queries />} />
               <Route path="help-queries" element={<HelpQueries />} />
               <Route path="deletion-requests" element={<DeletionRequests />} />
+              <Route path="manage-feedback" element={<ManageFeedback />} />
+              <Route path="manage-social-links" element={<ManageSocialLinks />} />
             </Route>
           </Route>
 

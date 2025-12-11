@@ -21,7 +21,7 @@ exports.createInternship = async (req, res, next) => {
 // @access  Public
 exports.getPublicInternships = async (req, res, next) => {
     try {
-        const internships = await Internship.find({ isAccepting: true }).sort({ createdAt: -1 });
+        const internships = await Internship.find({ isAccepting: true }).sort({ order: 1, createdAt: -1 });
         res.status(200).json({
             success: true,
             count: internships.length,
@@ -62,7 +62,7 @@ exports.getPublicInternshipById = async (req, res, next) => {
 // @access  Private/Admin
 exports.getInternships = async (req, res, next) => {
     try {
-        const internships = await Internship.find().sort({ createdAt: -1 });
+        const internships = await Internship.find().sort({ order: 1, createdAt: -1 });
         res.status(200).json({
             success: true,
             count: internships.length,

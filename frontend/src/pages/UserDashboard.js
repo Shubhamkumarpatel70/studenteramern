@@ -65,9 +65,9 @@ const UserDashboard = () => {
                 </header>
 
                 {/* Main Content */}
-                <main className="flex-1 p-4 sm:p-6 lg:p-8">
-                    <div className="max-w-7xl mx-auto">
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8 min-h-[calc(100vh-12rem)]">
+                <main className="flex-1 p-3 sm:p-4 md:p-6 lg:p-8 overflow-x-hidden">
+                    <div className="max-w-7xl mx-auto w-full">
+                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4 md:p-6 lg:p-8 min-h-[calc(100vh-12rem)]">
                             <Outlet />
                         </div>
                     </div>

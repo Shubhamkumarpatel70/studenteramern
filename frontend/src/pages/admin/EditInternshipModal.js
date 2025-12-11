@@ -9,6 +9,9 @@ const EditInternshipModal = ({ isOpen, onClose, internship, onSave }) => {
             ...internship,
             technologies: Array.isArray(internship.technologies) ? internship.technologies.join(', ') : '',
             stipendType: internship.stipendType || 'month',
+            tag: internship.tag || '',
+            tagColor: internship.tagColor || '#3B82F6',
+            order: internship.order || 999,
         });
     }, [internship]);
 
@@ -45,6 +48,7 @@ const EditInternshipModal = ({ isOpen, onClose, internship, onSave }) => {
             technologies: formData.technologies.split(',').map(s => s.trim()),
             features: Array.isArray(formData.features) ? formData.features : (formData.features ? formData.features.split('\n').map(f => f.trim()).filter(f => f.length > 0) : []),
             stipendType: formData.stipendType || 'month',
+            order: formData.order !== undefined && formData.order !== '' ? Number(formData.order) : 999,
         };
         onSave(finalData);
     };
@@ -117,6 +121,62 @@ const EditInternshipModal = ({ isOpen, onClose, internship, onSave }) => {
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Total Positions</label>
                         <input type="number" name="totalPositions" value={formData.totalPositions || 1} onChange={handleChange} min="1" className="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Registration Fee (₹)</label>
+                        <input type="number" name="registrationFee" value={formData.registrationFee || 149} onChange={handleChange} min="0" className="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+                        <p className="mt-1 text-xs text-gray-500">This fee will be shown as "Application Fee" on the payment page</p>
+                    </div>
+
+                    {/* Tag (Optional) */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Tag (Optional)</label>
+                        <div className="mt-1 flex gap-2">
+                            <input 
+                                type="text" 
+                                name="tag" 
+                                value={formData.tag || ''} 
+                                onChange={handleChange} 
+                                placeholder="e.g., New, Popular, Featured" 
+                                className="flex-1 border-gray-300 rounded-md shadow-sm" 
+                            />
+                            <input 
+                                type="color" 
+                                name="tagColor" 
+                                value={formData.tagColor || '#3B82F6'} 
+                                onChange={handleChange} 
+                                className="h-10 w-16 border border-gray-300 rounded-md cursor-pointer" 
+                                title="Tag background color"
+                            />
+                        </div>
+                        <p className="mt-1 text-xs text-gray-500">Tag will appear in the top right corner of the internship card</p>
+                        {formData.tag && (
+                            <div className="mt-2 flex items-center gap-2">
+                                <span className="text-xs text-gray-600">Preview:</span>
+                                <span 
+                                    className="px-3 py-1 rounded-full text-xs font-semibold text-white"
+                                    style={{ backgroundColor: formData.tagColor || '#3B82F6' }}
+                                >
+                                    {formData.tag}
+                                </span>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Order */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Display Order</label>
+                        <input 
+                            type="number" 
+                            name="order" 
+                            value={formData.order !== undefined && formData.order !== '' ? formData.order : 999} 
+                            onChange={handleChange} 
+                            min="1" 
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm" 
+                            placeholder="999"
+                        />
+                        <p className="mt-1 text-xs text-gray-500">Lower numbers appear first (1 = top, 2 = second, etc.). Default: 999 (appears last)</p>
                     </div>
 
                     <div className="flex items-center">

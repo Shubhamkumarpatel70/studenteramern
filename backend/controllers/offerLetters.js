@@ -46,6 +46,19 @@ exports.generateOfferLetter = async (req, res, next) => {
       stipend,
       hrName,
     } = req.body;
+
+    // Check if offer letter already exists for same user and job title
+    const existing = await OfferLetter.findOne({
+      user: userId,
+      title: title,
+    });
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        message: "Offer letter already exists for this student and job title. Please edit the existing offer letter instead.",
+      });
+    }
+
     const offerLetter = new OfferLetter({
       user,
       candidateName,

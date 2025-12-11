@@ -38,6 +38,19 @@ exports.generateCertificate = async (req, res, next) => {
       certificateId,
       signatureName,
     } = req.body;
+
+    // Check if certificate already exists for same user and internship title
+    const existing = await Certificate.findOne({
+      user: userId,
+      internshipTitle: internshipTitle,
+    });
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        message: "Certificate already exists for this student and internship title. Please edit the existing certificate instead.",
+      });
+    }
+
     const certificate = await Certificate.create({
       user,
       candidateName,
@@ -271,6 +284,138 @@ exports.generateSelfCertificate = async (req, res, next) => {
     // Remove local file after upload
     require("fs").unlinkSync(pdfPath);
     res.status(201).json({ success: true, data: certificate });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+// @desc    Get certificate by ID
+// @route   GET /api/certificates/:id
+// @access  Private/Admin
+exports.getCertificateById = async (req, res, next) => {
+  try {
+    const certificate = await Certificate.findById(req.params.id).populate('user', 'name email internId');
+    if (!certificate) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Certificate not found" });
+    }
+    res.status(200).json({ success: true, data: certificate });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
+// @desc    Update a certificate by ID
+// @route   PUT /api/certificates/:id
+// @access  Private/Admin
+exports.updateCertificate = async (req, res, next) => {
+  try {
+    let certificate = await Certificate.findById(req.params.id);
+    if (!certificate) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Certificate not found" });
+    }
+
+    // Support using internId (student ID) as well as ObjectId for user if provided
+    let userId = req.body.user || certificate.user.toString();
+    if (req.body.user && !mongoose.Types.ObjectId.isValid(req.body.user)) {
+      const User = require("../models/User");
+      const userDoc = await User.findOne({ internId: req.body.user });
+      if (!userDoc) {
+        return res.status(400).json({
+          success: false,
+          message: "User not found for given Student ID or User ID.",
+        });
+      }
+      userId = userDoc._id;
+    }
+
+    const {
+      candidateName,
+      internshipTitle,
+      duration,
+      completionDate,
+      certificateId,
+      signatureName,
+    } = req.body;
+
+    // Update certificate fields
+    if (candidateName) certificate.candidateName = candidateName;
+    if (internshipTitle) certificate.internshipTitle = internshipTitle;
+    if (duration) certificate.duration = duration;
+    if (completionDate) certificate.completionDate = completionDate;
+    if (certificateId) certificate.certificateId = certificateId;
+    if (signatureName) certificate.signatureName = signatureName;
+    if (req.body.user) certificate.user = userId;
+
+    await certificate.save();
+
+    // Regenerate PDF with updated data
+    const pdfDir = path.join(__dirname, "../uploads/certificates");
+    if (!fs.existsSync(pdfDir)) fs.mkdirSync(pdfDir, { recursive: true });
+    const pdfPath = path.join(pdfDir, `${certificate._id}.pdf`);
+    await generateCertificatePDF(
+      {
+        candidateName: certificate.candidateName,
+        internshipTitle: certificate.internshipTitle,
+        duration: certificate.duration,
+        completionDate: certificate.completionDate,
+        certificateId: certificate.certificateId,
+        signatureName: certificate.signatureName,
+      },
+      pdfPath
+    );
+
+    // Upload updated PDF to Cloudinary
+    const result = await cloudinary.uploader.upload(pdfPath, {
+      folder: "certificates",
+      resource_type: "raw",
+      public_id: `${certificate._id}.pdf`,
+      type: "upload",
+      access_mode: "public",
+      use_filename: true,
+      unique_filename: false,
+      overwrite: true,
+    });
+
+    // Update fileUrl with new Cloudinary URL
+    certificate.fileUrl = result.secure_url;
+    await certificate.save();
+
+    // Send email to user with updated certificate
+    try {
+      const User = require("../models/User");
+      const userDoc = await User.findById(certificate.user);
+      if (userDoc && userDoc.email) {
+        const emailTemplate = getCertificateEmailTemplate(
+          userDoc.name,
+          {
+            internshipTitle: certificate.internshipTitle,
+            duration: certificate.duration,
+            completionDate: certificate.completionDate,
+            certificateId: certificate.certificateId,
+          },
+          result.secure_url
+        );
+
+        await sendEmail({
+          email: userDoc.email,
+          subject: `Updated: ${emailTemplate.subject}`,
+          message: emailTemplate.text,
+          html: emailTemplate.html,
+        });
+
+        console.log(`Updated certificate email sent successfully to ${userDoc.email}`);
+      }
+    } catch (emailError) {
+      console.error("Failed to send updated certificate email:", emailError);
+    }
+
+    // Remove local file after upload
+    fs.unlinkSync(pdfPath);
+    res.status(200).json({ success: true, data: certificate });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }

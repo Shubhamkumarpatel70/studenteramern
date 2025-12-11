@@ -288,8 +288,28 @@ const FeaturesSection = () => (
 );
 
 const InternshipCard = ({ internship }) => (
-    <div className="bg-[#F8F9FA] rounded-2xl shadow-xl overflow-hidden transform hover:-translate-y-2 hover:scale-105 transition-all duration-300 border border-[#0A2463] group flex flex-col">
-        {internship.image && <img src={internship.image} alt={internship.title} className="h-40 w-full object-cover group-hover:scale-105 transition-transform duration-300" />}
+    <div className="bg-[#F8F9FA] rounded-2xl shadow-xl overflow-hidden border border-[#0A2463] group flex flex-col relative">
+        {internship.image && (
+            <div className="relative overflow-hidden">
+                <img src={internship.image} alt={internship.title} className="h-40 w-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                {internship.tag && (
+                    <span 
+                        className="absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-semibold text-white shadow-lg z-10"
+                        style={{ backgroundColor: internship.tagColor || '#3B82F6' }}
+                    >
+                        {internship.tag}
+                    </span>
+                )}
+            </div>
+        )}
+        {!internship.image && internship.tag && (
+            <span 
+                className="absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-semibold text-white shadow-lg z-10"
+                style={{ backgroundColor: internship.tagColor || '#3B82F6' }}
+            >
+                {internship.tag}
+            </span>
+        )}
         <div className="p-6 flex-1 flex flex-col">
             <h3 className="text-2xl font-extrabold text-[#0A2463] mb-2 font-sans">{internship.title}</h3>
             <p className="text-[#212529] mb-4 h-24 overflow-hidden flex-1 font-sans">{internship.shortDescription}</p>
@@ -422,4 +442,4 @@ const Home = () => {
     );
 };
 
-export default Home; 
+export default Home;

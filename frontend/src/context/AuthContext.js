@@ -7,7 +7,8 @@ const initialState = {
     user: null,
     token: localStorage.getItem('token'),
     showProfileModal: false,
-    localNotifications: []
+    localNotifications: [],
+    loading: true // Add loading state to track initial auth check
 };
 
 const AuthContext = createContext(initialState);
@@ -18,7 +19,8 @@ const authReducer = (state, action) => {
             return {
                 ...state,
                 isAuthenticated: true,
-                user: action.payload
+                user: action.payload,
+                loading: false
             };
         case 'LOGIN_SUCCESS':
         case 'REGISTER_SUCCESS':
@@ -29,7 +31,8 @@ const authReducer = (state, action) => {
                 isAuthenticated: true,
                 user: action.payload.user,
                 token: action.payload.token,
-                showProfileModal: action.payload.user.profileCompleteness < 100
+                showProfileModal: action.payload.user.profileCompleteness < 100,
+                loading: false
             };
         case 'PROFILE_UPDATE_SUCCESS':
             return {
@@ -47,7 +50,18 @@ const authReducer = (state, action) => {
                 token: null,
                 isAuthenticated: false,
                 user: null,
-                showProfileModal: false
+                showProfileModal: false,
+                loading: false
+            };
+        case 'AUTH_LOADING':
+            return {
+                ...state,
+                loading: true
+            };
+        case 'AUTH_LOADED':
+            return {
+                ...state,
+                loading: false
             };
         case 'ADD_LOCAL_NOTIFICATION':
             return { ...state, localNotifications: [action.payload, ...state.localNotifications] };
@@ -61,6 +75,7 @@ export const AuthProvider = ({ children }) => {
 
     // Load user
     const loadUser = async () => {
+        dispatch({ type: 'AUTH_LOADING' });
         const token = localStorage.getItem('token');
         if (token && token.trim() !== '') {
             setAuthToken(token);
@@ -72,6 +87,8 @@ export const AuthProvider = ({ children }) => {
                 dispatch({ type: 'LOGOUT' });
             }
         } else {
+            dispatch({ type: 'AUTH_LOADED' });
+            // Don't dispatch LOGOUT here, just mark as not authenticated
             dispatch({ type: 'LOGOUT' });
         }
     };
@@ -89,9 +106,9 @@ export const AuthProvider = ({ children }) => {
         }});
     };
 
-    const login = async (email, password) => {
+    const login = async (email, password, captchaId, captchaCode) => {
         const config = { headers: { 'Content-Type': 'application/json' } };
-        const body = JSON.stringify({ email, password });
+        const body = JSON.stringify({ email, password, captchaId, captchaCode });
         try {
             const res = await api.post('/auth/login', body, config);
             if (!res || !res.data) throw new Error('No response from server');
@@ -132,7 +149,7 @@ export const AuthProvider = ({ children }) => {
                     // Retry once with an increased timeout for this single request
                     const retryRes = await api.post('/auth/register', userData, { ...config, timeout: (process.env.REACT_APP_API_TIMEOUT ? parseInt(process.env.REACT_APP_API_TIMEOUT, 10) : 60000) * 2 });
                     const retryData = retryRes.data || {};
-                    addLocalNotification(`Registration successful! Login ID: ${retryData.email || userData.email} | Intern ID: ${retryData.internId || 'Check your email/OTP'}`);
+                    addLocalNotification(`Registration successful! Login ID: ${retryData.email || userData.email} | Intern ID: ${retryData.internId || 'N/A'}`);
                     return retryData;
                 } catch (retryErr) {
                     console.error('Retry registration failed:', retryErr.message || retryErr);

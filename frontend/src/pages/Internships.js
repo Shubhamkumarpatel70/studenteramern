@@ -5,9 +5,27 @@ import { Loader2, AlertCircle, Briefcase, Calendar, MapPin, IndianRupee } from '
 
 const InternshipCard = ({ internship }) => {
     return (
-        <div className="bg-white bg-opacity-95 rounded-2xl shadow-xl overflow-hidden transform hover:-translate-y-2 hover:scale-105 transition-all duration-300 border border-indigo-100 group">
+        <div className="bg-white bg-opacity-95 rounded-2xl shadow-xl overflow-hidden border border-indigo-100 group relative">
             {internship.image && (
-                 <img src={internship.image} alt={internship.title} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
+                <div className="relative overflow-hidden">
+                    <img src={internship.image} alt={internship.title} className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300" />
+                    {internship.tag && (
+                        <span 
+                            className="absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-semibold text-white shadow-lg z-10"
+                            style={{ backgroundColor: internship.tagColor || '#3B82F6' }}
+                        >
+                            {internship.tag}
+                        </span>
+                    )}
+                </div>
+            )}
+            {!internship.image && internship.tag && (
+                <span 
+                    className="absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-semibold text-white shadow-lg z-10"
+                    style={{ backgroundColor: internship.tagColor || '#3B82F6' }}
+                >
+                    {internship.tag}
+                </span>
             )}
             <div className="p-6">
                 <h3 className="text-2xl font-extrabold mb-3 text-indigo-800 font-sans">{internship.title}</h3>
@@ -37,7 +55,7 @@ const InternshipCard = ({ internship }) => {
                     </div>
                 </div>
 
-                <Link to={`/internships/${internship._id}`} className="w-full text-center block bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 font-sans">
+                <Link to={`/internships/${internship._id}`} className="w-full text-center block bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 font-sans">
                     View Details
                 </Link>
             </div>
@@ -91,7 +109,7 @@ const Internships = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {[...internships].reverse().map(internship => (
+                    {internships.map(internship => (
                         <InternshipCard key={internship._id} internship={internship} />
                     ))}
                 </div>

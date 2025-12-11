@@ -14,7 +14,8 @@ import {
     ListChecks,
     MessageSquare,
     Trash2,
-    X
+    X,
+    Star
 } from 'lucide-react';
 
 const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
@@ -34,6 +35,7 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
         { href: '/dashboard/my-tasks', icon: <ListChecks className="h-5 w-5" />, label: 'My Tasks' },
         { href: '/dashboard/upload-task', icon: <Upload className="h-5 w-5" />, label: 'Upload Task' },
         { href: '/dashboard/help', icon: <MessageSquare className="h-5 w-5" />, label: 'Help & Support' },
+        { href: '/dashboard/feedback', icon: <Star className="h-5 w-5" />, label: 'Feedback' },
     ];
 
     const bottomNavItems = [

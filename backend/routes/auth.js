@@ -3,13 +3,12 @@ const rateLimit = require("express-rate-limit");
 const {
   register,
   login,
-  verifyOtp,
   forgotPassword,
   resetPassword,
-  resendOtp,
   getMe,
   getResetPassword,
-  verifyAdminOtp,
+  checkEmail,
+  resetPasswordDirect,
 } = require("../controllers/auth");
 const { protect } = require("../middleware/auth");
 
@@ -27,29 +26,6 @@ const registerLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Rate limiting for OTP resend
-const resendOtpLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 3, // limit each IP to 3 OTP resend requests per windowMs
-  message: {
-    success: false,
-    message: "Too many OTP resend requests. Please try again after 15 minutes.",
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-// Rate limiting for OTP verification
-const verifyOtpLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // limit each IP to 10 OTP verification attempts per windowMs
-  message: {
-    success: false,
-    message: "Too many OTP verification attempts. Please try again after 15 minutes.",
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
 
 // Rate limiting for login
 const loginLimiter = rateLimit({
@@ -77,7 +53,8 @@ const forgotPasswordLimiter = rateLimit({
 
 router.post("/register", registerLimiter, register);
 router.post("/login", loginLimiter, login);
-router.post("/verify-otp", verifyOtpLimiter, verifyOtp);
+router.post("/check-email", checkEmail);
+router.put("/reset-password-direct", resetPasswordDirect);
 router.post("/forgot-password", forgotPasswordLimiter, forgotPassword);
 router.post("/forgotpassword", forgotPasswordLimiter, forgotPassword); // Legacy route support
 router.post("/send-email-token", require("../controllers/auth").sendEmailToken);
@@ -95,8 +72,6 @@ router.get(
 );
 router.get("/reset-password/:resettoken", getResetPassword);
 router.put("/reset-password/:resettoken", resetPassword);
-router.post("/admin-verify-otp", verifyOtpLimiter, verifyAdminOtp);
-router.post("/resend-otp", resendOtpLimiter, resendOtp);
 router.get("/me", protect, getMe);
 
 module.exports = router;

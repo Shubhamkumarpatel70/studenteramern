@@ -19,7 +19,10 @@ import {
     BarChart3,
     UserCheck,
     Clock,
-    HelpCircle
+    HelpCircle,
+    UserCog,
+    Star,
+    Share2
 } from 'lucide-react';
 
 const AdminSidebar = ({ isSidebarOpen, setSidebarOpen }) => {
@@ -78,7 +81,20 @@ const AdminSidebar = ({ isSidebarOpen, setSidebarOpen }) => {
             items: [
                 { to: "/admin-dashboard/manage-testimonials", icon: <Settings size={20} />, label: "Testimonials" },
                 { to: "/admin-dashboard/queries", icon: <Mail size={20} />, label: "Queries" },
-                { to: "/admin-dashboard/help-queries", icon: <HelpCircle size={20} />, label: "Help Center" }
+                { to: "/admin-dashboard/help-queries", icon: <HelpCircle size={20} />, label: "Help Center" },
+                { to: "/admin-dashboard/manage-feedback", icon: <Star size={20} />, label: "User Feedback" }
+            ]
+        },
+        {
+            title: "HR Management",
+            items: [
+                { to: "/admin-dashboard/manage-hr", icon: <UserCog size={20} />, label: "Manage HR" }
+            ]
+        },
+        {
+            title: "Social Media",
+            items: [
+                { to: "/admin-dashboard/manage-social-links", icon: <Share2 size={20} />, label: "Social Links" }
             ]
         }
     ];

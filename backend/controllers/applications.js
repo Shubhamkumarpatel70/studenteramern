@@ -32,8 +32,8 @@ exports.createApplication = async (req, res, next) => {
             return res.status(400).json({ success: false, message: 'You have already applied for this internship.' });
         }
         
-        // 3. Calculate amount on the backend
-        const amount = parseInt(duration, 10) * 500; // Example fee logic
+        // 3. Get amount from internship registrationFee, default to 149
+        const amount = internship.registrationFee || 149;
 
         // 4. Require paymentScreenshot
         if (!paymentScreenshot || paymentScreenshot.trim() === '') {

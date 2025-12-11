@@ -60,6 +60,24 @@ const InternshipSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    registrationFee: {
+        type: Number,
+        default: 149
+    },
+    tag: {
+        type: String,
+        trim: true,
+        default: ''
+    },
+    tagColor: {
+        type: String,
+        trim: true,
+        default: '#3B82F6' // Default blue color
+    },
+    order: {
+        type: Number,
+        default: 999 // Higher number means lower priority (appears later)
+    },
     createdAt: {
         type: Date,
         default: Date.now

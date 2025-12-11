@@ -16,16 +16,22 @@ const AdminDashboard = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
 
     return (
-        <div className="min-h-screen bg-gray-100 flex">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex">
             <AdminSidebar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />
-            <div className="flex-1 flex flex-col">
-                <header className="bg-white shadow-sm md:hidden">
-                    <button onClick={() => setSidebarOpen(true)} className="p-4 text-gray-600">
+            <div className="flex-1 flex flex-col lg:ml-0">
+                <header className="bg-white shadow-sm border-b border-gray-200 md:hidden sticky top-0 z-30">
+                    <button 
+                        onClick={() => setSidebarOpen(true)} 
+                        className="p-4 text-gray-600 hover:bg-gray-50 transition-colors"
+                        aria-label="Open menu"
+                    >
                         ☰ Menu
                     </button>
                 </header>
-                <main className="flex-1 p-4 md:p-8">
-                    <Outlet />
+                <main className="flex-1 p-4 sm:p-6 md:p-8 overflow-x-hidden">
+                    <div className="max-w-7xl mx-auto">
+                        <Outlet />
+                    </div>
                 </main>
             </div>
         </div>
