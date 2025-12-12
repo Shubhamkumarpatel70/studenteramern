@@ -28,9 +28,9 @@ const DeleteAccount = () => {
 
   if (status === 'pending') {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-orange-50 via-yellow-50 to-amber-50 p-4">
-        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 max-w-md w-full border-2 border-orange-200 text-center">
-          <div className="bg-orange-100 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 w-full text-center">
+          <div className="bg-gray-100 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
             <AlertCircle className="h-8 w-8 text-orange-600" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-orange-600 mb-4">Account Deletion Requested</h1>
@@ -41,10 +41,10 @@ const DeleteAccount = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 p-4">
-      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 max-w-md w-full border-2 border-red-200">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4">
+      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 w-full">
         <div className="text-center mb-6">
-          <div className="bg-red-100 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+          <div className="bg-gray-100 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
             <AlertCircle className="h-8 w-8 text-red-600" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-red-600 mb-2">Delete Account</h1>
@@ -78,7 +78,7 @@ const DeleteAccount = () => {
             </button>
             <button 
               type="submit" 
-              className="flex-1 py-3 rounded-xl bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold shadow-lg transition-all duration-200"
+              className="flex-1 py-3 rounded-xl bg-gray-600 hover:bg-gray-700 text-white font-bold shadow-lg transition-all duration-200"
             >
               Yes, Delete
             </button>

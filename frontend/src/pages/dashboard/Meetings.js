@@ -57,7 +57,7 @@ const JoinMeetingButton = ({ meetingDate, meetingLink, expireAfterMinutes = 60 }
                 href={meetingLink} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 hover:shadow-xl"
+                className="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-2 hover:shadow-xl"
             >
                 <Video className="h-4 w-4" />
                 Join Now
@@ -66,7 +66,7 @@ const JoinMeetingButton = ({ meetingDate, meetingLink, expireAfterMinutes = 60 }
     }
 
     return (
-        <button disabled className="w-full bg-gradient-to-r from-indigo-500 to-blue-600 text-white font-semibold py-3 px-4 rounded-xl cursor-not-allowed flex items-center justify-center gap-2">
+        <button disabled className="w-full bg-gray-400 text-white font-semibold py-3 px-4 rounded-xl cursor-not-allowed flex items-center justify-center gap-2">
             <Clock className="h-4 w-4" />
             <span className="text-sm sm:text-base">Joins in: {timeLeft}</span>
         </button>
@@ -119,11 +119,11 @@ const Meetings = () => {
     }
 
     return (
-        <div className="p-3 sm:p-4 md:p-6 lg:p-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
-            <div className="w-full max-w-3xl mx-auto">
+        <div className="p-3 sm:p-4 md:p-6 lg:p-8 min-h-screen">
+            <div className="w-full">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
                     <div className="flex items-center gap-3">
-                        <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl p-3">
+                        <div className="bg-gray-100 rounded-xl p-3">
                             <Calendar className="h-6 w-6 sm:h-7 sm:w-7 text-blue-600" />
                         </div>
                         <div>
@@ -133,7 +133,7 @@ const Meetings = () => {
                     </div>
                     <button
                         onClick={fetchMeetings}
-                        className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl shadow-md transition-all duration-200 text-sm sm:text-base font-semibold flex items-center gap-2 disabled:opacity-50"
+                        className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-xl shadow-md transition-all duration-200 text-sm sm:text-base font-semibold flex items-center gap-2 disabled:opacity-50"
                         title="Refresh meetings"
                         disabled={loading}
                     >
@@ -142,9 +142,9 @@ const Meetings = () => {
                     </button>
                 </div>
                 {meetings.length === 0 ? (
-                    <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-blue-100/50 p-8 sm:p-12 text-center">
+                    <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-8 sm:p-12 text-center">
                         <div className="flex justify-center mb-4">
-                            <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full p-6">
+                            <div className="bg-gray-100 rounded-full p-6">
                                 <Calendar className="h-16 w-16 text-blue-600" />
                             </div>
                         </div>
@@ -154,9 +154,9 @@ const Meetings = () => {
                 ) : (
                     <div className="space-y-4 sm:space-y-6">
                         {meetings.map(meeting => (
-                            <div key={meeting._id} className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 border border-blue-100/50 hover:shadow-xl transition-all duration-300">
+                            <div key={meeting._id} className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 hover:shadow-xl transition-all duration-300">
                                 <div className="flex items-start gap-3 mb-4">
-                                    <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl p-3 flex-shrink-0">
+                                    <div className="bg-gray-100 rounded-xl p-3 flex-shrink-0">
                                         <Video className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
                                     </div>
                                     <div className="flex-1 min-w-0">

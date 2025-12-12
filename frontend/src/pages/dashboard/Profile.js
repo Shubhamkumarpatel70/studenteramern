@@ -184,8 +184,8 @@ const Profile = () => {
   };
 
   return (
-    <div className="p-2 sm:p-4 md:p-8 bg-gradient-to-br from-primary-light via-background to-accent-light min-h-screen flex flex-col items-center font-sans font-medium">
-      <div className="relative bg-card p-4 sm:p-8 rounded-2xl shadow-2xl border border-primary-light/30 flex flex-col items-center max-w-lg w-full mx-auto">
+    <div className="p-2 sm:p-4 md:p-8 min-h-screen flex flex-col items-center font-sans font-medium">
+      <div className="relative bg-white p-4 sm:p-8 rounded-2xl shadow-2xl flex flex-col items-center w-full">
         <div className="absolute top-4 right-4">
           {completeness < 100 ? (
             <button

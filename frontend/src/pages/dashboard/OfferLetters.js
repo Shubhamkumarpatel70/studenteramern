@@ -58,15 +58,15 @@ const OfferLetters = () => {
         // Case 1: User has no applications at all
         if (applications.length === 0) {
             return (
-                <div className="text-center bg-white p-8 sm:p-12 rounded-2xl sm:rounded-3xl shadow-xl border border-purple-100/50">
+                <div className="text-center bg-white p-8 sm:p-12 rounded-2xl sm:rounded-3xl shadow-xl">
                     <div className="flex justify-center mb-4">
-                        <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-full p-6">
-                            <Inbox className="h-16 w-16 text-purple-600" />
+                        <div className="bg-gray-100 rounded-full p-6">
+                            <Inbox className="h-16 w-16 text-gray-600" />
                         </div>
                     </div>
                     <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">No Applications Found</h3>
                     <p className="text-gray-600 mb-6 max-w-md mx-auto">Apply for at least one internship to be eligible for an offer letter.</p>
-                    <Link to="/internships" className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 px-6 rounded-xl shadow-lg transition-all duration-200 font-semibold">
+                    <Link to="/internships" className="inline-flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white py-3 px-6 rounded-xl shadow-lg transition-all duration-200 font-semibold">
                         Browse Internships
                     </Link>
                 </div>
@@ -76,10 +76,10 @@ const OfferLetters = () => {
         // Case 2: User has applications, but no offer letters yet
         if (offerLetters.length === 0) {
             return (
-                <div className="text-center bg-white p-8 sm:p-12 rounded-2xl sm:rounded-3xl shadow-xl border border-purple-100/50">
+                <div className="text-center bg-white p-8 sm:p-12 rounded-2xl sm:rounded-3xl shadow-xl">
                     <div className="flex justify-center mb-4">
-                        <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-full p-6">
-                            <Inbox className="h-16 w-16 text-purple-600" />
+                        <div className="bg-gray-100 rounded-full p-6">
+                            <Inbox className="h-16 w-16 text-gray-600" />
                         </div>
                     </div>
                     <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">No Offer Letters Yet</h3>
@@ -100,10 +100,10 @@ const OfferLetters = () => {
                         issuedDate = new Date(letter.issuedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
                     }
                     return (
-                        <div key={letter._id} className="bg-white rounded-2xl sm:rounded-3xl shadow-lg p-4 sm:p-6 flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] border border-purple-100/50 group">
+                        <div key={letter._id} className="bg-white rounded-2xl sm:rounded-3xl shadow-lg p-4 sm:p-6 flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] group">
                             <div>
                                 <div className="flex items-center justify-between mb-3">
-                                    <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl p-3">
+                                    <div className="bg-gray-100 rounded-xl p-3">
                                         <FileText className="h-6 w-6 sm:h-8 sm:w-8 text-purple-600" />
                                     </div>
                                     {letter.fileUrl && (
@@ -127,7 +127,7 @@ const OfferLetters = () => {
                                     href={letter.fileUrl} 
                                     target="_blank" 
                                     rel="noopener noreferrer" 
-                                    className="mt-4 flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-2.5 sm:py-3 px-4 rounded-xl font-semibold transition-all duration-200 text-sm sm:text-base shadow-md group-hover:shadow-lg"
+                                    className="mt-4 flex items-center justify-center gap-2 bg-gray-600 hover:bg-gray-700 text-white py-2.5 sm:py-3 px-4 rounded-xl font-semibold transition-all duration-200 text-sm sm:text-base shadow-md group-hover:shadow-lg"
                                 >
                                     <Download className="h-4 w-4" />
                                     Download PDF
@@ -145,8 +145,8 @@ const OfferLetters = () => {
     };
 
     return (
-        <div className="p-3 sm:p-4 md:p-6 lg:p-8 bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 min-h-screen">
-            <div className="w-full max-w-6xl mx-auto">
+        <div className="p-3 sm:p-4 md:p-6 lg:p-8 min-h-screen">
+            <div className="w-full">
                 <div className="mb-6 sm:mb-8">
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-800 mb-2">My Offer Letters</h1>
                     <p className="text-sm sm:text-base text-gray-600">View and download your offer letters</p>

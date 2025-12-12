@@ -65,23 +65,23 @@ const AppliedInternships = () => {
     }
 
     return (
-        <div className="p-3 sm:p-4 md:p-6 lg:p-8 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 min-h-screen">
-            <div className="w-full max-w-6xl mx-auto">
+        <div className="p-3 sm:p-4 md:p-6 lg:p-8 min-h-screen">
+            <div className="w-full">
                 <div className="mb-6 sm:mb-8">
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-800 mb-2">My Applied Internships</h1>
                     <p className="text-sm sm:text-base text-gray-600">Track the status of your internship applications</p>
                 </div>
 
                 {applications.length === 0 ? (
-                    <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-indigo-100/50 p-8 sm:p-12 text-center">
+                    <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-8 sm:p-12 text-center">
                         <div className="flex justify-center mb-4">
-                            <div className="bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full p-6">
+                            <div className="bg-gray-100 rounded-full p-6">
                                 <Inbox className="h-16 w-16 text-indigo-600" />
                             </div>
                         </div>
                         <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">No Applications Yet</h3>
                         <p className="text-gray-600 mb-6 max-w-md mx-auto">You haven't applied for any internships yet. Find your next opportunity!</p>
-                        <Link to="/internships" className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 px-6 rounded-xl shadow-lg transition-all duration-200 font-semibold">
+                        <Link to="/internships" className="inline-flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white py-3 px-6 rounded-xl shadow-lg transition-all duration-200 font-semibold">
                             <Briefcase className="h-4 w-4" />
                             Browse Internships
                         </Link>
@@ -91,7 +91,7 @@ const AppliedInternships = () => {
                         {/* Mobile Card View */}
                         <div className="block md:hidden space-y-4">
                             {applications.map(app => (
-                                <div key={app._id} className="bg-white rounded-xl shadow-lg p-4 border border-indigo-100/50">
+                                <div key={app._id} className="bg-white rounded-xl shadow-lg p-4">
                                     <div className="flex items-start justify-between mb-3">
                                         <div className="flex-1 min-w-0">
                                             <h3 className="text-base font-bold text-gray-800 mb-1 line-clamp-2">{app.internship?.title || 'Internship not available'}</h3>
@@ -114,10 +114,10 @@ const AppliedInternships = () => {
                         </div>
 
                         {/* Desktop Table View */}
-                        <div className="hidden md:block bg-white shadow-lg rounded-2xl overflow-hidden border border-indigo-100/50">
+                        <div className="hidden md:block bg-white shadow-lg rounded-2xl overflow-hidden">
                             <div className="overflow-x-auto">
                                 <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gradient-to-r from-indigo-100 to-purple-100">
+                                    <thead className="bg-gray-100">
                                         <tr>
                                             <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Internship</th>
                                             <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Applied On</th>
@@ -127,7 +127,7 @@ const AppliedInternships = () => {
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-100">
                                         {applications.map(app => (
-                                            <tr key={app._id} className="hover:bg-indigo-50/50 transition-colors duration-200">
+                                            <tr key={app._id} className="hover:bg-gray-50 transition-colors duration-200">
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center gap-2">
                                                         <Briefcase className="h-4 w-4 text-indigo-600" />
@@ -163,7 +163,7 @@ const AppliedInternships = () => {
 
                 {selectedApp && (
                 <Modal onClose={() => setSelectedApp(null)}>
-                    <div className="p-4 sm:p-6 bg-white rounded-2xl shadow-2xl border border-indigo-100/50 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                    <div className="p-4 sm:p-6 bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
                         <div className="flex items-center justify-between mb-4">
                             <h2 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2">
                                 <FileText className="h-5 w-5 text-indigo-600" />
@@ -209,7 +209,7 @@ const AppliedInternships = () => {
                         </div>
                         <button 
                             onClick={() => setSelectedApp(null)} 
-                            className="mt-6 w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl shadow-lg transition-all duration-200 font-semibold"
+                            className="mt-6 w-full py-3 px-4 bg-gray-600 hover:bg-gray-700 text-white rounded-xl shadow-lg transition-all duration-200 font-semibold"
                         >
                             Close
                         </button>

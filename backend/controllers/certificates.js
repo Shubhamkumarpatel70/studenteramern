@@ -6,6 +6,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 const sendEmail = require("../utils/sendEmail");
 const { getCertificateEmailTemplate } = require("../utils/emailTemplates");
+const createNotification = require("../utils/createNotification");
 
 // @desc    Generate a new certificate
 // @route   POST /api/certificates
@@ -120,6 +121,12 @@ exports.generateCertificate = async (req, res, next) => {
       console.error("Failed to send certificate email:", emailError);
       // Don't fail the request if email fails
     }
+
+    // Create notification for certificate generation
+    await createNotification(
+      user,
+      `Congratulations! Your certificate for "${internshipTitle}" has been issued. You can view and download it from your dashboard.`
+    );
 
     // Remove local file after upload
     fs.unlinkSync(pdfPath);

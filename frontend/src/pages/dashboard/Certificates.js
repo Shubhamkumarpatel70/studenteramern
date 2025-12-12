@@ -104,16 +104,16 @@ const Certificates = () => {
     }
 
     return (
-        <div className="p-3 sm:p-4 md:p-6 lg:p-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
-            <div className="w-full max-w-6xl mx-auto">
+        <div className="p-3 sm:p-4 md:p-6 lg:p-8 min-h-screen">
+            <div className="w-full">
                 <div className="mb-6 sm:mb-8">
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-800 mb-2">My Certificates</h1>
                     <p className="text-sm sm:text-base text-gray-600">View and download your earned certificates</p>
                 </div>
                 {(certificates.length === 0 && Object.keys(internshipTaskStatus).length === 0) ? (
-                    <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-blue-100/50 p-8 sm:p-12 text-center">
+                    <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-8 sm:p-12 text-center">
                         <div className="flex justify-center mb-4">
-                            <div className="bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full p-6">
+                            <div className="bg-gray-100 rounded-full p-6">
                                 <Inbox className="h-16 w-16 text-indigo-600" />
                             </div>
                         </div>
@@ -124,10 +124,10 @@ const Certificates = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                         {/* Render issued certificates */}
                         {certificates.map(cert => (
-                            <div key={cert._id} className="bg-white border border-blue-100/50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col justify-between shadow-lg transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] group">
+                            <div key={cert._id} className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col justify-between shadow-lg transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] group">
                                 <div>
                                     <div className="flex items-center justify-between mb-3">
-                                        <div className="bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl p-3">
+                                        <div className="bg-gray-100 rounded-xl p-3">
                                             <Award className="h-6 w-6 sm:h-8 sm:w-8 text-indigo-600" />
                                         </div>
                                         {cert.fileUrl && (
@@ -150,7 +150,7 @@ const Certificates = () => {
                                         href={cert.fileUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="mt-4 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-2.5 sm:py-3 px-4 rounded-xl shadow-md transition-all duration-200 font-semibold text-sm sm:text-base group-hover:shadow-lg"
+                                        className="mt-4 flex items-center justify-center gap-2 bg-gray-600 hover:bg-gray-700 text-white py-2.5 sm:py-3 px-4 rounded-xl shadow-md transition-all duration-200 font-semibold text-sm sm:text-base group-hover:shadow-lg"
                                     >
                                         <Download className="h-4 w-4" />
                                         Download PDF
@@ -160,7 +160,7 @@ const Certificates = () => {
                                         to={`/verify-certificate/${cert.certificateId}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="mt-4 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-2.5 sm:py-3 px-4 rounded-xl shadow-md transition-all duration-200 font-semibold text-sm sm:text-base group-hover:shadow-lg"
+                                        className="mt-4 flex items-center justify-center gap-2 bg-gray-600 hover:bg-gray-700 text-white py-2.5 sm:py-3 px-4 rounded-xl shadow-md transition-all duration-200 font-semibold text-sm sm:text-base group-hover:shadow-lg"
                                     >
                                         <FileText className="h-4 w-4" />
                                         View Certificate
@@ -178,10 +178,10 @@ const Certificates = () => {
                             const completedCount = statuses.filter(s => s === 'completed').length;
                             const totalCount = statuses.length;
                             return (
-                                <div key={internshipId} className="bg-white border-2 border-dashed border-blue-200/50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col justify-between shadow-lg hover:shadow-xl transition-all duration-300">
+                                <div key={internshipId} className="bg-white border-2 border-dashed border-gray-300 rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col justify-between shadow-lg hover:shadow-xl transition-all duration-300">
                                     <div>
                                         <div className="flex items-center justify-between mb-3">
-                                            <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl p-3">
+                                            <div className="bg-gray-100 rounded-xl p-3">
                                                 <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500" />
                                             </div>
                                             <span className="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
@@ -209,7 +209,7 @@ const Certificates = () => {
                                             <>
                                                 <p className="text-xs sm:text-sm text-gray-600 mt-2 mb-4">You are eligible to generate your certificate.</p>
                                                 <button
-                                                    className="w-full py-2.5 sm:py-3 px-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-xl shadow-md transition-all duration-200 font-semibold text-sm sm:text-base disabled:opacity-60 flex items-center justify-center gap-2"
+                                                    className="w-full py-2.5 sm:py-3 px-4 bg-gray-600 hover:bg-gray-700 text-white rounded-xl shadow-md transition-all duration-200 font-semibold text-sm sm:text-base disabled:opacity-60 flex items-center justify-center gap-2"
                                                     onClick={() => handleGenerate(internshipId)}
                                                     disabled={genLoading[internshipId]}
                                                 >

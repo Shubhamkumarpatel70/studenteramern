@@ -158,17 +158,17 @@ const UploadTask = () => {
     }
 
     return (
-        <div className="p-3 sm:p-4 md:p-6 lg:p-8 bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 min-h-screen">
-            <div className="w-full max-w-4xl mx-auto space-y-6 sm:space-y-8">
+        <div className="p-3 sm:p-4 md:p-6 lg:p-8 min-h-screen">
+            <div className="w-full space-y-6 sm:space-y-8">
                 <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-6 lg:p-8 border border-purple-100/50">
                     <div className="mb-6">
                         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-800 mb-2">Upload Task Submission</h1>
                         <p className="text-sm sm:text-base text-gray-600">Submit your completed tasks for review</p>
                     </div>
                     {assignedTasks.length === 0 ? (
-                        <div className="text-center py-12 bg-gray-50 rounded-xl">
+                        <div className="text-center py-12 rounded-xl">
                             <div className="flex justify-center mb-4">
-                                <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-full p-6">
+                                <div className="bg-gray-100 rounded-full p-6">
                                     <FileText className="h-16 w-16 text-purple-600" />
                                 </div>
                             </div>
@@ -258,7 +258,7 @@ const UploadTask = () => {
                             )}
                             <button 
                                 type="submit" 
-                                className="w-full py-3.5 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-xl shadow-lg transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2" 
+                                className="w-full py-3.5 px-6 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-xl shadow-lg transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2" 
                                 disabled={submitting}
                             >
                                 {submitting ? (
@@ -278,12 +278,12 @@ const UploadTask = () => {
                 </div>
                 {/* Uploaded Tasks List */}
                 {uploadedTasks.length > 0 && (
-                    <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-6 lg:p-8 border border-purple-100/50">
+                    <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-6 lg:p-8">
                         <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-800">Manage Uploaded Tasks</h2>
                         {/* Mobile Card View */}
                         <div className="block md:hidden space-y-4">
                             {uploadedTasks.map(task => (
-                                <div key={task._id} className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                                    <div key={task._id} className="bg-white rounded-xl p-4 border border-gray-200">
                                     <div className="flex items-start justify-between mb-3">
                                         <h3 className="text-base font-bold text-gray-800 flex-1">{task.title}</h3>
                                         <div className="flex gap-2">
@@ -341,7 +341,7 @@ const UploadTask = () => {
                         {/* Desktop Table View */}
                         <div className="hidden md:block overflow-x-auto">
                             <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gradient-to-r from-purple-100 to-pink-100">
+                                    <thead className="bg-gray-100">
                                     <tr>
                                         <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Title</th>
                                         <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Links</th>
@@ -351,7 +351,7 @@ const UploadTask = () => {
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-100">
                                     {uploadedTasks.map(task => (
-                                        <tr key={task._id} className="hover:bg-purple-50/50 transition-colors">
+                                        <tr key={task._id} className="hover:bg-gray-50 transition-colors">
                                             <td className="px-4 py-4 whitespace-nowrap font-semibold text-gray-800">{task.title}</td>
                                             <td className="px-4 py-4">
                                                 <div className="flex flex-wrap gap-2">

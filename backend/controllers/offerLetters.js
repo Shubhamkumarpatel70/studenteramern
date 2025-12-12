@@ -6,6 +6,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 const sendEmail = require("../utils/sendEmail");
 const { getOfferLetterEmailTemplate } = require("../utils/emailTemplates");
+const createNotification = require("../utils/createNotification");
 
 exports.generateOfferLetter = async (req, res, next) => {
   try {
@@ -124,6 +125,12 @@ exports.generateOfferLetter = async (req, res, next) => {
       console.error("Failed to send offer letter email:", emailError);
       // Don't fail the request if email fails
     }
+
+    // Create notification for offer letter generation
+    await createNotification(
+      userId,
+      `Congratulations! Your offer letter for "${title}" at ${company || 'the company'} has been issued. You can view and download it from your dashboard.`
+    );
 
     // Remove local file after upload
     fs.unlinkSync(pdfPath);

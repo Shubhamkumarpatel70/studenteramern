@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const crypto = require("crypto");
 const sendEmail = require("../utils/sendEmail");
+const createNotification = require("../utils/createNotification");
 
 // @desc    Register user
 // @route   POST /api/auth/register
@@ -56,6 +57,12 @@ exports.register = async (req, res, next) => {
         isVerified: true, // Auto-verify on registration
       });
     }
+
+    // Create welcome notification
+    await createNotification(
+      user._id,
+      `Welcome to Student Era! Your registration was successful. Your Student ID is ${user.internId}.`
+    );
 
     // Return success - user is automatically verified
     return res.status(200).json({

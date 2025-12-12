@@ -52,11 +52,11 @@ const Notifications = () => {
     }
 
     return (
-        <div className="p-3 sm:p-4 md:p-6 lg:p-8 bg-gradient-to-br from-orange-50 via-yellow-50 to-amber-50 min-h-screen">
-            <div className="w-full max-w-2xl mx-auto">
+        <div className="p-3 sm:p-4 md:p-6 lg:p-8 min-h-screen">
+            <div className="w-full">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
                     <div className="flex items-center gap-3">
-                        <div className="bg-gradient-to-br from-orange-100 to-amber-100 rounded-xl p-3">
+                        <div className="bg-gray-100 rounded-xl p-3">
                             <Bell className="h-6 w-6 sm:h-7 sm:w-7 text-orange-600" />
                         </div>
                         <div>
@@ -72,7 +72,7 @@ const Notifications = () => {
                         )}
                         <button 
                             onClick={fetchNotifications} 
-                            className="px-3 sm:px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-xl shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold flex items-center gap-2 disabled:opacity-50" 
+                            className="px-3 sm:px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-xl shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold flex items-center gap-2 disabled:opacity-50" 
                             disabled={loading}
                         >
                             <RefreshCw className={loading ? 'animate-spin' : ''} size={16} /> 
@@ -88,9 +88,9 @@ const Notifications = () => {
                         </div>
                     </div>
                 ) : (notifications.length === 0 && localNotifications.length === 0) ? (
-                    <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-orange-100/50 p-8 sm:p-12 text-center">
+                    <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-8 sm:p-12 text-center">
                         <div className="flex justify-center mb-4">
-                            <div className="bg-gradient-to-br from-orange-100 to-amber-100 rounded-full p-6">
+                            <div className="bg-gray-100 rounded-full p-6">
                                 <Bell className="h-16 w-16 text-orange-600" />
                             </div>
                         </div>
@@ -101,7 +101,7 @@ const Notifications = () => {
                     <div className="space-y-3 sm:space-y-4">
                         {/* Local notifications (login/registration) */}
                         {localNotifications.map(notification => (
-                            <div key={notification._id} className="bg-white rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-5 border border-orange-100/50 hover:shadow-lg transition-all duration-200">
+                            <div key={notification._id} className="bg-white rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-5 hover:shadow-lg transition-all duration-200">
                                 <div className="flex items-start gap-3">
                                     <div className="bg-green-100 rounded-full p-2 flex-shrink-0">
                                         <Check className="h-4 w-4 text-green-600" />

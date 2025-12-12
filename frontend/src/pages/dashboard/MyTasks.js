@@ -72,8 +72,8 @@ const MyTasks = () => {
     }
 
     return (
-        <div className="p-3 sm:p-4 md:p-6 lg:p-8 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 min-h-screen">
-            <div className="w-full max-w-4xl mx-auto">
+        <div className="p-3 sm:p-4 md:p-6 lg:p-8 min-h-screen">
+            <div className="w-full">
                 <div className="mb-6 sm:mb-8">
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-800 mb-2">My Tasks</h1>
                     <p className="text-sm sm:text-base text-gray-600">Track and manage your assigned tasks</p>
@@ -90,9 +90,9 @@ const MyTasks = () => {
                         <p className="text-red-800 font-semibold">{error}</p>
                     </div>
                 ) : tasks.length === 0 ? (
-                    <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-green-100/50 p-8 sm:p-12 text-center">
+                    <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-8 sm:p-12 text-center">
                         <div className="flex justify-center mb-4">
-                            <div className="bg-gradient-to-br from-green-100 to-emerald-100 rounded-full p-6">
+                            <div className="bg-gray-100 rounded-full p-6">
                                 <CheckCircle className="h-16 w-16 text-green-600" />
                             </div>
                         </div>
@@ -102,12 +102,12 @@ const MyTasks = () => {
                 ) : (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                         {tasks.map(task => (
-                            <div key={task._id} className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 border border-green-100/50 hover:shadow-xl transition-all duration-300">
+                            <div key={task._id} className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 hover:shadow-xl transition-all duration-300">
                                 <div className="flex items-start justify-between mb-3">
                                     <div className="flex-1 min-w-0">
                                         <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-2 line-clamp-2">{task.title}</h3>
                                     </div>
-                                    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border flex-shrink-0 ${getStatusColor(task.status)}`}>
+                                    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold flex-shrink-0 ${getStatusColor(task.status)}`}>
                                         {getStatusIcon(task.status)}
                                         <span className="hidden sm:inline">{getStatusText(task.status)}</span>
                                     </div>

@@ -67,8 +67,8 @@ const Feedback = () => {
     };
 
     return (
-        <div className="p-3 sm:p-4 md:p-6 lg:p-8 bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-50 min-h-screen">
-            <div className="max-w-2xl mx-auto">
+        <div className="p-3 sm:p-4 md:p-6 lg:p-8 min-h-screen">
+            <div className="w-full">
                 <div className="mb-6 sm:mb-8">
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-800 mb-2">Submit Feedback</h1>
                     <p className="text-sm sm:text-base text-gray-600">We value your opinion! Please share your experience with us.</p>
@@ -87,7 +87,7 @@ const Feedback = () => {
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-6 lg:p-8 space-y-6 border border-yellow-100/50">
+                <form onSubmit={handleSubmit} className="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-6 lg:p-8 space-y-6">
                 {/* Star Rating */}
                 <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-3">
@@ -171,7 +171,7 @@ const Feedback = () => {
                         className={`w-full flex items-center justify-center gap-2 px-6 py-3.5 sm:py-4 rounded-xl font-semibold transition-all text-base sm:text-lg ${
                             loading || rating === 0 || !description.trim()
                                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                : 'bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-100'
+                                : 'bg-gray-600 hover:bg-gray-700 text-white shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-100'
                         }`}
                     >
                         {loading ? (

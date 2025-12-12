@@ -95,7 +95,7 @@ const Help = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-light via-background to-accent-light">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="bg-card p-8 rounded-2xl shadow-2xl text-center">
           <h2 className="text-2xl font-extrabold mb-2 text-primary-dark font-sans">Please log in to use Help Chat</h2>
         </div>
@@ -104,9 +104,9 @@ const Help = () => {
   }
 
   return (
-    <div className="p-3 sm:p-4 md:p-6 lg:p-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
-      <div className="max-w-2xl mx-auto">
-        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 border border-blue-100/50 flex flex-col h-[calc(100vh-8rem)] sm:h-[calc(100vh-10rem)]">
+    <div className="p-3 sm:p-4 md:p-6 lg:p-8 min-h-screen">
+      <div className="w-full">
+        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 flex flex-col h-[calc(100vh-8rem)] sm:h-[calc(100vh-10rem)]">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 sm:mb-6">
             <div>
               <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-800 mb-1">Help & Support Chat</h1>
@@ -119,7 +119,7 @@ const Help = () => {
               </div>
               <button
                 onClick={fetchQuery}
-                className="px-3 sm:px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl shadow-md transition-all duration-200 disabled:opacity-50 flex items-center gap-2 text-sm font-semibold"
+                className="px-3 sm:px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-xl shadow-md transition-all duration-200 disabled:opacity-50 flex items-center gap-2 text-sm font-semibold"
                 title="Refresh chat"
                 disabled={loading}
               >
@@ -143,7 +143,7 @@ const Help = () => {
                 {messages.length === 0 && (
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center">
-                      <div className="bg-blue-100 rounded-full p-4 w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+                      <div className="bg-gray-100 rounded-full p-4 w-16 h-16 mx-auto mb-3 flex items-center justify-center">
                         <MessageSquare className="h-8 w-8 text-blue-600" />
                       </div>
                       <p className="text-gray-500 font-medium">No messages yet. Start the conversation!</p>
@@ -154,7 +154,7 @@ const Help = () => {
                   <div key={i} className={`flex ${msg.from === "user" ? "justify-end" : "justify-start"}`}>
                     <div className={`px-4 py-2.5 rounded-2xl max-w-[85%] sm:max-w-xs shadow-md ${
                       msg.from === "user" 
-                        ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white" 
+                        ? "bg-gray-600 text-white" 
                         : "bg-white text-gray-800 border border-gray-200"
                     }`}>
                       <p className="text-sm sm:text-base break-words">{msg.text}</p>
@@ -175,7 +175,7 @@ const Help = () => {
                 />
                 <button 
                   type="submit" 
-                  className="px-4 sm:px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl font-semibold shadow-lg transition-all duration-200 disabled:opacity-50 flex items-center gap-2" 
+                  className="px-4 sm:px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-xl font-semibold shadow-lg transition-all duration-200 disabled:opacity-50 flex items-center gap-2" 
                   disabled={loading}
                 >
                   <span className="hidden sm:inline">Send</span>
@@ -187,7 +187,7 @@ const Help = () => {
                 <h2 className="text-lg sm:text-xl font-bold mb-4 text-gray-800">Resolved Queries</h2>
                 <div className="space-y-3 max-h-64 overflow-y-auto">
                   {resolvedQueries.map(q => (
-                    <div key={q._id} className="border border-gray-200 rounded-xl bg-gray-50">
+                    <div key={q._id} className="border border-gray-200 rounded-xl bg-white">
                       <button
                         className="w-full text-left px-4 py-3 font-semibold flex justify-between items-center focus:outline-none hover:bg-gray-100 rounded-xl transition-colors"
                         onClick={() => setExpanded(exp => ({ ...exp, [q._id]: !exp[q._id] }))}

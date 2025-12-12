@@ -2,6 +2,7 @@ const Application = require('../models/Application');
 const Internship = require('../models/Internship'); // Import Internship model
 const User = require('../models/User');
 const cloudinary = require('../config/cloudinary');
+const createNotification = require('../utils/createNotification');
 
 // @desc    Create a new application
 // @route   POST /api/applications
@@ -69,6 +70,12 @@ exports.createApplication = async (req, res, next) => {
         if (appCount > 6) newLevel = 'Pro';
         else if (appCount > 2) newLevel = 'Intermediate';
         await User.findByIdAndUpdate(userId, { level: newLevel });
+
+        // Create notification for application submission
+        await createNotification(
+          userId,
+          `Your application for "${internship.title}" has been submitted successfully. We will review it and get back to you soon.`
+        );
 
         res.status(201).json({ success: true, data: application });
 
@@ -152,7 +159,7 @@ exports.updateApplicationStatus = async (req, res, next) => {
         }, {
             new: true,
             runValidators: true
-        });
+        }).populate('internship', 'title');
 
         if (!application) {
             return res.status(404).json({ success: false, message: 'Application not found' });
@@ -161,8 +168,14 @@ exports.updateApplicationStatus = async (req, res, next) => {
         // Only set transactionId if approved
         if (status === 'Approved') {
             application.transactionId = `SE_txn_${Date.now()}`; // Mock a real transaction ID
+            await application.save();
+
+            // Create notification for application approval
+            await createNotification(
+                application.user,
+                `Great news! Your application for "${application.internship?.title || 'the internship'}" has been approved.`
+            );
         }
-        await application.save();
 
         res.status(200).json({ success: true, data: application });
     } catch (err) {
