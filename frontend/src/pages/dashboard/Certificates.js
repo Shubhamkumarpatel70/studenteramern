@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../config/api';
+import { Link } from 'react-router-dom';
 import { Award, Clock, Loader2, Inbox, Download, FileText } from 'lucide-react';
 
 const Certificates = () => {
@@ -144,24 +145,27 @@ const Certificates = () => {
                                         )}
                                     </div>
                                 </div>
-                                <a
-                                    href={cert.fileUrl || `/verify-certificate/${cert.certificateId}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="mt-4 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-2.5 sm:py-3 px-4 rounded-xl shadow-md transition-all duration-200 font-semibold text-sm sm:text-base group-hover:shadow-lg"
-                                >
-                                    {cert.fileUrl ? (
-                                        <>
-                                            <Download className="h-4 w-4" />
-                                            Download PDF
-                                        </>
-                                    ) : (
-                                        <>
-                                            <FileText className="h-4 w-4" />
-                                            View Certificate
-                                        </>
-                                    )}
-                                </a>
+                                {cert.fileUrl ? (
+                                    <a
+                                        href={cert.fileUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="mt-4 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-2.5 sm:py-3 px-4 rounded-xl shadow-md transition-all duration-200 font-semibold text-sm sm:text-base group-hover:shadow-lg"
+                                    >
+                                        <Download className="h-4 w-4" />
+                                        Download PDF
+                                    </a>
+                                ) : (
+                                    <Link
+                                        to={`/verify-certificate/${cert.certificateId}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="mt-4 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-2.5 sm:py-3 px-4 rounded-xl shadow-md transition-all duration-200 font-semibold text-sm sm:text-base group-hover:shadow-lg"
+                                    >
+                                        <FileText className="h-4 w-4" />
+                                        View Certificate
+                                    </Link>
+                                )}
                             </div>
                         ))}
 
