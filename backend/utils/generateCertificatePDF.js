@@ -27,7 +27,10 @@ function generateCertificatePDF(certificate, outputPath) {
     doc.opacity(1).restore();
 
     // Centered logo (larger)
-    const logoPath = path.join(__dirname, '../templates/company-logo.png');
+    // Try new logo first, fallback to old logo
+    const newLogoPath = path.join(__dirname, '../templates/logo.png');
+    const oldLogoPath = path.join(__dirname, '../templates/company-logo.png');
+    const logoPath = fs.existsSync(newLogoPath) ? newLogoPath : oldLogoPath;
     if (fs.existsSync(logoPath)) {
       doc.image(logoPath, doc.page.width / 2 - 80, 50, { width: 160 });
     }

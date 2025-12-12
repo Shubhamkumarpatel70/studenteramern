@@ -36,6 +36,7 @@ const GenerateOfferLetter = () => {
     const jobTitleDropdownRef = useRef(null);
     const [hrs, setHrs] = useState([]);
     const [selectedHR, setSelectedHR] = useState('');
+    const [editingId, setEditingId] = useState(null);
 
     const { user, candidateName, internId, title, company, issueDate, startDate, techPartner, stipend, hrName } = formData;
 
@@ -246,9 +247,20 @@ const GenerateOfferLetter = () => {
         
         if (localStorage.token) setAuthToken(localStorage.token);
         try {
-            const res = await api.post('/offer-letters', formData);
-            alert('Offer letter generated successfully!');
-            setGeneratedLetter(res.data.data);
+            if (editingId) {
+                // Update existing offer letter
+                const res = await api.put(`/offer-letters/${editingId}`, formData, {
+                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                });
+                alert('Offer letter updated successfully!');
+                setGeneratedLetter(res.data.data);
+                setEditingId(null);
+            } else {
+                // Create new offer letter
+                const res = await api.post('/offer-letters', formData);
+                alert('Offer letter generated successfully!');
+                setGeneratedLetter(res.data.data);
+            }
             setFormData({ user: '', candidateName: '', internId: '', title: '', company: 'Student Era', issueDate: '', startDate: '', techPartner: 'Student Era', stipend: '', hrName: '' });
             setSelectedUserDisplay('');
             setSelectedJobTitleDisplay('');
@@ -258,9 +270,97 @@ const GenerateOfferLetter = () => {
             setShowPreview(false);
             fetchAllLetters();
         } catch (err) {
-            console.error('Failed to generate offer letter', err.response?.data);
-            alert(`Error: ${err.response?.data?.message || 'Failed to generate offer letter'}`);
+            console.error('Failed to generate/update offer letter', err.response?.data);
+            alert(`Error: ${err.response?.data?.message || 'Failed to process offer letter'}`);
         }
+    };
+
+    const handleEdit = async (letterId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            const res = await api.get(`/offer-letters/${letterId}`, config);
+            const letter = res.data.data;
+            
+            // Get internId from populated user data or find in users list
+            let userInternId = '';
+            if (letter.user?.internId) {
+                userInternId = letter.user.internId;
+            } else if (letter.user?._id || letter.user) {
+                const userId = letter.user?._id || letter.user;
+                const userObj = users.find(u => {
+                    const uId = u._id?.toString();
+                    const letterUId = userId?.toString();
+                    return uId === letterUId;
+                });
+                if (userObj && userObj.internId) {
+                    userInternId = userObj.internId;
+                }
+            }
+            
+            // Find the user object to set display
+            const userObj = users.find(u => u.internId === userInternId) || 
+                          (letter.user?.internId ? { internId: letter.user.internId, name: letter.user.name, email: letter.user.email } : null);
+            
+            // Find internship to set display
+            const internshipObj = internships.find(i => i.title === letter.title);
+            
+            setFormData({
+                user: userInternId,
+                candidateName: letter.candidateName || '',
+                internId: letter.internId || '',
+                title: letter.title || '',
+                company: letter.company || 'Student Era',
+                issueDate: letter.issueDate ? new Date(letter.issueDate).toISOString().split('T')[0] : '',
+                startDate: letter.startDate ? new Date(letter.startDate).toISOString().split('T')[0] : '',
+                techPartner: letter.techPartner || 'Student Era',
+                stipend: letter.stipend || '',
+                hrName: letter.hrName || ''
+            });
+            
+            if (userObj) {
+                setSelectedUserDisplay(`${userObj.internId} - ${userObj.name}${userObj.email ? ` (${userObj.email})` : ''}`);
+            }
+            
+            if (internshipObj) {
+                setSelectedJobTitleDisplay(internshipObj.title);
+                // Find matching HR
+                const matchingHR = hrs.find(hr => {
+                    if (!hr.isActive) return false;
+                    const titleLower = internshipObj.title.toLowerCase();
+                    const categoryLower = hr.internshipCategory.toLowerCase();
+                    return titleLower.includes(categoryLower) || 
+                           categoryLower.includes(titleLower) ||
+                           titleLower.split(' ').some(word => categoryLower.includes(word)) ||
+                           categoryLower.split(' ').some(word => titleLower.includes(word));
+                });
+                if (matchingHR && matchingHR.name === letter.hrName) {
+                    setSelectedHR(matchingHR.name);
+                } else if (letter.hrName) {
+                    setSelectedHR(letter.hrName);
+                }
+            } else if (letter.title) {
+                setSelectedJobTitleDisplay(letter.title);
+            }
+            
+            setEditingId(letterId);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } catch (err) {
+            alert('Failed to load offer letter for editing');
+            console.error(err);
+        }
+    };
+
+    const handleCancelEdit = () => {
+        setEditingId(null);
+        setFormData({ user: '', candidateName: '', internId: '', title: '', company: 'Student Era', issueDate: '', startDate: '', techPartner: 'Student Era', stipend: '', hrName: '' });
+        setSelectedUserDisplay('');
+        setSelectedJobTitleDisplay('');
+        setSelectedHR('');
+        setSearchTerm('');
+        setJobTitleSearchTerm('');
+        setShowUserDropdown(false);
+        setShowJobTitleDropdown(false);
     };
 
     const deleteOfferLetter = async (id) => {
@@ -315,7 +415,7 @@ const GenerateOfferLetter = () => {
     <div class='container'>
       <div class='watermark'>Student Era</div>
       <div class='header'>
-        <img src='/logo.png' alt='Company Logo' class='logo' />
+        <img src='/logo512.png' alt='Company Logo' class='logo' />
         <div class='company-info'>
           <div class='company-name'>${company || 'Student Era'}</div>
           <div class='address-block'>D-107, 91Springboard, Vyapar Marg, Sector-2, Noida, UP 201301<br />info@studentera.com | www.studentera.com</div>
@@ -363,7 +463,7 @@ const GenerateOfferLetter = () => {
 
     return (
         <div className="p-4 sm:p-6 md:p-8">
-            <h1 className="text-2xl sm:text-3xl font-bold mb-6">Generate a New Offer Letter</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold mb-6">{editingId ? 'Edit Offer Letter' : 'Generate a New Offer Letter'}</h1>
             {offerLetterExists && (
                 <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                     <p className="text-yellow-800 font-semibold">⚠️ An offer letter already exists for this student and job title. Only one offer letter per job title is allowed per student.</p>
@@ -593,6 +693,15 @@ const GenerateOfferLetter = () => {
                         )}
                     </div>
                     <div className="flex gap-2 flex-wrap">
+                        {editingId && (
+                            <button 
+                                type="button" 
+                                onClick={handleCancelEdit}
+                                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+                            >
+                                Cancel Edit
+                            </button>
+                        )}
                         <button 
                             type="button" 
                             onClick={() => setShowPreview(!showPreview)} 
@@ -602,14 +711,14 @@ const GenerateOfferLetter = () => {
                         </button>
                         <button 
                             type="submit" 
-                            disabled={offerLetterExists}
+                            disabled={offerLetterExists && !editingId}
                             className={`px-4 py-2 rounded-md text-white flex-1 ${
-                                offerLetterExists 
+                                (offerLetterExists && !editingId)
                                     ? 'bg-gray-400 cursor-not-allowed' 
                                     : 'bg-blue-600 hover:bg-blue-700'
                             }`}
                         >
-                            Generate Offer Letter
+                            {editingId ? 'Update Offer Letter' : 'Generate Offer Letter'}
                         </button>
                     </div>
                 </form>
@@ -658,7 +767,10 @@ const GenerateOfferLetter = () => {
                                             )}
                                         </td>
                                         <td className="px-2 sm:px-4 py-2 whitespace-nowrap">
-                                            <button onClick={() => deleteOfferLetter(letter._id)} className="text-red-600 hover:text-red-800 font-bold text-sm">Delete</button>
+                                            <div className="flex gap-2">
+                                                <button onClick={() => handleEdit(letter._id)} className="text-blue-600 hover:text-blue-800 font-bold text-sm">Edit</button>
+                                                <button onClick={() => deleteOfferLetter(letter._id)} className="text-red-600 hover:text-red-800 font-bold text-sm">Delete</button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}

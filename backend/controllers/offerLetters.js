@@ -164,7 +164,7 @@ exports.getMyOfferLetters = async (req, res, next) => {
 // @access  Private/Admin
 exports.getAllOfferLetters = async (req, res, next) => {
   try {
-    const offerLetters = await OfferLetter.find().sort({ createdAt: -1 });
+    const offerLetters = await OfferLetter.find().sort({ createdAt: -1 }).populate('user', 'name email internId');
     res
       .status(200)
       .json({ success: true, count: offerLetters.length, data: offerLetters });
@@ -179,7 +179,7 @@ exports.getAllOfferLetters = async (req, res, next) => {
 // @access  Private/Admin
 exports.getOfferLetterById = async (req, res) => {
   try {
-    const offerLetter = await OfferLetter.findById(req.params.id);
+    const offerLetter = await OfferLetter.findById(req.params.id).populate('user', 'name email internId');
     if (!offerLetter) {
       return res
         .status(404)
@@ -188,6 +188,125 @@ exports.getOfferLetterById = async (req, res) => {
     res.status(200).json({ success: true, data: offerLetter });
   } catch (err) {
     res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
+// @desc    Update offer letter by ID (Admin)
+// @route   PUT /api/offer-letters/:id
+// @access  Private/Admin
+exports.updateOfferLetter = async (req, res, next) => {
+  try {
+    let offerLetter = await OfferLetter.findById(req.params.id);
+    if (!offerLetter) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Offer letter not found" });
+    }
+
+    // Support using internId (student ID) as well as ObjectId for user if provided
+    let userId = req.body.user || offerLetter.user.toString();
+    if (req.body.user && !mongoose.Types.ObjectId.isValid(req.body.user)) {
+      const User = require("../models/User");
+      const userDoc = await User.findOne({ internId: req.body.user });
+      if (!userDoc) {
+        return res.status(400).json({
+          success: false,
+          message: "User not found for given Student ID or User ID.",
+        });
+      }
+      userId = userDoc._id;
+    }
+
+    const {
+      candidateName,
+      internId,
+      title,
+      company,
+      issueDate,
+      startDate,
+      techPartner,
+      stipend,
+      hrName,
+    } = req.body;
+
+    // Update offer letter fields
+    if (candidateName) offerLetter.candidateName = candidateName;
+    if (internId) offerLetter.internId = internId;
+    if (title) offerLetter.title = title;
+    if (company) offerLetter.company = company;
+    if (issueDate) offerLetter.issueDate = issueDate;
+    if (startDate) offerLetter.startDate = startDate;
+    if (techPartner) offerLetter.techPartner = techPartner;
+    if (stipend !== undefined) offerLetter.stipend = stipend;
+    if (hrName) offerLetter.hrName = hrName;
+    if (req.body.user) offerLetter.user = userId;
+
+    await offerLetter.save();
+
+    // Regenerate PDF with updated data
+    const pdfDir = path.join(__dirname, "../uploads/offerLetters");
+    if (!fs.existsSync(pdfDir)) fs.mkdirSync(pdfDir, { recursive: true });
+    const pdfPath = path.join(pdfDir, `${offerLetter._id}.pdf`);
+    await generateOfferLetterPDF(
+      { ...offerLetter.toObject(), candidateName: offerLetter.candidateName },
+      pdfPath
+    );
+
+    // Upload updated PDF to Cloudinary
+    const result = await cloudinary.uploader.upload(pdfPath, {
+      folder: "offerLetters",
+      resource_type: "raw",
+      public_id: `${offerLetter._id}.pdf`,
+      type: "upload",
+      access_mode: "public",
+      use_filename: true,
+      unique_filename: false,
+      overwrite: true,
+    });
+
+    // Update fileUrl with new Cloudinary URL
+    offerLetter.fileUrl = result.secure_url;
+    await offerLetter.save();
+
+    // Send email to user with updated offer letter
+    try {
+      const User = require("../models/User");
+      const userDoc = await User.findById(offerLetter.user);
+      if (userDoc && userDoc.email) {
+        const emailTemplate = getOfferLetterEmailTemplate(
+          userDoc.name,
+          {
+            title: offerLetter.title,
+            company: offerLetter.company,
+            startDate: offerLetter.startDate,
+          },
+          result.secure_url
+        );
+
+        await sendEmail({
+          email: userDoc.email,
+          subject: `Updated: ${emailTemplate.subject}`,
+          message: emailTemplate.text,
+          html: emailTemplate.html,
+        });
+
+        console.log(`Updated offer letter email sent successfully to ${userDoc.email}`);
+      }
+    } catch (emailError) {
+      console.error("Failed to send updated offer letter email:", emailError);
+    }
+
+    // Create notification for offer letter update
+    await createNotification(
+      offerLetter.user,
+      `Your offer letter for "${offerLetter.title}" at ${offerLetter.company || 'the company'} has been updated. You can view and download it from your dashboard.`
+    );
+
+    // Remove local file after upload
+    fs.unlinkSync(pdfPath);
+    res.status(200).json({ success: true, data: offerLetter });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
   }
 };
 

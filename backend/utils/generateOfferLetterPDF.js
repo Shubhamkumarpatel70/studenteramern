@@ -9,7 +9,10 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
     doc.pipe(stream);
 
     // Header: Logo top left, company details top right
-    const logoPath = offerLetter.companyLogo || path.join(__dirname, '../templates/company-logo.png');
+    // Try new logo first, fallback to old logo
+    const newLogoPath = path.join(__dirname, '../templates/logo.png');
+    const oldLogoPath = path.join(__dirname, '../templates/company-logo.png');
+    const logoPath = offerLetter.companyLogo || (fs.existsSync(newLogoPath) ? newLogoPath : oldLogoPath);
     const headerY = 30;
     if (typeof logoPath === 'string' && fs.existsSync(logoPath)) {
       doc.image(logoPath, 30, headerY, { width: 80 });

@@ -64,6 +64,12 @@ const Login = () => {
 
     const { email, password, captcha } = formData;
 
+    // Check if captcha matches exactly (case-insensitive)
+    const isCaptchaValid = captchaData && captcha && captcha.trim().toUpperCase() === captchaData.code.toUpperCase();
+    
+    // Button should be disabled if captcha doesn't match or is submitting
+    const isButtonDisabled = !isCaptchaValid || isSubmitting || !captchaData;
+
     const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const onSubmit = async e => {
@@ -247,11 +253,14 @@ const Login = () => {
                     <div>
                         <button
                             type="submit"
-                            disabled={isSubmitting}
-                            className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-[#FFFFFF] ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#0A2463] hover:bg-[#1C1C1E]'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#28A745] transition duration-200`}
+                            disabled={isButtonDisabled}
+                            className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-[#FFFFFF] ${isButtonDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#0A2463] hover:bg-[#1C1C1E]'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#28A745] transition duration-200`}
                         >
                             {isSubmitting ? 'Signing in...' : 'Sign in'}
                         </button>
+                        {!isCaptchaValid && captcha && captchaData && (
+                            <p className="mt-2 text-xs text-red-600 text-center">CAPTCHA does not match. Please enter the exact code shown above.</p>
+                        )}
                     </div>
                 </form>
             </div>

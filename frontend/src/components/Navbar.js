@@ -58,7 +58,6 @@ const Navbar = () => {
                         {/* Logo */}
                         <Link to="/" className="flex items-center gap-3 group">
                             <img src="/logo192.png" alt="Student Era Logo" className="w-12 h-12 rounded-full bg-white shadow-md group-hover:scale-105 transition-transform duration-200" />
-                            <span className="font-extrabold text-2xl md:text-3xl text-[#0A84FF] tracking-tight font-sans drop-shadow">Student Era</span>
                         </Link>
                         {/* Desktop Menu */}
                         <div className="hidden md:flex items-center space-x-8 text-lg font-bold font-[Inter,sans-serif]">
