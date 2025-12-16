@@ -330,10 +330,10 @@ const AssignTasks = () => {
                         <User className="h-4 w-4 text-gray-400 mr-2" />
                         <div>
                           <div className="text-sm font-medium text-gray-900">
-                            {task.user.name}
+                            {task.user?.name || 'N/A'}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {task.user.internId}
+                            {task.user?.internId || 'N/A'}
                           </div>
                         </div>
                       </div>
@@ -343,10 +343,10 @@ const AssignTasks = () => {
                         <Briefcase className="h-4 w-4 text-gray-400 mr-2" />
                         <div>
                           <div className="text-sm font-medium text-gray-900">
-                            {task.internship.title}
+                            {task.internship?.title || 'N/A'}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {task.internship.company}
+                            {task.internship?.company || 'N/A'}
                           </div>
                         </div>
                       </div>
