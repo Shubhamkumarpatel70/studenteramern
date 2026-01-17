@@ -108,10 +108,6 @@ const Privacy = () => (
                   <Mail className="h-5 w-5 inline mr-2" />
                  contact.studentera@gmail.com
                 </p>
-                <p className="text-indigo-700 font-semibold">
-                  <Phone className="h-5 w-5 inline mr-2" />
-                  +91 9027880288
-                </p>
               </div>
             </div>
           </div>

@@ -44,7 +44,6 @@ const Footer = () => {
       console.error('Failed to fetch social links', err);
       // Fallback to default links if API fails
       setSocialLinks({
-        whatsapp: 'https://wa.me/919027880288?text=Hi, I am come across your website',
         instagram: 'https://www.instagram.com/officialstudentera',
         linkedin: 'https://www.linkedin.com/in/studentera?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app'
       });

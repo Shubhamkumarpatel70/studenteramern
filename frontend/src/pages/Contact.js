@@ -129,14 +129,7 @@ const Contact = () => {
                 </div>
               </div>
 
-              <div className="flex items-start space-x-4 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl shadow-lg">
-                <PhoneIcon className="h-8 w-8 text-indigo-600 flex-shrink-0 mt-1" />
-                <div>
-                  <h3 className="text-xl font-bold text-indigo-800 mb-1">Phone</h3>
-                  <p className="text-gray-700 text-lg">+91 9027880288</p>
-                </div>
-              </div>
-
+          
               <div className="flex items-start space-x-4 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl shadow-lg">
                 <MapPinIcon className="h-8 w-8 text-indigo-600 flex-shrink-0 mt-1" />
                 <div>
