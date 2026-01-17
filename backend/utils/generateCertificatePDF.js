@@ -34,13 +34,29 @@ function generateCertificatePDF(certificate, outputPath) {
       });
     doc.opacity(1).restore();
 
-    // Centered logo (larger)
+    // Centered logo (larger, circular)
     // Try new logo first, fallback to old logo
     const newLogoPath = path.join(__dirname, "../templates/logo.png");
     const oldLogoPath = path.join(__dirname, "../templates/company-logo.png");
     const logoPath = fs.existsSync(newLogoPath) ? newLogoPath : oldLogoPath;
     if (fs.existsSync(logoPath)) {
-      doc.image(logoPath, doc.page.width / 2 - 80, 50, { width: 160 });
+      const logoSize = 160;
+      const logoX = doc.page.width / 2 - logoSize / 2;
+      const logoY = 50;
+
+      // Save the graphics state
+      doc.save();
+
+      // Create a circular clipping path
+      doc
+        .circle(logoX + logoSize / 2, logoY + logoSize / 2, logoSize / 2)
+        .clip();
+
+      // Draw the image within the circular clip
+      doc.image(logoPath, logoX, logoY, { width: logoSize });
+
+      // Restore the graphics state
+      doc.restore();
     }
 
     // Title
@@ -110,7 +126,7 @@ function generateCertificatePDF(certificate, outputPath) {
       __dirname,
       "../templates/startup-india.png"
     );
-    const logoY = doc.page.height - 180;
+    const logoY = doc.page.height - 150;
     const centerX = doc.page.width / 2;
 
     if (fs.existsSync(msmeLogoPath)) {
