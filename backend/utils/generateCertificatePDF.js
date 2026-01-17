@@ -40,9 +40,9 @@ function generateCertificatePDF(certificate, outputPath) {
     const oldLogoPath = path.join(__dirname, "../templates/company-logo.png");
     const logoPath = fs.existsSync(newLogoPath) ? newLogoPath : oldLogoPath;
     if (fs.existsSync(logoPath)) {
-      const logoSize = 160;
+      const logoSize = 120;
       const logoX = doc.page.width / 2 - logoSize / 2;
-      const logoY = 50;
+      const logoY = 35;
 
       // Save the graphics state
       doc.save();
@@ -126,7 +126,7 @@ function generateCertificatePDF(certificate, outputPath) {
       __dirname,
       "../templates/startup-india.png"
     );
-    const logoY = doc.page.height - 150;
+    const logoY = doc.page.height - 120;
     const centerX = doc.page.width / 2;
 
     if (fs.existsSync(msmeLogoPath)) {
