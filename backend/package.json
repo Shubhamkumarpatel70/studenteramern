@@ -26,7 +26,8 @@
     "mongoose": "^8.1.0",
     "multer": "^2.0.1",
     "nodemailer": "^6.9.8",
-    "pdfkit": "^0.17.1"
+    "pdfkit": "^0.17.1",
+    "svg-captcha": "^1.4.0"
   },
   "optionalDependencies": {
     "compression": "^1.8.1",
