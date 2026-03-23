@@ -1,3 +1,4 @@
+// Removed invalid top-level JSX and duplicate import/route lines
 import React, { useState, useEffect, useContext } from "react";
 import {
   HashRouter as Router,
@@ -54,6 +55,7 @@ import SendNotification from "./pages/admin/SendNotification";
 import GenerateCertificate from "./pages/admin/GenerateCertificate";
 import CertificateVerification from "./pages/admin/CertificateVerification";
 import GenerateOfferLetter from "./pages/admin/GenerateOfferLetter";
+import SendOfferLetter from "./pages/admin/SendOfferLetter";
 import AddInternship from "./pages/admin/AddInternship";
 import InternshipRegistrations from "./pages/admin/InternshipRegistrations";
 import ManageTestimonials from "./pages/admin/ManageTestimonials";
@@ -112,7 +114,7 @@ const AppContent = () => {
         }
         // Do NOT set serverError for 5xx errors; let pages handle them locally
         return Promise.reject(error);
-      }
+      },
     );
 
     return () => {
@@ -259,12 +261,16 @@ const AppContent = () => {
                 path="generate-offer-letter"
                 element={<GenerateOfferLetter />}
               />
+              <Route path="send-offer-letter" element={<SendOfferLetter />} />
               <Route path="manage-hr" element={<ManageHR />} />
               <Route path="queries" element={<Queries />} />
               <Route path="help-queries" element={<HelpQueries />} />
               <Route path="deletion-requests" element={<DeletionRequests />} />
               <Route path="manage-feedback" element={<ManageFeedback />} />
-              <Route path="manage-social-links" element={<ManageSocialLinks />} />
+              <Route
+                path="manage-social-links"
+                element={<ManageSocialLinks />}
+              />
             </Route>
           </Route>
 

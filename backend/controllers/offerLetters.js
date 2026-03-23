@@ -1,3 +1,87 @@
+// @desc    Admin: Generate and send offer letter by user ID/name/domain/email
+// @route   POST /api/offer-letters/admin/send-offer-letter
+// @access  Private/Admin
+exports.sendOfferLetterByAdmin = async (req, res, next) => {
+  try {
+    const { id, name, domain, email } = req.body;
+    if (!id || !name || !domain || !email) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing required fields" });
+    }
+    // Find user by internId or _id
+    const User = require("../models/User");
+    let userDoc = null;
+    const mongoose = require("mongoose");
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      userDoc = await User.findById(id);
+    }
+    if (!userDoc) {
+      userDoc = await User.findOne({ internId: id });
+    }
+    if (!userDoc) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "User not found for given Student ID or User ID.",
+        });
+    }
+    // Generate a new OfferLetter document (not saved to DB)
+    const offerLetterData = {
+      user: userDoc._id,
+      candidateName: name,
+      internId: userDoc.internId || id,
+      title: domain,
+      company: "Student Era",
+      issueDate: new Date(),
+      startDate: new Date(),
+      techPartner: "",
+      stipend: "",
+      hrName: "HR Team",
+    };
+    // Generate PDF
+    const pdfDir = require("path").join(__dirname, "../uploads/offerLetters");
+    if (!require("fs").existsSync(pdfDir))
+      require("fs").mkdirSync(pdfDir, { recursive: true });
+    const pdfPath = require("path").join(pdfDir, `${id}-${Date.now()}.pdf`);
+    await require("../utils/generateOfferLetterPDF")(offerLetterData, pdfPath);
+    // Upload to Cloudinary
+    const result = await require("../config/cloudinary").uploader.upload(
+      pdfPath,
+      {
+        folder: "offerLetters",
+        resource_type: "raw",
+        public_id: `${id}-${Date.now()}.pdf`,
+        type: "upload",
+        access_mode: "public",
+        use_filename: true,
+        unique_filename: false,
+      },
+    );
+    // Send email
+    const emailTemplate =
+      require("../utils/emailTemplates").getOfferLetterEmailTemplate(
+        name,
+        { title: domain, company: "Student Era", startDate: new Date() },
+        result.secure_url,
+      );
+    await require("../utils/sendEmail")({
+      email,
+      subject: emailTemplate.subject,
+      message: emailTemplate.text,
+      html: emailTemplate.html,
+    });
+    res
+      .status(200)
+      .json({ success: true, data: { pdfUrl: result.secure_url } });
+  } catch (err) {
+    console.error("Admin send offer letter error:", err);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to send offer letter" });
+  }
+};
 const OfferLetter = require("../models/OfferLetter");
 const generateOfferLetterPDF = require("../utils/generateOfferLetterPDF");
 const cloudinary = require("../config/cloudinary");
@@ -56,7 +140,8 @@ exports.generateOfferLetter = async (req, res, next) => {
     if (existing) {
       return res.status(400).json({
         success: false,
-        message: "Offer letter already exists for this student and job title. Please edit the existing offer letter instead.",
+        message:
+          "Offer letter already exists for this student and job title. Please edit the existing offer letter instead.",
       });
     }
 
@@ -79,7 +164,7 @@ exports.generateOfferLetter = async (req, res, next) => {
     const pdfPath = path.join(pdfDir, `${offerLetter._id}.pdf`);
     await generateOfferLetterPDF(
       { ...offerLetter.toObject(), candidateName },
-      pdfPath
+      pdfPath,
     );
 
     // Upload to Cloudinary
@@ -109,7 +194,7 @@ exports.generateOfferLetter = async (req, res, next) => {
             company: offerLetter.company,
             startDate: offerLetter.startDate,
           },
-          result.secure_url
+          result.secure_url,
         );
 
         await sendEmail({
@@ -129,7 +214,7 @@ exports.generateOfferLetter = async (req, res, next) => {
     // Create notification for offer letter generation
     await createNotification(
       userId,
-      `Congratulations! Your offer letter for "${title}" at ${company || 'the company'} has been issued. You can view and download it from your dashboard.`
+      `Congratulations! Your offer letter for "${title}" at ${company || "the company"} has been issued. You can view and download it from your dashboard.`,
     );
 
     // Remove local file after upload
@@ -148,7 +233,7 @@ exports.getMyOfferLetters = async (req, res, next) => {
   try {
     const offerLetters = await OfferLetter.find({ user: req.user.id }).populate(
       "user",
-      "name"
+      "name",
     );
     res
       .status(200)
@@ -164,7 +249,9 @@ exports.getMyOfferLetters = async (req, res, next) => {
 // @access  Private/Admin
 exports.getAllOfferLetters = async (req, res, next) => {
   try {
-    const offerLetters = await OfferLetter.find().sort({ createdAt: -1 }).populate('user', 'name email internId');
+    const offerLetters = await OfferLetter.find()
+      .sort({ createdAt: -1 })
+      .populate("user", "name email internId");
     res
       .status(200)
       .json({ success: true, count: offerLetters.length, data: offerLetters });
@@ -179,7 +266,10 @@ exports.getAllOfferLetters = async (req, res, next) => {
 // @access  Private/Admin
 exports.getOfferLetterById = async (req, res) => {
   try {
-    const offerLetter = await OfferLetter.findById(req.params.id).populate('user', 'name email internId');
+    const offerLetter = await OfferLetter.findById(req.params.id).populate(
+      "user",
+      "name email internId",
+    );
     if (!offerLetter) {
       return res
         .status(404)
@@ -249,7 +339,7 @@ exports.updateOfferLetter = async (req, res, next) => {
     const pdfPath = path.join(pdfDir, `${offerLetter._id}.pdf`);
     await generateOfferLetterPDF(
       { ...offerLetter.toObject(), candidateName: offerLetter.candidateName },
-      pdfPath
+      pdfPath,
     );
 
     // Upload updated PDF to Cloudinary
@@ -280,7 +370,7 @@ exports.updateOfferLetter = async (req, res, next) => {
             company: offerLetter.company,
             startDate: offerLetter.startDate,
           },
-          result.secure_url
+          result.secure_url,
         );
 
         await sendEmail({
@@ -290,7 +380,9 @@ exports.updateOfferLetter = async (req, res, next) => {
           html: emailTemplate.html,
         });
 
-        console.log(`Updated offer letter email sent successfully to ${userDoc.email}`);
+        console.log(
+          `Updated offer letter email sent successfully to ${userDoc.email}`,
+        );
       }
     } catch (emailError) {
       console.error("Failed to send updated offer letter email:", emailError);
@@ -299,7 +391,7 @@ exports.updateOfferLetter = async (req, res, next) => {
     // Create notification for offer letter update
     await createNotification(
       offerLetter.user,
-      `Your offer letter for "${offerLetter.title}" at ${offerLetter.company || 'the company'} has been updated. You can view and download it from your dashboard.`
+      `Your offer letter for "${offerLetter.title}" at ${offerLetter.company || "the company"} has been updated. You can view and download it from your dashboard.`,
     );
 
     // Remove local file after upload

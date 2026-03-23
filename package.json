@@ -24,7 +24,8 @@
   "license": "MIT",
   "dependencies": {
     "pdfkit": "^0.17.1",
-    "react-circular-progressbar": "^2.2.0"
+    "react-circular-progressbar": "^2.2.0",
+    "svg-captcha": "^1.4.0"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

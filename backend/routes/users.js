@@ -8,11 +8,18 @@ const {
   updateUserRole,
   getDeletionRequests,
   permanentlyDeleteUser,
+  getUserDetailsForOfferLetter,
 } = require("../controllers/users");
-
 const router = express.Router();
-
 const { protect, authorize } = require("../middleware/auth");
+
+// Admin: Get user details for offer letter (name, domain, email)
+router.get(
+  "/admin/user-details/:id",
+  protect,
+  authorize("admin"),
+  getUserDetailsForOfferLetter,
+);
 
 router
   .route("/")
@@ -30,13 +37,13 @@ router.get(
   "/deletion-requests",
   protect,
   authorize("admin", "co-admin"),
-  getDeletionRequests
+  getDeletionRequests,
 );
 router.delete(
   "/:id/permanent",
   protect,
   authorize("admin", "co-admin"),
-  permanentlyDeleteUser
+  permanentlyDeleteUser,
 );
 
 module.exports = router;

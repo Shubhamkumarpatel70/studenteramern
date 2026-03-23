@@ -56,10 +56,10 @@ const Footer = () => {
       if (socialLinks.whatsapp.includes('?text=')) {
         return socialLinks.whatsapp;
       }
-      return `${socialLinks.whatsapp}${socialLinks.whatsapp.includes('?') ? '&' : '?'}text=Hi, I am come across your website`;
+      return `${socialLinks.whatsapp}${socialLinks.whatsapp.includes('?') ? '&' : '?'}text=Hi, I am come across your website STUDENT ERA`;
     }
     // Fallback
-    return 'https://wa.me/919027880288?text=Hi, I am come across your website';
+    return 'https://wa.me/919027880288?text=Hi, I am come across your website STUDENT ERA';
   };
 
   return (

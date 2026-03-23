@@ -1,3 +1,36 @@
+// @desc    Get user details for offer letter (name, domain, email)
+// @route   GET /api/users/admin/user-details/:id
+// @access  Private/Admin
+exports.getUserDetailsForOfferLetter = async (req, res, next) => {
+  try {
+    let user = null;
+    // Try to find by MongoDB ObjectId
+    if (require("mongoose").Types.ObjectId.isValid(req.params.id)) {
+      user = await User.findById(req.params.id);
+    }
+    // If not found, or not a valid ObjectId, try by internId
+    if (!user) {
+      user = await User.findOne({ internId: req.params.id });
+    }
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+    res.status(200).json({
+      success: true,
+      data: {
+        name: user.name,
+        domain: user.domain || user.internshipDomain || "",
+        email: user.email,
+      },
+    });
+  } catch (err) {
+    res
+      .status(400)
+      .json({ success: false, message: "Error fetching user details" });
+  }
+};
 const User = require("../models/User");
 
 // @desc    Get all users with pagination
@@ -16,32 +49,32 @@ exports.getUsers = async (req, res, next) => {
 
     // Fetch users with pagination and plainPasswordForAdmin field explicitly selected
     const users = await User.find()
-      .select('+plainPasswordForAdmin')
+      .select("+plainPasswordForAdmin")
       .sort({ createdAt: -1 }) // Sort by newest first
       .skip(skip)
       .limit(limit);
-    
+
     // Convert to plain objects and ensure plainPasswordForAdmin is included
-    const usersData = users.map(user => {
+    const usersData = users.map((user) => {
       const userObj = user.toObject();
       // Ensure plainPasswordForAdmin is included (even if null/undefined)
-      if (!userObj.hasOwnProperty('plainPasswordForAdmin')) {
+      if (!userObj.hasOwnProperty("plainPasswordForAdmin")) {
         userObj.plainPasswordForAdmin = null;
       }
       return userObj;
     });
-    
-    res.status(200).json({ 
-      success: true, 
+
+    res.status(200).json({
+      success: true,
       count: usersData.length,
       totalUsers,
       totalPages,
       currentPage: page,
-      data: usersData 
+      data: usersData,
     });
   } catch (err) {
-    console.error('Error fetching users:', err);
-    res.status(400).json({ success: false, message: 'Failed to fetch users' });
+    console.error("Error fetching users:", err);
+    res.status(400).json({ success: false, message: "Failed to fetch users" });
   }
 };
 
@@ -146,7 +179,7 @@ exports.updateUserRole = async (req, res, next) => {
     const user = await User.findByIdAndUpdate(
       req.params.id,
       { role },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
     if (!user) {
       return res

@@ -301,7 +301,7 @@ const ManageSocialLinks = () => {
                     <li>Enter the URL for each social media platform</li>
                     <li>Click "Save Link" to store the URL</li>
                     <li>Toggle the status to "Active" to display the link on the website</li>
-                    <li>For WhatsApp, use the format: <code className="bg-blue-100 px-1 rounded">https://wa.me/919027880288?text=Hi, I am come across your website</code></li>
+                    <li>For WhatsApp, use the format: <code className="bg-blue-100 px-1 rounded">https://wa.me/919027880288?text=Hi, I am come across your website STUDENT ERA</code></li>
                     <li>Links are inactive by default and won't appear until activated</li>
                 </ul>
             </div>

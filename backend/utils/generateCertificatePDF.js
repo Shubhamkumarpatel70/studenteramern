@@ -40,7 +40,7 @@ function generateCertificatePDF(certificate, outputPath) {
     const oldLogoPath = path.join(__dirname, "../templates/company-logo.png");
     const logoPath = fs.existsSync(newLogoPath) ? newLogoPath : oldLogoPath;
     if (fs.existsSync(logoPath)) {
-      const logoSize = 120;
+      const logoSize = 100;
       const logoX = doc.page.width / 2 - logoSize / 2;
       const logoY = 35;
 
