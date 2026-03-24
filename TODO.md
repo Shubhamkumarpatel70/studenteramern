@@ -1,12 +1,22 @@
-# TODO: Enhance Admin Dashboard and Profile Picture Upload
+# Task: Fix "Could not fetch meetings" error
 
-## Tasks
+## Steps to Complete:
 
-- [x] Add OTP column to admin ManageUsers table for unverified users
-- [x] Ensure Profile.js uses correct Cloudinary upload endpoint (/api/profile/picture)
-- [x] Update profile image display in user dashboard after upload
-- [x] Fix CORS headers for static image serving in backend
-- [x] Resolve Cloudinary 401 authentication issues
-- [x] Add revenue growth display (₹8,149 increased user amount) in admin dashboard
-- [x] Test admin dashboard OTP display functionality (syntax check passed)
-- [x] Test profile picture upload to Cloudinary and display (syntax check passed)
+### 1. Update backend/middleware/auth.js
+
+- Add validation after User.findById to return 401 if req.user is null.
+  **Status: Pending**
+
+### 2. Update backend/controllers/meetings.js
+
+- Add early validation for user and user.id.
+- Wrap user-role Application.find in try-catch.
+  **Status: Pending**
+
+### 3. Test the fix
+
+- Backend: no 500 on /api/meetings for user role.
+- Frontend: no "Could not fetch meetings."
+  **Status: Pending**
+
+Progress: 0/3 completed

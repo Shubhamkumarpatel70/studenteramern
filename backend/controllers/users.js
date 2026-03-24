@@ -43,12 +43,20 @@ exports.getUsers = async (req, res, next) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
+    // Filters
+    const queryFilter = {};
+    if (req.query.role) queryFilter.role = req.query.role;
+    if (req.query.isVerified !== undefined) {
+      if (req.query.isVerified === "true") queryFilter.isVerified = true;
+      if (req.query.isVerified === "false") queryFilter.isVerified = false;
+    }
+
     // Get total count for pagination
-    const totalUsers = await User.countDocuments();
+    const totalUsers = await User.countDocuments(queryFilter);
     const totalPages = Math.ceil(totalUsers / limit);
 
     // Fetch users with pagination and plainPasswordForAdmin field explicitly selected
-    const users = await User.find()
+    const users = await User.find(queryFilter)
       .select("+plainPasswordForAdmin")
       .sort({ createdAt: -1 }) // Sort by newest first
       .skip(skip)

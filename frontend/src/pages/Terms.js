@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { FileText, Users, Shield, RefreshCw, Mail } from "lucide-react";
-// Footer moved to App-level for specific pages (full-bleed display)
+import { FileText, Users, Shield, RefreshCw, Mail, ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const sections = [
-  { id: "acceptance", title: "1. Acceptance of Terms", icon: FileText },
-  { id: "responsibilities", title: "2. User Responsibilities", icon: Users },
-  { id: "privacy", title: "3. Privacy Policy", icon: Shield },
-  { id: "changes", title: "4. Changes to Terms", icon: RefreshCw },
-  { id: "contact", title: "5. Contact", icon: Mail }
+  { id: "acceptance", title: "Acceptance of Terms", icon: FileText },
+  { id: "responsibilities", title: "User Responsibilities", icon: Users },
+  { id: "privacy", title: "Privacy Policy", icon: Shield },
+  { id: "changes", title: "Changes to Terms", icon: RefreshCw },
+  { id: "contact", title: "Contact", icon: Mail }
 ];
 
 const Terms = () => {
@@ -15,7 +15,7 @@ const Terms = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + 200;
+      const scrollPosition = window.scrollY + 300;
       for (let i = sections.length - 1; i >= 0; i--) {
         const element = document.getElementById(sections[i].id);
         if (element && element.offsetTop <= scrollPosition) {
@@ -32,88 +32,142 @@ const Terms = () => {
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      const y = element.getBoundingClientRect().top + window.scrollY - 100;
+      window.scrollTo({ top: y, behavior: "smooth" });
     }
   };
 
   return (
-  <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4 py-8">
-      <div className="bg-white bg-opacity-95 p-8 rounded-2xl shadow-2xl max-w-4xl w-full">
-        <h1 className="text-5xl font-extrabold mb-8 text-indigo-800 text-center bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-          Terms & Conditions
-        </h1>
+    <div className="min-h-screen bg-gray-50 flex justify-center py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl w-full flex flex-col lg:flex-row gap-8">
 
-        {/* Table of Contents */}
-        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-xl mb-8 shadow-lg">
-          <h2 className="text-2xl font-bold mb-4 text-indigo-800">Table of Contents</h2>
-          <nav className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {sections.map(({ id, title, icon: Icon }) => (
+        {/* Sidebar Navigation */}
+        <div className="lg:w-1/3 hidden lg:block">
+          <div className="sticky top-24 bg-white shadow-sm ring-1 ring-gray-200 rounded-2xl p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Table of Contents</h2>
+            <nav className="space-y-2">
+              {sections.map(({ id, title, icon: Icon }) => (
+                <button
+                  key={id}
+                  onClick={() => scrollToSection(id)}
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 ${activeSection === id
+                      ? "bg-primary/10 text-primary font-semibold ring-1 ring-primary/20"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                    }`}
+                >
+                  <div className="flex items-center">
+                    <Icon className={`h-5 w-5 mr-3 ${activeSection === id ? "text-primary" : "text-gray-400"}`} />
+                    <span>{title}</span>
+                  </div>
+                  {activeSection === id && <ChevronRight className="h-4 w-4 text-primary" />}
+                </button>
+              ))}
+            </nav>
+          </div>
+        </div>
+
+        {/* Mobile Navigation */}
+        <div className="lg:hidden w-full bg-white shadow-sm ring-1 ring-gray-200 rounded-2xl p-5 mb-4">
+          <h2 className="text-lg font-bold text-gray-900 mb-4">Table of Contents</h2>
+          <div className="flex flex-wrap gap-2">
+            {sections.map(({ id, title }) => (
               <button
                 key={id}
                 onClick={() => scrollToSection(id)}
-                className={`flex items-center space-x-3 p-3 rounded-lg text-left transition-all duration-300 hover:bg-indigo-100 hover:shadow-md ${
-                  activeSection === id ? "bg-indigo-200 shadow-md" : ""
-                }`}
+                className={`px-4 py-2 text-sm rounded-full transition-colors ${activeSection === id
+                    ? "bg-primary text-white font-medium"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
               >
-                <Icon className="h-5 w-5 text-indigo-600 flex-shrink-0" />
-                <span className="text-indigo-700 font-medium">{title}</span>
+                {title}
               </button>
             ))}
-          </nav>
+          </div>
         </div>
 
-        <div className="space-y-8">
-          <section id="acceptance" className="scroll-mt-20">
-            <h2 className="text-3xl font-bold mb-4 text-gray-800 flex items-center space-x-3">
-              <FileText className="h-8 w-8 text-indigo-600" />
-              <span>1. Acceptance of Terms</span>
-            </h2>
-            <p className="text-gray-700 text-lg leading-relaxed">
-              By using <strong className="text-indigo-600">Student Era</strong>, you agree to these terms and conditions. Please read them carefully before using our services.
+        {/* Content Area */}
+        <div className="lg:w-2/3 bg-white shadow-sm ring-1 ring-gray-200 rounded-2xl p-8 md:p-10">
+          <div className="mb-12">
+            <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-4">
+              Terms & Conditions
+            </h1>
+            <p className="text-lg text-gray-600">
+              Please read these terms and conditions carefully before using our platform. Your use of Student Era indicates your acceptance of these terms.
             </p>
-          </section>
+          </div>
 
-          <section id="responsibilities" className="scroll-mt-20">
-            <h2 className="text-3xl font-bold mb-4 text-gray-800 flex items-center space-x-3">
-              <Users className="h-8 w-8 text-indigo-600" />
-              <span>2. User Responsibilities</span>
-            </h2>
-            <ul className="list-disc pl-8 text-gray-700 text-lg leading-relaxed space-y-2">
-              <li>Provide <strong className="text-indigo-600">accurate and complete information</strong> during registration and application.</li>
-              <li>Do not share your <strong className="text-indigo-600">account credentials</strong> with others.</li>
-              <li>Respect <strong className="text-indigo-600">deadlines and guidelines</strong> for internships and tasks.</li>
-            </ul>
-          </section>
+          <div className="space-y-12">
+            <section id="acceptance" className="scroll-mt-28">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="bg-primary/10 p-2 rounded-lg">
+                  <FileText className="h-6 w-6 text-primary" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">1. Acceptance of Terms</h2>
+              </div>
+              <p className="text-gray-600 leading-relaxed pl-11">
+                By using <strong className="text-gray-900">Student Era</strong>, you agree to these terms and conditions. If you do not agree with any part of these terms, please refrain from using our services.
+              </p>
+            </section>
 
-          <section id="privacy" className="scroll-mt-20">
-            <h2 className="text-3xl font-bold mb-4 text-gray-800 flex items-center space-x-3">
-              <Shield className="h-8 w-8 text-indigo-600" />
-              <span>3. Privacy Policy</span>
-            </h2>
-            <p className="text-gray-700 text-lg leading-relaxed">
-              We value your privacy. Your data will not be shared with third parties except as required by law or for service provision.
-            </p>
-          </section>
+            <div className="w-full h-[1px] bg-gray-100"></div>
 
-          <section id="changes" className="scroll-mt-20">
-            <h2 className="text-3xl font-bold mb-4 text-gray-800 flex items-center space-x-3">
-              <RefreshCw className="h-8 w-8 text-indigo-600" />
-              <span>4. Changes to Terms</span>
-            </h2>
-            <p className="text-gray-700 text-lg leading-relaxed">
-              <strong className="text-indigo-600">Student Era</strong> reserves the right to update these terms at any time. Continued use of the platform constitutes acceptance of the new terms.
-            </p>
-          </section>
+            <section id="responsibilities" className="scroll-mt-28">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="bg-primary/10 p-2 rounded-lg">
+                  <Users className="h-6 w-6 text-primary" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">2. User Responsibilities</h2>
+              </div>
+              <ul className="list-disc pl-16 text-gray-600 leading-relaxed space-y-3 marker:text-primary">
+                <li>Provide <strong className="text-gray-900">accurate and complete information</strong> during registration and application.</li>
+                <li>Maintain the confidentiality and do not share your <strong className="text-gray-900">account credentials</strong> with others.</li>
+                <li>Respect and adhere to the <strong className="text-gray-900">deadlines and guidelines</strong> provided for internships and associated tasks.</li>
+                <li>Engage professionally with other users, administrators, and provided resources.</li>
+              </ul>
+            </section>
 
-          <section id="contact" className="scroll-mt-20">
-            <h2 className="text-3xl font-bold mb-4 text-gray-800 flex items-center space-x-3">
-              <Mail className="h-8 w-8 text-indigo-600" />
-              <span>5. Contact</span>
-            </h2>
-            <p className="text-gray-700 text-lg leading-relaxed">
-              For any questions, please <a href="/contact" className="text-indigo-600 underline hover:text-indigo-800 transition-colors duration-300 font-semibold">contact us</a>.
-            </p>
-          </section>
+            <div className="w-full h-[1px] bg-gray-100"></div>
+
+            <section id="privacy" className="scroll-mt-28">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="bg-primary/10 p-2 rounded-lg">
+                  <Shield className="h-6 w-6 text-primary" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">3. Privacy Policy</h2>
+              </div>
+              <p className="text-gray-600 leading-relaxed pl-11">
+                We deeply value your privacy. Your data will not be shared with third parties except as required by law or to directly facilitate the services you request. For detailed information, please review our comprehensive <Link to="/privacy" className="text-primary hover:text-primary-dark font-medium underline underline-offset-4">Privacy Policy</Link>.
+              </p>
+            </section>
+
+            <div className="w-full h-[1px] bg-gray-100"></div>
+
+            <section id="changes" className="scroll-mt-28">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="bg-primary/10 p-2 rounded-lg">
+                  <RefreshCw className="h-6 w-6 text-primary" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">4. Changes to Terms</h2>
+              </div>
+              <p className="text-gray-600 leading-relaxed pl-11">
+                <strong className="text-gray-900">Student Era</strong> reserves the right to consistently update and modify these terms at any time. We will notify users of significant changes, but your continued use of the platform constitutes your full acceptance of the new terms.
+              </p>
+            </section>
+
+            <div className="w-full h-[1px] bg-gray-100"></div>
+
+            <section id="contact" className="scroll-mt-28">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="bg-primary/10 p-2 rounded-lg">
+                  <Mail className="h-6 w-6 text-primary" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">5. Contact</h2>
+              </div>
+              <p className="text-gray-600 leading-relaxed pl-11">
+                For any questions or clarification regarding these Terms & Conditions, please <Link to="/contact" className="text-primary hover:text-primary-dark font-medium underline underline-offset-4">contact us</Link>. We are here to help and ensure you have a transparent experience on our platform.
+              </p>
+            </section>
+          </div>
         </div>
       </div>
     </div>

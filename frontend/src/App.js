@@ -35,6 +35,7 @@ import Transactions from "./pages/dashboard/Transactions";
 import Profile from "./pages/dashboard/Profile";
 import Certificates from "./pages/dashboard/Certificates";
 import OfferLetters from "./pages/dashboard/OfferLetters";
+import Documents from "./pages/dashboard/Documents";
 import UploadTask from "./pages/dashboard/UploadTask";
 import MyTasks from "./pages/dashboard/MyTasks";
 import PaymentPage from "./pages/PaymentPage";
@@ -210,8 +211,8 @@ const AppContent = () => {
             <Route path="/dashboard" element={<UserDashboard />}>
               <Route index element={<DashboardHome />} />
               <Route path="overview" element={<DashboardHome />} />
-              <Route path="transactions" element={<Transactions />} />
-              <Route path="certificates" element={<Certificates />} />
+              <Route path="billing" element={<Transactions />} />
+              <Route path="documents" element={<Documents />} />
               <Route path="profile" element={<Profile />} />
               <Route
                 path="applied-internships"
@@ -219,9 +220,8 @@ const AppContent = () => {
               />
               <Route path="meetings" element={<Meetings />} />
               <Route path="notifications" element={<Notifications />} />
-              <Route path="offer-letters" element={<OfferLetters />} />
-              <Route path="upload-task" element={<UploadTask />} />
               <Route path="my-tasks" element={<MyTasks />} />
+              <Route path="upload-task" element={<UploadTask />} />
               <Route path="help" element={<Help />} />
               <Route path="feedback" element={<Feedback />} />
               <Route path="delete-account" element={<DeleteAccount />} />

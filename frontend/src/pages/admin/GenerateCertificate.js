@@ -144,8 +144,7 @@ const GenerateCertificate = () => {
         err.response?.data
       );
       alert(
-        `Error: ${
-          err.response?.data?.message || "Failed to process certificate"
+        `Error: ${err.response?.data?.message || "Failed to process certificate"
         }`
       );
     } finally {
@@ -183,10 +182,10 @@ const GenerateCertificate = () => {
         users.find((u) => u.internId === userInternId) ||
         (cert.user?.internId
           ? {
-              internId: cert.user.internId,
-              name: cert.user.name,
-              email: cert.user.email,
-            }
+            internId: cert.user.internId,
+            name: cert.user.name,
+            email: cert.user.email,
+          }
           : null);
 
       // Find internship to set display
@@ -208,8 +207,7 @@ const GenerateCertificate = () => {
 
       if (userObj) {
         setSelectedUserDisplay(
-          `${userObj.internId} - ${userObj.name}${
-            userObj.email ? ` (${userObj.email})` : ""
+          `${userObj.internId} - ${userObj.name}${userObj.email ? ` (${userObj.email})` : ""
           }`
         );
       }
@@ -308,8 +306,7 @@ const GenerateCertificate = () => {
         candidateName: selectedUser.name || "",
       }));
       setSelectedUserDisplay(
-        `${selectedUser.internId} - ${selectedUser.name}${
-          selectedUser.email ? ` (${selectedUser.email})` : ""
+        `${selectedUser.internId} - ${selectedUser.name}${selectedUser.email ? ` (${selectedUser.email})` : ""
         }`
       );
       setSearchTerm("");
@@ -443,76 +440,121 @@ const GenerateCertificate = () => {
     }
   };
 
+  const formattedDateValue = completionDate
+    ? new Date(completionDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+    : "Month DD, YYYY";
+
   // HTML/CSS Certificate Preview
   const certHTML = `
     <!DOCTYPE html>
     <html><head><meta charset='utf-8'>
     <style>
-    body { background: #f4f4f4; margin: 0; }
+    body { background: #f8fafc; margin: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     .certificate {
-      background: #fff;
-      margin: 40px auto;
-      padding: 40px 60px;
-      border-radius: 16px;
-      max-width: 1100px;
-      min-height: 600px;
-      box-shadow: 0 4px 32px rgba(44,62,80,0.10);
-      border: 3px solid #1e293b;
+      background: #ffffff;
+      width: 100%;
+      aspect-ratio: 1.414; /* A4 landscape roughly */
+      max-width: 1000px;
       position: relative;
-      font-family: 'Segoe UI', Arial, sans-serif;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      overflow: hidden;
+      border-top: 15px solid #4f46e5;
+      border-bottom: 15px solid #1e293b;
+      box-sizing: border-box;
+      padding: 0;
+    }
+    .inner-border {
+      position: absolute;
+      top: 20px; bottom: 20px; left: 20px; right: 20px;
+      border: 1px solid #e2e8f0;
+      pointer-events: none;
+      z-index: 10;
     }
     .watermark {
       position: absolute;
       top: 50%; left: 50%;
       transform: translate(-50%, -50%) rotate(-30deg);
-      font-size: 6rem;
+      font-size: 8rem;
+      font-weight: 800;
       color: #4f46e5;
-      opacity: 0.08;
+      opacity: 0.03;
       pointer-events: none;
       user-select: none;
-      z-index: 0;
+      z-index: 1;
+      white-space: nowrap;
+    }
+    .content-wrapper {
+      position: relative;
+      z-index: 5;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 50px 60px;
+      box-sizing: border-box;
     }
     .logo {
-      display: block;
-      margin: 40px auto 0 auto;
-      height: 120px;
-      max-width: 300px;
-      object-fit: contain;
+      height: 75px; width: 75px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 30px;
     }
-    .title { text-align: center; font-size: 2.8rem; font-weight: bold; color: #1e293b; margin: 48px 0 12px 0; }
-    .subtitle { text-align: center; font-size: 1.2rem; color: #333; margin-bottom: 24px; }
-    .name { text-align: center; font-size: 2.2rem; font-weight: bold; color: #0e7490; margin-bottom: 8px; }
-    .desc { text-align: center; font-size: 1.1rem; color: #222; margin-bottom: 8px; }
-    .internship { text-align: center; font-size: 1.5rem; font-weight: bold; color: #1e293b; margin-bottom: 8px; }
-    .info { text-align: center; font-size: 1.1rem; color: #444; margin-bottom: 4px; }
-    .cert-id { text-align: center; font-size: 1rem; color: #666; margin-bottom: 24px; }
-    .signature { position: absolute; left: 60px; bottom: 60px; font-size: 1.1rem; color: #222; }
-    .for { position: absolute; right: 60px; bottom: 60px; font-size: 1.1rem; color: #222; }
+    .title { font-size: 2rem; font-weight: 800; color: #0f172a; letter-spacing: 2px; margin-bottom: 25px; }
+    .subtitle { font-size: 1.1rem; color: #64748b; margin-bottom: 25px; }
+    .name { font-size: 3.2rem; font-weight: 800; color: #4f46e5; margin-bottom: 25px; }
+    .desc { font-size: 1.1rem; color: #64748b; margin-bottom: 15px; }
+    .internship { font-size: 1.4rem; font-weight: 800; color: #0f172a; margin-bottom: 40px; }
+    .details-grid {
+      display: grid;
+      grid-template-columns: max-content auto;
+      row-gap: 12px;
+      column-gap: 10px;
+      text-align: left;
+      font-size: 1rem;
+    }
+    .label { color: #64748b; text-align: right; }
+    .value { font-weight: bold; color: #0f172a; }
+    .footer {
+      position: absolute;
+      bottom: 50px; left: 60px; right: 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .partner-logos { display: flex; align-items: center; gap: 20px; }
+    .partner-label { background: #f1f5f9; padding: 10px 16px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; color: #64748b; border: 1px solid #e2e8f0; }
+    .signature-block { width: 280px; text-align: center; position: relative; }
+    .sig-line { border-top: 1px solid #94a3b8; margin-bottom: 12px; }
+    .sig-name { font-weight: 800; color: #0f172a; font-size: 1.1rem; margin-bottom: 4px; }
+    .sig-title { color: #64748b; font-size: 0.9rem; }
+    .stamp { position: absolute; right: -15px; bottom: 20px; width: 70px; opacity: 0.4; pointer-events: none; }
     </style></head><body>
     <div class='certificate'>
+      <div class='inner-border'></div>
       <div class='watermark'>Student Era</div>
-      <!-- For React app: -->
-      <img src='/logo.png' alt='Logo' class='logo' />
-      <!-- For static HTML: <img src='../../../public/logo.png' alt='Logo' class='logo' /> -->
-      <div class='title'>Certificate of Completion</div>
-      <div class='subtitle'>This is to certify that</div>
-      <div class='name'>${candidateName || "Shubham Kumar"}</div>
-      <div class='desc'>has successfully completed the internship in</div>
-      <div class='internship'>${
-        internshipTitle || "MERN Stack Development"
-      }</div>
-      <div class='info'>Duration: ${duration || "4 Weeks"}</div>
-      <div class='info'>Completion Date: ${completionDate || "2024-06-01"}</div>
-      <div class='cert-id'>Certificate ID: ${
-        certificateId || "SE-CERT-123456"
-      }</div>
-      <div class='signature'>
-        _________________________<br>
-        ${signatureName || "Authorized Signature"}
+      <div class='content-wrapper'>
+        <img src='/logo512.png' alt='Logo' class='logo' onerror="this.style.display='none'" />
+        <div class='title'>CERTIFICATE OF COMPLETION</div>
+        <div class='subtitle'>This is to certify that</div>
+        <div class='name'>${candidateName || "Candidate Name"}</div>
+        <div class='desc'>has successfully completed the internship in</div>
+        <div class='internship'>${internshipTitle || "Internship Title"}</div>
+        <div class='details-grid'>
+          <div class='label'>Duration:</div><div class='value'>${duration || "________"}</div>
+          <div class='label'>Completion Date:</div><div class='value'>${formattedDateValue}</div>
+          <div class='label'>Certificate ID:</div><div class='value'>${certificateId || "SE-CERT-ID"}</div>
+        </div>
       </div>
-      <div class='for'>
-        For Student Era
-        <img src='/stamp.png' alt='Stamp' style='display:inline-block;vertical-align:middle;width:80px;margin-left:16px;' />
+      <div class='footer'>
+        <div class='partner-logos'>
+          <div class='partner-label'>Recognized by MSME & Startup India</div>
+        </div>
+        <div class='signature-block'>
+          <img src='/stamp.png' alt='Stamp' class='stamp' onerror="this.style.display='none'" />
+          <div class='sig-line'></div>
+          <div class='sig-name'>${signatureName || "Authorized Signature"}</div>
+          <div class='sig-title'>For Student Era</div>
+        </div>
       </div>
     </div>
     </body></html>
@@ -855,17 +897,16 @@ const GenerateCertificate = () => {
             <button
               type="submit"
               disabled={(certificateExists && !editingId) || isGenerating}
-              className={`px-4 py-2 rounded-md text-white flex-1 ${
-                certificateExists && !editingId
+              className={`px-4 py-2 rounded-md text-white flex-1 ${certificateExists && !editingId
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-blue-600 hover:bg-blue-700"
-              }`}
+                }`}
             >
               {isGenerating
                 ? "Processing..."
                 : editingId
-                ? "Update Certificate"
-                : "Generate Certificate"}
+                  ? "Update Certificate"
+                  : "Generate Certificate"}
             </button>
           </div>
         </form>

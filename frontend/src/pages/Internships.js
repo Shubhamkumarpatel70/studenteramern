@@ -1,67 +1,58 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../config/api';
-import { Loader2, AlertCircle, Briefcase, Calendar, MapPin, IndianRupee } from 'lucide-react';
+import Footer from '../components/Footer';
+import { Loader2, AlertCircle, Briefcase, ArrowRight } from 'lucide-react';
 
-const InternshipCard = ({ internship }) => {
-    return (
-        <div className="bg-white bg-opacity-95 rounded-2xl shadow-xl overflow-hidden border border-indigo-100 group relative">
-            {internship.image && (
-                <div className="relative overflow-hidden">
-                    <img src={internship.image} alt={internship.title} className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300" />
-                    {internship.tag && (
-                        <span 
-                            className="absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-semibold text-white shadow-lg z-10"
-                            style={{ backgroundColor: internship.tagColor || '#3B82F6' }}
-                        >
-                            {internship.tag}
-                        </span>
-                    )}
-                </div>
-            )}
-            {!internship.image && internship.tag && (
-                <span 
-                    className="absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-semibold text-white shadow-lg z-10"
-                    style={{ backgroundColor: internship.tagColor || '#3B82F6' }}
-                >
+const InternshipCard = ({ internship }) => (
+    <div className="bg-white rounded-xl border border-gray-200 p-6 flex flex-col hover:border-blue-300 transition-colors shadow-sm">
+        <div className="flex items-start justify-between mb-4">
+            <h3 className="text-xl font-bold text-gray-900 line-clamp-2">
+                {internship.title}
+            </h3>
+            {internship.tag && (
+                <span className="px-2.5 py-1 rounded bg-blue-50 text-blue-700 text-[10px] font-bold uppercase tracking-wider border border-blue-200 shrink-0 ml-3">
                     {internship.tag}
                 </span>
             )}
-            <div className="p-6">
-                <h3 className="text-2xl font-extrabold mb-3 text-indigo-800 font-sans">{internship.title}</h3>
-                <p className="text-gray-600 mb-4 h-20 overflow-hidden font-sans leading-relaxed">{internship.shortDescription}</p>
+        </div>
+        <p className="text-sm text-gray-500 mb-6 flex-1 line-clamp-3 leading-relaxed">
+            {internship.shortDescription || internship.description}
+        </p>
 
-                <div className="space-y-3 mb-6">
-                    <div className="flex items-center gap-3 text-gray-700">
-                        <IndianRupee className="h-5 w-5 text-indigo-600 flex-shrink-0" />
-                        <div>
-                            <span className="text-sm text-gray-500">Stipend</span>
-                            <p className="font-semibold">₹{internship.stipend}</p>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-3 text-gray-700">
-                        <Calendar className="h-5 w-5 text-indigo-600 flex-shrink-0" />
-                        <div>
-                            <span className="text-sm text-gray-500">Duration</span>
-                            <p className="font-semibold">{internship.duration}</p>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-3 text-gray-700">
-                        <MapPin className="h-5 w-5 text-indigo-600 flex-shrink-0" />
-                        <div>
-                            <span className="text-sm text-gray-500">Location</span>
-                            <p className="font-semibold">{internship.location}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <Link to={`/internships/${internship._id}`} className="w-full text-center block bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 font-sans">
-                    View Details
-                </Link>
+        <div className="grid grid-cols-2 gap-4 mb-6">
+            <div>
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">Duration</p>
+                <p className="text-sm font-semibold text-gray-900">{internship.duration}</p>
+            </div>
+            <div>
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">Stipend</p>
+                <p className="text-sm font-semibold text-gray-900">₹{internship.stipend}</p>
             </div>
         </div>
-    );
-};
+
+        {Array.isArray(internship.technologies) && (
+            <div className="flex flex-wrap gap-1.5 mb-6">
+                {internship.technologies.slice(0, 4).map((tech) => (
+                    <span
+                        key={tech}
+                        className="bg-gray-100 text-gray-600 text-xs font-medium px-2 py-0.5 rounded border border-gray-200"
+                    >
+                        {tech}
+                    </span>
+                ))}
+            </div>
+        )}
+        <div className="pt-4 border-t border-gray-100 mt-auto">
+            <Link
+                to={`/internships/${internship._id}`}
+                className="flex items-center text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors"
+            >
+                View Full Details <ArrowRight className="ml-1.5 h-4 w-4" />
+            </Link>
+        </div>
+    </div>
+);
 
 const Internships = () => {
     const [internships, setInternships] = useState([]);
@@ -83,47 +74,49 @@ const Internships = () => {
         fetchInternships();
     }, []);
 
-    if (loading) return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-50">
-            <Loader2 className="animate-spin h-16 w-16 text-indigo-600" />
-        </div>
-    );
-
-    if (error) return (
-        <div className="flex flex-col justify-center items-center min-h-screen bg-gray-50 text-center p-4">
-            <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
-            <h2 className="text-2xl font-bold text-red-600">{error}</h2>
-        </div>
-    );
-
     return (
-        <div className="min-h-screen bg-gray-50 font-[Inter,sans-serif] py-8">
-            <div className="container mx-auto px-4 py-8">
-                <div className="text-center mb-12">
-                    <h1 className="text-5xl font-extrabold mb-4 text-indigo-800 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                        Available Internships
-                    </h1>
-                    <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                        Discover exciting internship opportunities to kickstart your career journey with hands-on experience and professional growth.
-                    </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {internships.map(internship => (
-                        <InternshipCard key={internship._id} internship={internship} />
-                    ))}
-                </div>
-
-                {internships.length === 0 && (
-                    <div className="text-center py-16">
-                        <Briefcase className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                        <h3 className="text-2xl font-bold text-gray-600 mb-2">No Internships Available</h3>
-                        <p className="text-gray-500">Check back later for new opportunities!</p>
+        <div className="min-h-screen bg-slate-50 font-sans flex flex-col">
+            <div className="flex-1 py-16 sm:py-24">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-16">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-700 font-semibold text-xs border border-blue-200 mb-4 uppercase tracking-wider">
+                            Enroll Today
+                        </span>
+                        <h1 className="text-4xl sm:text-5xl font-extrabold mb-6 text-gray-900 tracking-tight">
+                            Available Internships
+                        </h1>
+                        <p className="text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
+                            Discover structured internship programs to kickstart your career journey with verifiable hands-on execution.
+                        </p>
                     </div>
-                )}
+
+                    {loading ? (
+                        <div className="flex justify-center items-center py-20">
+                            <Loader2 className="animate-spin h-10 w-10 text-blue-600" />
+                        </div>
+                    ) : error ? (
+                        <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center max-w-2xl mx-auto">
+                            <AlertCircle className="h-10 w-10 text-red-500 mx-auto mb-4" />
+                            <h2 className="text-lg font-bold text-red-700">{error}</h2>
+                        </div>
+                    ) : internships.length === 0 ? (
+                        <div className="bg-white border border-gray-200 rounded-2xl p-16 text-center max-w-2xl mx-auto shadow-sm">
+                            <Briefcase className="h-14 w-14 text-gray-300 mx-auto mb-4" />
+                            <h3 className="text-2xl font-bold text-gray-900 mb-2">No Programs Available</h3>
+                            <p className="text-gray-500">Check back later for new internship batches!</p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                            {internships.map(internship => (
+                                <InternshipCard key={internship._id} internship={internship} />
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
+            <Footer />
         </div>
     );
 };
 
-export default Internships; 
+export default Internships;

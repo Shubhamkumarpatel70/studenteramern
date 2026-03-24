@@ -99,9 +99,9 @@ const GenerateOfferLetter = () => {
 
     const handleUserSelect = (selectedUser) => {
         if (selectedUser && selectedUser.internId) {
-            setFormData(prev => ({ 
-                ...prev, 
-                user: selectedUser.internId, 
+            setFormData(prev => ({
+                ...prev,
+                user: selectedUser.internId,
                 candidateName: selectedUser.name || '',
                 internId: selectedUser.internId || ''
             }));
@@ -125,7 +125,7 @@ const GenerateOfferLetter = () => {
         const value = e.target.value;
         setSearchTerm(value);
         setShowUserDropdown(true);
-        
+
         if (!value) {
             setFormData(prev => ({ ...prev, user: '', candidateName: '', internId: '' }));
             setSelectedUserDisplay('');
@@ -134,25 +134,25 @@ const GenerateOfferLetter = () => {
 
     const handleJobTitleSelect = (selectedInternship) => {
         if (selectedInternship) {
-            setFormData(prev => ({ 
-                ...prev, 
+            setFormData(prev => ({
+                ...prev,
                 title: selectedInternship.title,
                 stipend: selectedInternship.stipend || prev.stipend
             }));
             setSelectedJobTitleDisplay(selectedInternship.title);
             setJobTitleSearchTerm('');
             setShowJobTitleDropdown(false);
-            
+
             // Auto-select HR based on internship title
             const matchingHR = hrs.find(hr => {
                 if (!hr.isActive) return false;
                 const titleLower = selectedInternship.title.toLowerCase();
                 const categoryLower = hr.internshipCategory.toLowerCase();
                 // Check if title contains category or category contains title keywords
-                return titleLower.includes(categoryLower) || 
-                       categoryLower.includes(titleLower) ||
-                       titleLower.split(' ').some(word => categoryLower.includes(word)) ||
-                       categoryLower.split(' ').some(word => titleLower.includes(word));
+                return titleLower.includes(categoryLower) ||
+                    categoryLower.includes(titleLower) ||
+                    titleLower.split(' ').some(word => categoryLower.includes(word)) ||
+                    categoryLower.split(' ').some(word => titleLower.includes(word));
             });
             if (matchingHR) {
                 setFormData(prev => ({ ...prev, hrName: matchingHR.name }));
@@ -171,7 +171,7 @@ const GenerateOfferLetter = () => {
         const value = e.target.value;
         setJobTitleSearchTerm(value);
         setShowJobTitleDropdown(true);
-        
+
         if (!value) {
             setFormData(prev => ({ ...prev, title: '', stipend: '' }));
             setSelectedJobTitleDisplay('');
@@ -184,7 +184,7 @@ const GenerateOfferLetter = () => {
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (
-                dropdownRef.current && 
+                dropdownRef.current &&
                 !dropdownRef.current.contains(event.target) &&
                 searchInputRef.current &&
                 !searchInputRef.current.contains(event.target)
@@ -192,7 +192,7 @@ const GenerateOfferLetter = () => {
                 setShowUserDropdown(false);
             }
             if (
-                jobTitleDropdownRef.current && 
+                jobTitleDropdownRef.current &&
                 !jobTitleDropdownRef.current.contains(event.target) &&
                 jobTitleSearchInputRef.current &&
                 !jobTitleSearchInputRef.current.contains(event.target)
@@ -238,13 +238,13 @@ const GenerateOfferLetter = () => {
 
     const onSubmit = async e => {
         e.preventDefault();
-        
+
         // Validate that a user is selected
         if (!user) {
             alert('Please select a student from the search results.');
             return;
         }
-        
+
         if (localStorage.token) setAuthToken(localStorage.token);
         try {
             if (editingId) {
@@ -281,7 +281,7 @@ const GenerateOfferLetter = () => {
             const config = { headers: { Authorization: `Bearer ${token}` } };
             const res = await api.get(`/offer-letters/${letterId}`, config);
             const letter = res.data.data;
-            
+
             // Get internId from populated user data or find in users list
             let userInternId = '';
             if (letter.user?.internId) {
@@ -297,14 +297,14 @@ const GenerateOfferLetter = () => {
                     userInternId = userObj.internId;
                 }
             }
-            
+
             // Find the user object to set display
-            const userObj = users.find(u => u.internId === userInternId) || 
-                          (letter.user?.internId ? { internId: letter.user.internId, name: letter.user.name, email: letter.user.email } : null);
-            
+            const userObj = users.find(u => u.internId === userInternId) ||
+                (letter.user?.internId ? { internId: letter.user.internId, name: letter.user.name, email: letter.user.email } : null);
+
             // Find internship to set display
             const internshipObj = internships.find(i => i.title === letter.title);
-            
+
             setFormData({
                 user: userInternId,
                 candidateName: letter.candidateName || '',
@@ -317,11 +317,11 @@ const GenerateOfferLetter = () => {
                 stipend: letter.stipend || '',
                 hrName: letter.hrName || ''
             });
-            
+
             if (userObj) {
                 setSelectedUserDisplay(`${userObj.internId} - ${userObj.name}${userObj.email ? ` (${userObj.email})` : ''}`);
             }
-            
+
             if (internshipObj) {
                 setSelectedJobTitleDisplay(internshipObj.title);
                 // Find matching HR
@@ -329,10 +329,10 @@ const GenerateOfferLetter = () => {
                     if (!hr.isActive) return false;
                     const titleLower = internshipObj.title.toLowerCase();
                     const categoryLower = hr.internshipCategory.toLowerCase();
-                    return titleLower.includes(categoryLower) || 
-                           categoryLower.includes(titleLower) ||
-                           titleLower.split(' ').some(word => categoryLower.includes(word)) ||
-                           categoryLower.split(' ').some(word => titleLower.includes(word));
+                    return titleLower.includes(categoryLower) ||
+                        categoryLower.includes(titleLower) ||
+                        titleLower.split(' ').some(word => categoryLower.includes(word)) ||
+                        categoryLower.split(' ').some(word => titleLower.includes(word));
                 });
                 if (matchingHR && matchingHR.name === letter.hrName) {
                     setSelectedHR(matchingHR.name);
@@ -342,7 +342,7 @@ const GenerateOfferLetter = () => {
             } else if (letter.title) {
                 setSelectedJobTitleDisplay(letter.title);
             }
-            
+
             setEditingId(letterId);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (err) {
@@ -377,85 +377,105 @@ const GenerateOfferLetter = () => {
 
     // Helper to format date
     const formatDate = (date) => {
-      if (!date) return '__________';
-      try {
-        return new Date(date).toLocaleDateString();
-      } catch {
-        return date;
-      }
+        if (!date) return '__________';
+        try {
+            return new Date(date).toLocaleDateString();
+        } catch {
+            return date;
+        }
     };
 
     // HTML/CSS Offer Letter Preview
+    const formattedIssueDate = issueDate ? new Date(issueDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "Month DD, YYYY";
+    const formattedStartDate = startDate ? new Date(startDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "Month DD, YYYY";
+
     const offerLetterHTML = `
     <!DOCTYPE html>
     <html><head><meta charset='utf-8'>
     <style>
-    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #f4f4f4; }
-    .container { background: #fff; margin: 40px auto; padding: 56px 64px 48px 64px; border-radius: 16px; max-width: 950px; box-shadow: 0 4px 32px rgba(44,62,80,0.10); border: 2.5px solid #4f46e5; position: relative; min-height: 1100px; }
-    .header { display: flex; justify-content: flex-start; align-items: flex-start; border-bottom: none; margin-bottom: 0; }
-    .logo { height: 110px; margin: 0 24px 0 0; }
-    .company-info { margin-top: 10px; }
-    .company-name { font-size: 2.1rem; font-weight: bold; color: #4f46e5; letter-spacing: 2px; }
-    .address-block { font-size: 1.05rem; color: #444; line-height: 1.6; }
-    .line { height: 4px; background: #4f46e5; border: none; margin: 0 0 32px 0; }
-    .ref-date-row { display: flex; justify-content: space-between; margin: 24px 0 12px 0; font-size: 1.13rem; }
-    .subject-row { display: flex; justify-content: center; align-items: center; margin-bottom: 24px; }
-    .subject { font-weight: bold; text-decoration: underline; font-size: 1.5rem; color: #4f46e5; letter-spacing: 1px; }
-    .content { font-size: 1.18rem; color: #222; line-height: 1.8; margin-top: 36px; }
-    .highlight { font-weight: bold; color: #4f46e5; }
-    .confidential { font-weight: bold; text-align: center; margin: 28px 0 14px 0; text-decoration: underline; color: #b91c1c; }
-    .terms { margin: 0 0 28px 0; }
-    .terms li { margin-bottom: 12px; }
-    .footer { margin-top: 56px; font-size: 1.13rem; color: #555; position: relative; min-height: 120px; }
-    .footer .stamp-img { display:inline-block;vertical-align:middle;width:90px;margin-left:18px;opacity:0.55;position:relative;top:8px; }
-    .signatures { width: 100%; display: flex; justify-content: space-between; margin-top: 64px; font-size: 1.08rem; }
-    .sign-col { text-align: center; width: 24%; }
-    .watermark { position: absolute; top: 44%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-size: 5.5rem; color: #6366f1; opacity: 0.09; pointer-events: none; z-index: 0; user-select: none; }
+    body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; background: #f8fafc; display: flex; justify-content: center; padding: 20px; }
+    .container { background: #fff; width: 100%; max-width: 850px; padding: 60px 80px; box-sizing: border-box; box-shadow: 0 10px 40px rgba(0,0,0,0.05); position: relative; border-top: 8px solid #4f46e5; border-radius: 8px; }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
+    .logo { height: 60px; object-fit: contain; }
+    .company-details { text-align: right; }
+    .company-name { font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 8px; }
+    .address-block { font-size: 11px; color: #64748b; line-height: 1.6; }
+    .line { height: 1px; background: #e2e8f0; border: none; margin: 0 0 30px 0; }
+    .ref-date-row { display: flex; justify-content: space-between; margin-bottom: 40px; font-size: 13px; color: #475569; font-weight: bold; }
+    .subject { font-weight: 800; font-size: 18px; color: #0f172a; text-align: center; margin-bottom: 40px; letter-spacing: 1px; }
+    .greeting { font-size: 14px; color: #334155; margin-bottom: 20px; }
+    .greeting .highlight { font-weight: bold; color: #0f172a; }
+    .intern-id { font-size: 13px; color: #64748b; margin-bottom: 25px; }
+    .congrats { font-weight: 800; font-size: 15px; color: #0f172a; margin-bottom: 20px; }
+    .confidential { font-weight: bold; text-align: center; margin: 25px 0; color: #b91c1c; font-size: 13px; }
+    .content { font-size: 13px; color: #334155; line-height: 1.8; margin-bottom: 30px; }
+    .stipend { font-weight: bold; color: #4f46e5; font-size: 14px; margin: 25px 0; }
+    .terms { margin: 0 0 30px 0; padding-left: 20px; }
+    .terms li { margin-bottom: 8px; padding-left: 10px; }
+    .footer-text { font-weight: bold; font-size: 13px; color: #0f172a; margin-top: 20px; }
+    .signatures-section { display: flex; justify-content: space-between; margin-top: 60px; align-items: flex-end; position: relative; }
+    .company-sig { width: 200px; }
+    .company-sig-name { font-weight: 800; font-size: 14px; color: #0f172a; margin-bottom: 15px; }
+    .company-sig-img { height: 40px; margin-bottom: 10px; display: block; }
+    .hr-name { font-size: 12px; color: #64748b; }
+    .stamp-container { position: absolute; left: 220px; bottom: -20px; opacity: 0.4; pointer-events: none; }
+    .stamp-img { width: 80px; }
+    .intern-sigs { display: flex; justify-content: space-between; gap: 40px; margin-top: 100px; }
+    .sig-box { flex: 1; text-align: left; }
+    .sig-line { border-top: 1px solid #cbd5e1; padding-top: 8px; font-size: 11px; color: #64748b; }
+    .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-size: 8rem; font-weight: 800; color: #4f46e5; opacity: 0.02; pointer-events: none; z-index: 0; user-select: none; }
     </style></head><body>
     <div class='container'>
       <div class='watermark'>Student Era</div>
       <div class='header'>
-        <img src='/logo512.png' alt='Company Logo' class='logo' />
-        <div class='company-info'>
-          <div class='company-name'>${company || 'Student Era'}</div>
-          <div class='address-block'>D-107, 91Springboard, Vyapar Marg, Sector-2, Noida, UP 201301<br />info@studentera.com | www.studentera.com</div>
+        <img src='/logo512.png' alt='Logo' class='logo' onerror="this.style.display='none'" />
+        <div class='company-details'>
+          <div class='company-name'>${formData.company || 'Student Era'}</div>
+          <div class='address-block'>Patna, Bihar India, BR 800002<br />contact.studentera@gmail.com | www.studentera.com</div>
         </div>
       </div>
       <div class='line'></div>
       <div class='ref-date-row'>
         <div>REF: SE/INTERNSHIP/OFFER</div>
-        <div><span class='highlight'>Dated:</span> ${formatDate(issueDate)}</div>
+        <div>Date: ${formattedIssueDate}</div>
       </div>
-      <div class='subject-row'>
-        <div class='subject'>LETTER OF OFFER</div>
-      </div>
+      <div class='subject'>LETTER OF OFFER</div>
+      <div class='greeting'>Dear <span class='highlight'>${candidateName || 'Candidate Name'}</span>,</div>
+      <div class='intern-id'>Intern ID: ${internId && internId.trim() !== '' ? internId : '__________'}</div>
+      <div class='congrats'>Congratulations!</div>
+      <div class='confidential'>STRICTLY PRIVATE & CONFIDENTIAL</div>
       <div class='content'>
-        <p>Dear <span class='highlight'>${candidateName || 'Candidate Name'}</span>,<br />Intern ID: <span class='highlight'>${internId && internId.trim() !== '' ? internId : '__________'}</span></p>
-        <p>Congratulations!!</p>
-        <div class='confidential'>STRICTLY PRIVATE &amp; CONFIDENTIAL</div>
-        <p>We are pleased to offer you a Summer Internship with <span class='highlight'>${company || 'Student Era'}</span>, based on your application and the interview &amp; discussions you had with us. Details of the terms &amp; conditions of offer are as under:</p>
-        ${stipend && stipend > 0 ? `<p style='font-weight: bold; color: #1976d2; font-size: 1.15rem; margin: 20px 0;'>Stipend: ₹${stipend} /month</p>` : ''}
-        <ol class='terms'>
-          <li>You must always maintain utmost secrecy and confidentiality of your offer, its terms, and of any information about the company, and shall not disclose any such details to outsiders.</li>
-          <li>You will be designated as <span class='highlight'>${title || 'MERN Developer'}</span>.</li>
-          <li>Your date of commencement of internship will be from <span class='highlight'>${startDate && startDate.trim() !== '' ? formatDate(startDate) : '__________'}</span> in WFH mode.</li>
-          <li>You will be entitled to receive compensation and benefits as discussed at the time of interview.</li>
-          <li>You agree to work in both work environments i.e., WFH, Work from office.</li>
-          <li>${techPartner || 'Tech Partner'} shall be the official Technology Partner for this internship.</li>
-          <li>The company reserves all rights to withdraw this internship offer at any time without giving any reasons.</li>
-          <li>In addition to core responsibilities of this internship, the company may assign additional tasks or projects based on operational needs and availability. The intern is expected to contribute effectively to such assignments as per the company's discretion.</li>
-        </ol>
-        <p>Kindly sign and return a copy of this letter as a token of your acceptance of the offer.</p>
-        <p>Looking forward to a long and mutually beneficial career with us</p>
-        <div class='footer'>Yours truly,<br />For ${company || 'Student Era'}
-        <img src='/stamp.png' alt='Stamp' class='stamp-img' />
-        <br />${hrName || 'HR Name'} (HR)</div>
-        <div class='signatures'>
-          <div class='sign-col'>${hrName || 'HR Name'}<br /><span style='font-size:0.95em;'>(HR)</span></div>
-          <div class='sign-col'>Applicant Sign</div>
-          <div class='sign-col'>College</div>
-          <div class='sign-col'>Location</div>
+        We are pleased to offer you an Internship with ${formData.company || 'Student Era'}, based on your application and interview. Details of the terms & conditions of the offer are as under:
+      </div>
+      ${stipend && stipend > 0 ? `<div class='stipend'>Stipend: ₹${stipend} /month</div>` : ''}
+      <ol class='terms content'>
+        <li>You must always maintain utmost secrecy and confidentiality of your offer, its terms, and of any information about the company, and shall not disclose any such details to outsiders.</li>
+        <li>You will be designated as <span style="font-weight:bold">${title || 'Intern'}</span>.</li>
+        <li>Your date of commencement of internship will be from <span style="font-weight:bold">${formattedStartDate}</span> in WFH mode.</li>
+        <li>You will be entitled to receive compensation and benefits as discussed at the time of interview.</li>
+        <li>You agree to work in both work environments i.e., WFH, Work from office.</li>
+        <li>${techPartner || 'Student Era'} shall be the official Technology Partner for this internship.</li>
+        <li>The company reserves all rights to withdraw this internship offer at any time without giving any reasons.</li>
+        <li>In addition to core responsibilities of this internship, the company may assign additional tasks or projects based on operational needs and availability. The intern is expected to contribute effectively to such assignments as per the company's discretion.</li>
+      </ol>
+      <div class='content'>Kindly sign and return a copy of this letter as a token of your acceptance of the offer.</div>
+      <div class='footer-text'>Looking forward to a long and mutually beneficial career with us.</div>
+      
+      <div class='signatures-section'>
+        <div class='company-sig'>
+          <div class='company-sig-name'>For ${formData.company || 'Student Era'}</div>
+          <img src='' alt='' class='company-sig-img' onerror="this.style.display='none'" />
+          <div class='hr-name'>${hrName || 'HR Name'} (HR)</div>
         </div>
+        <div class='stamp-container'>
+          <img src='/stamp.png' alt='Stamp' class='stamp-img' onerror="this.style.display='none'" />
+        </div>
+      </div>
+
+      <div class='intern-sigs'>
+        <div class='sig-box'><div class='sig-line'>Intern's Signature</div></div>
+        <div class='sig-box'><div class='sig-line'>Date</div></div>
+        <div class='sig-box'><div class='sig-line'>College</div></div>
       </div>
     </div>
     </body></html>
@@ -508,9 +528,9 @@ const GenerateOfferLetter = () => {
                                         </button>
                                     )}
                                 </div>
-                                
+
                                 {showUserDropdown && searchTerm && filteredUsers.length > 0 && (
-                                    <div 
+                                    <div
                                         ref={dropdownRef}
                                         className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
                                     >
@@ -529,13 +549,13 @@ const GenerateOfferLetter = () => {
                                         ))}
                                     </div>
                                 )}
-                                
+
                                 {showUserDropdown && searchTerm && filteredUsers.length === 0 && (
                                     <div className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg p-4 text-center text-gray-500">
                                         No students found
                                     </div>
                                 )}
-                                
+
                                 <p className="mt-1 text-xs text-gray-500">
                                     {selectedUserDisplay ? 'Student selected. Click X to clear.' : 'Type to search for a student by ID, name, or email'}
                                 </p>
@@ -590,9 +610,9 @@ const GenerateOfferLetter = () => {
                                         </button>
                                     )}
                                 </div>
-                                
+
                                 {showJobTitleDropdown && jobTitleSearchTerm && filteredJobTitles.length > 0 && (
-                                    <div 
+                                    <div
                                         ref={jobTitleDropdownRef}
                                         className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
                                     >
@@ -613,13 +633,13 @@ const GenerateOfferLetter = () => {
                                         ))}
                                     </div>
                                 )}
-                                
+
                                 {showJobTitleDropdown && jobTitleSearchTerm && filteredJobTitles.length === 0 && (
                                     <div className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg p-4 text-center text-gray-500">
                                         No internships found
                                     </div>
                                 )}
-                                
+
                                 <p className="mt-1 text-xs text-gray-500">
                                     {selectedJobTitleDisplay ? 'Job title selected. Stipend auto-filled. Click X to clear.' : 'Type to search for an internship title'}
                                 </p>
@@ -647,13 +667,13 @@ const GenerateOfferLetter = () => {
                         <label className="block text-sm font-medium text-gray-700">Stipend (per month) - ₹</label>
                         <div className="relative">
                             <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-semibold">₹</span>
-                            <input 
-                                type="number" 
-                                name="stipend" 
-                                value={stipend} 
-                                onChange={onChange} 
-                                required 
-                                className="mt-1 block w-full pl-8 pr-3 py-2 border rounded-md" 
+                            <input
+                                type="number"
+                                name="stipend"
+                                value={stipend}
+                                onChange={onChange}
+                                required
+                                className="mt-1 block w-full pl-8 pr-3 py-2 border rounded-md"
                                 placeholder="Auto-filled when job title is selected"
                             />
                         </div>
@@ -669,14 +689,14 @@ const GenerateOfferLetter = () => {
                                 <span className="text-xs text-green-600 ml-2">(Auto-selected based on internship)</span>
                             </div>
                         ) : (
-                            <input 
-                                type="text" 
-                                name="hrName" 
-                                value={hrName} 
-                                onChange={onChange} 
-                                required 
-                                className="mt-1 block w-full px-3 py-2 border rounded-md" 
-                                placeholder="Enter HR Name" 
+                            <input
+                                type="text"
+                                name="hrName"
+                                value={hrName}
+                                onChange={onChange}
+                                required
+                                className="mt-1 block w-full px-3 py-2 border rounded-md"
+                                placeholder="Enter HR Name"
                             />
                         )}
                         {selectedHR && (
@@ -694,29 +714,28 @@ const GenerateOfferLetter = () => {
                     </div>
                     <div className="flex gap-2 flex-wrap">
                         {editingId && (
-                            <button 
-                                type="button" 
+                            <button
+                                type="button"
                                 onClick={handleCancelEdit}
                                 className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
                             >
                                 Cancel Edit
                             </button>
                         )}
-                        <button 
-                            type="button" 
-                            onClick={() => setShowPreview(!showPreview)} 
+                        <button
+                            type="button"
+                            onClick={() => setShowPreview(!showPreview)}
                             className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
                         >
                             {showPreview ? 'Hide' : 'Preview'}
                         </button>
-                        <button 
-                            type="submit" 
+                        <button
+                            type="submit"
                             disabled={offerLetterExists && !editingId}
-                            className={`px-4 py-2 rounded-md text-white flex-1 ${
-                                (offerLetterExists && !editingId)
-                                    ? 'bg-gray-400 cursor-not-allowed' 
+                            className={`px-4 py-2 rounded-md text-white flex-1 ${(offerLetterExists && !editingId)
+                                    ? 'bg-gray-400 cursor-not-allowed'
                                     : 'bg-blue-600 hover:bg-blue-700'
-                            }`}
+                                }`}
                         >
                             {editingId ? 'Update Offer Letter' : 'Generate Offer Letter'}
                         </button>

@@ -4,176 +4,157 @@ const path = require("path");
 
 function generateCertificatePDF(certificate, outputPath) {
   return new Promise((resolve, reject) => {
+    // A4 Landscape: 841.89 x 595.28 points
     const doc = new PDFDocument({
-      margin: 50,
+      margin: 0,
       size: "A4",
       layout: "landscape",
     });
     const stream = fs.createWriteStream(outputPath);
     doc.pipe(stream);
 
-    // Border with subtle shadow
-    doc.save();
-    doc
-      .rect(20, 20, doc.page.width - 40, doc.page.height - 40)
-      .lineWidth(3)
-      .stroke("#4f46e5");
-    doc.restore();
+    const width = doc.page.width;
+    const height = doc.page.height;
+
+    // Elegant Background
+    doc.rect(0, 0, width, height).fill("#ffffff");
+
+    // Decorative Top & Bottom Borders (Minimal Corporate Style)
+    doc.rect(0, 0, width, 15).fill("#4f46e5"); // Top banner primary
+    doc.rect(0, height - 15, width, 15).fill("#1e293b"); // Bottom banner dark slate
+
+    // Inner subtle border
+    doc.rect(20, 35, width - 40, height - 70).lineWidth(1).stroke("#e2e8f0");
 
     // Watermark
     doc.save();
-    doc.rotate(-30, { origin: [doc.page.width / 2, doc.page.height / 2] });
+    doc.rotate(-30, { origin: [width / 2, height / 2] });
     doc
       .font("Helvetica-Bold")
-      .fontSize(100)
+      .fontSize(120)
       .fillColor("#4f46e5")
-      .opacity(0.07)
-      .text("Student Era", doc.page.width / 2 - 300, doc.page.height / 2 - 50, {
+      .opacity(0.03)
+      .text("Student Era", width / 2 - 400, height / 2 - 60, {
         align: "center",
-        width: 600,
+        width: 800,
       });
     doc.opacity(1).restore();
 
-    // Centered logo (larger, circular)
-    // Try new logo first, fallback to old logo
+    // Centered Logo
     const newLogoPath = path.join(__dirname, "../templates/logo.png");
     const oldLogoPath = path.join(__dirname, "../templates/company-logo.png");
     const logoPath = fs.existsSync(newLogoPath) ? newLogoPath : oldLogoPath;
+
+    let currentY = 75;
+
     if (fs.existsSync(logoPath)) {
-      const logoSize = 100;
-      const logoX = doc.page.width / 2 - logoSize / 2;
-      const logoY = 35;
+      const logoSize = 75;
+      const logoX = width / 2 - logoSize / 2;
 
-      // Save the graphics state
       doc.save();
-
-      // Create a circular clipping path
-      doc
-        .circle(logoX + logoSize / 2, logoY + logoSize / 2, logoSize / 2)
-        .clip();
-
-      // Draw the image within the circular clip
-      doc.image(logoPath, logoX, logoY, { width: logoSize });
-
-      // Restore the graphics state
+      doc.circle(logoX + logoSize / 2, currentY + logoSize / 2, logoSize / 2).clip();
+      doc.image(logoPath, logoX, currentY, { width: logoSize, height: logoSize });
       doc.restore();
+      currentY += 95;
+    } else {
+      currentY += 40;
     }
 
     // Title
-    doc.moveDown(2);
     doc
-      .fontSize(38)
+      .fontSize(32)
       .font("Helvetica-Bold")
-      .fillColor("#1e293b")
-      .text("Certificate of Completion", 0, 150, { align: "center" });
-    doc.moveDown(0.5);
+      .fillColor("#0f172a")
+      .text("CERTIFICATE OF COMPLETION", 0, currentY, { align: "center", tracking: 2 });
+    currentY += 45;
+
     doc
-      .fontSize(18)
+      .fontSize(14)
       .font("Helvetica")
-      .fillColor("#333")
-      .text("This is to certify that", { align: "center" });
+      .fillColor("#64748b")
+      .text("This is to certify that", 0, currentY, { align: "center" });
+    currentY += 30;
 
     // Candidate Name
-    doc.moveDown(0.5);
     doc
-      .fontSize(30)
+      .fontSize(42)
       .font("Helvetica-Bold")
-      .fillColor("#0e7490")
-      .text(certificate.candidateName, { align: "center" });
-    doc.moveDown(0.5);
-    doc
-      .fontSize(18)
-      .font("Helvetica")
-      .fillColor("#222")
-      .text("has successfully completed the internship in", {
-        align: "center",
-      });
-    doc.moveDown(0.2);
-    doc
-      .fontSize(24)
-      .font("Helvetica-Bold")
-      .fillColor("#1e293b")
-      .text(certificate.internshipTitle, { align: "center" });
-    doc.moveDown(0.5);
-    doc
-      .fontSize(16)
-      .font("Helvetica")
-      .fillColor("#444")
-      .text(`Duration: ${certificate.duration}`, { align: "center" });
-    doc.moveDown(0.5);
-    doc
-      .fontSize(16)
-      .font("Helvetica")
-      .fillColor("#444")
-      .text(
-        `Completion Date: ${new Date(
-          certificate.completionDate
-        ).toLocaleDateString()}`,
-        { align: "center" }
-      );
-    doc.moveDown(0.5);
+      .fillColor("#4f46e5")
+      .text(certificate.candidateName, 0, currentY, { align: "center" });
+    currentY += 60;
+
+    // Description text
     doc
       .fontSize(14)
       .font("Helvetica")
-      .fillColor("#666")
-      .text(`Certificate ID: ${certificate.certificateId}`, {
+      .fillColor("#64748b")
+      .text("has successfully completed the internship in", 0, currentY, {
         align: "center",
       });
+    currentY += 25;
 
-    // MSME and Startup India Logos (bottom center)
-    const msmeLogoPath = path.join(__dirname, "../templates/msme.png");
-    const startupIndiaLogoPath = path.join(
-      __dirname,
-      "../templates/startup-india.png"
-    );
-    const logoY = doc.page.height - 120;
-    const centerX = doc.page.width / 2;
-
-    if (fs.existsSync(msmeLogoPath)) {
-      doc.image(msmeLogoPath, centerX - 120, logoY, {
-        width: 80,
-        height: 60,
-        fit: [80, 60],
-      });
-    }
-
-    if (fs.existsSync(startupIndiaLogoPath)) {
-      doc.image(startupIndiaLogoPath, centerX + 40, logoY, {
-        width: 80,
-        height: 60,
-        fit: [80, 60],
-      });
-    }
-
-    // Signature area (modern)
-    const y = doc.page.height - 110;
     doc
-      .fontSize(14)
-      .font("Helvetica")
-      .fillColor("#222")
-      .text("_________________________", 100, y, { align: "left" });
-    doc.text(certificate.signatureName || "Authorized Signature", 100, y + 20, {
-      align: "left",
-    });
+      .fontSize(20)
+      .font("Helvetica-Bold")
+      .fillColor("#0f172a")
+      .text(certificate.internshipTitle, 0, currentY, { align: "center" });
+    currentY += 45;
+
+    // Details Grid
+    const detailsY = currentY;
+    const labelX = width / 2 - 170;
+    const valueX = width / 2 + 10;
+
     doc
       .fontSize(12)
-      .fillColor("#1e293b")
-      .text("For Student Era", doc.page.width - 250, y + 20, { align: "left" });
-    const stampPath = path.join(__dirname, "../templates/stamp.png");
-    if (fs.existsSync(stampPath)) {
-      doc
-        .opacity(0.5)
-        .image(stampPath, doc.page.width - 170, y - 10, { width: 70 })
-        .opacity(1);
+      .font("Helvetica")
+      .fillColor("#64748b")
+      .text(`Duration:`, labelX, detailsY, { align: "right", width: 150 })
+      .font("Helvetica-Bold").fillColor("#0f172a").text(certificate.duration, valueX, detailsY, { align: "left" });
+
+    const formattedDate = certificate.completionDate
+      ? new Date(certificate.completionDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+      : "N/A";
+
+    doc
+      .fontSize(12)
+      .font("Helvetica")
+      .fillColor("#64748b")
+      .text(`Completion Date:`, labelX, detailsY + 22, { align: "right", width: 150 })
+      .font("Helvetica-Bold").fillColor("#0f172a").text(formattedDate, valueX, detailsY + 22, { align: "left" });
+
+    doc
+      .fontSize(12)
+      .font("Helvetica")
+      .fillColor("#64748b")
+      .text(`Certificate ID:`, labelX, detailsY + 44, { align: "right", width: 150 })
+      .font("Helvetica-Bold").fillColor("#0f172a").text(certificate.certificateId, valueX, detailsY + 44, { align: "left" });
+
+    // Footer section (Logos, Signatures)
+    const footerY = height - 120;
+
+    // MSME & Startup India logos on the left
+    const msmeLogoPath = path.join(__dirname, "../templates/msme.png");
+    const startupIndiaLogoPath = path.join(__dirname, "../templates/startup-india.png");
+
+    if (fs.existsSync(msmeLogoPath)) {
+      doc.image(msmeLogoPath, 60, footerY + 5, { width: 60 });
+    }
+    if (fs.existsSync(startupIndiaLogoPath)) {
+      doc.image(startupIndiaLogoPath, 140, footerY + 5, { width: 70 });
     }
 
-    // Optional: QR code for verification (bottom right)
-    // Uncomment if you want to add QR code support
-    // const QRCode = require('qrcode');
-    // const qrData = `https://studentera.live/verify-certificate/${certificate.certificateId}`;
-    // QRCode.toDataURL(qrData, (err, url) => {
-    //   if (!err) doc.image(url, doc.page.width - 120, doc.page.height - 120, { width: 80 });
-    // });
+    // Signature Area on the right
+    const sigX = width - 300;
+    doc.moveTo(sigX, footerY + 25).lineTo(sigX + 240, footerY + 25).lineWidth(1).strokeColor("#94a3b8").stroke();
+
+    doc.fontSize(13).font("Helvetica-Bold").fillColor("#0f172a").text(certificate.signatureName || "Authorized Signature", sigX, footerY + 35, { align: "center", width: 240 });
+    doc.fontSize(10).font("Helvetica").fillColor("#64748b").text("For Student Era", sigX, footerY + 52, { align: "center", width: 240 });
+
+    const stampPath = path.join(__dirname, "../templates/stamp.png");
+    if (fs.existsSync(stampPath)) {
+      doc.opacity(0.4).image(stampPath, sigX + 160, footerY - 25, { width: 70 }).opacity(1);
+    }
 
     doc.end();
     stream.on("finish", () => resolve());

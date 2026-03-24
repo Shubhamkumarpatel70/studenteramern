@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { UserIcon, EnvelopeIcon, ChatBubbleLeftIcon, PhoneIcon, MapPinIcon, ClockIcon } from "@heroicons/react/24/outline";
+import {
+  UserIcon,
+  EnvelopeIcon,
+  ChatBubbleLeftIcon,
+  PhoneIcon,
+  MapPinIcon,
+  ClockIcon,
+} from "@heroicons/react/24/outline";
 // Footer moved to App-level for specific pages (full-bleed display)
 
 const Contact = () => {
@@ -7,17 +14,18 @@ const Contact = () => {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setStatus("");
     try {
-      const res = await fetch('/api/contact-queries', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+      const res = await fetch("/api/contact-queries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
       });
       const data = await res.json();
       if (res.ok && data.success) {
@@ -33,7 +41,7 @@ const Contact = () => {
   };
 
   return (
-  <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4 py-8">
       <div className="bg-white p-8 rounded-lg shadow-md max-w-6xl w-full">
         <h1 className="text-5xl font-extrabold mb-8 text-gray-900 text-center">
           Contact Us
@@ -43,7 +51,8 @@ const Contact = () => {
           {/* Contact Form */}
           <div className="space-y-6">
             <p className="text-center text-gray-600 text-xl mb-8">
-              Have a question or need help? Fill out the form below and our team will get back to you soon.
+              Have a question or need help? Fill out the form below and our team
+              will get back to you soon.
             </p>
 
             <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
@@ -106,7 +115,7 @@ const Contact = () => {
 
             {status === "success" && (
               <div className="mt-6 p-4 bg-green-100 border-2 border-green-300 rounded-xl text-green-800 text-center font-bold text-lg animate-pulse">
-                Thank you! Your message has been sent successfully.
+                Thank you! Your response has been sent successfully.
               </div>
             )}
             {status === "error" && (
@@ -118,31 +127,48 @@ const Contact = () => {
 
           {/* Contact Information */}
           <div className="space-y-8">
-            <h2 className="text-3xl font-bold text-indigo-800 mb-6">Get in Touch</h2>
+            <h2 className="text-3xl font-bold text-indigo-800 mb-6">
+              Get in Touch
+            </h2>
 
             <div className="space-y-6">
               <div className="flex items-start space-x-4 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl shadow-lg">
                 <EnvelopeIcon className="h-8 w-8 text-indigo-600 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-xl font-bold text-indigo-800 mb-1">Email</h3>
-                  <p className="text-gray-700 text-lg">contact.studentera@gmail.com</p>
+                  <h3 className="text-xl font-bold text-indigo-800 mb-1">
+                    Email
+                  </h3>
+                  <p className="text-gray-700 text-lg">
+                    contact.studentera@gmail.com
+                  </p>
                 </div>
               </div>
 
-          
               <div className="flex items-start space-x-4 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl shadow-lg">
                 <MapPinIcon className="h-8 w-8 text-indigo-600 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-xl font-bold text-indigo-800 mb-1">Address</h3>
-                  <p className="text-gray-700 text-lg">Bihar<br />Patna,800002</p>
+                  <h3 className="text-xl font-bold text-indigo-800 mb-1">
+                    Address
+                  </h3>
+                  <p className="text-gray-700 text-lg">
+                    Bihar
+                    <br />
+                    Patna,800002
+                  </p>
                 </div>
               </div>
 
               <div className="flex items-start space-x-4 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl shadow-lg">
                 <ClockIcon className="h-8 w-8 text-indigo-600 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-xl font-bold text-indigo-800 mb-1">Working Hours</h3>
-                  <p className="text-gray-700 text-lg">Monday - Friday: 10:00 AM - 4:00 PM<br />Saturday: 10:00 AM - 3:00 PM</p>
+                  <h3 className="text-xl font-bold text-indigo-800 mb-1">
+                    Working Hours
+                  </h3>
+                  <p className="text-gray-700 text-lg">
+                    Monday - Friday: 10:00 AM - 4:00 PM
+                    <br />
+                    Saturday: 10:00 AM - 3:00 PM
+                  </p>
                 </div>
               </div>
             </div>

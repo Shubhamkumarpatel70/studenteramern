@@ -40,16 +40,13 @@ exports.generateCertificate = async (req, res, next) => {
       signatureName,
     } = req.body;
 
-    // Check if certificate already exists for same user and internship title
-    const existing = await Certificate.findOne({
-      user: userId,
-      internshipTitle: internshipTitle,
-    });
-    if (existing) {
-      return res.status(400).json({
-        success: false,
-        message: "Certificate already exists for this student and internship title. Please edit the existing certificate instead.",
-      });
+    // Ensure unique certificateId for same user/domain (allow multiple certificates for same intern/domain)
+    let baseCertificateId = certificateId;
+    let uniqueCertificateId = baseCertificateId;
+    let counter = 2;
+    while (await Certificate.findOne({ certificateId: uniqueCertificateId })) {
+      uniqueCertificateId = `${baseCertificateId}-${counter}`;
+      counter++;
     }
 
     const certificate = await Certificate.create({
@@ -58,7 +55,7 @@ exports.generateCertificate = async (req, res, next) => {
       internshipTitle,
       duration,
       completionDate,
-      certificateId,
+      certificateId: uniqueCertificateId,
       signatureName,
     });
     // Generate PDF
@@ -74,7 +71,7 @@ exports.generateCertificate = async (req, res, next) => {
         certificateId,
         signatureName,
       },
-      pdfPath
+      pdfPath,
     );
 
     // Upload to Cloudinary
@@ -105,7 +102,7 @@ exports.generateCertificate = async (req, res, next) => {
             completionDate: certificate.completionDate,
             certificateId: certificate.certificateId,
           },
-          result.secure_url
+          result.secure_url,
         );
 
         await sendEmail({
@@ -125,7 +122,7 @@ exports.generateCertificate = async (req, res, next) => {
     // Create notification for certificate generation
     await createNotification(
       user,
-      `Congratulations! Your certificate for "${internshipTitle}" has been issued. You can view and download it from your dashboard.`
+      `Congratulations! Your certificate for "${internshipTitle}" has been issued. You can view and download it from your dashboard.`,
     );
 
     // Remove local file after upload
@@ -157,7 +154,7 @@ exports.getMyCertificates = async (req, res, next) => {
   try {
     const certificates = await Certificate.find({ user: req.user.id }).populate(
       "user",
-      "name"
+      "name",
     );
     res
       .status(200)
@@ -301,7 +298,10 @@ exports.generateSelfCertificate = async (req, res, next) => {
 // @access  Private/Admin
 exports.getCertificateById = async (req, res, next) => {
   try {
-    const certificate = await Certificate.findById(req.params.id).populate('user', 'name email internId');
+    const certificate = await Certificate.findById(req.params.id).populate(
+      "user",
+      "name email internId",
+    );
     if (!certificate) {
       return res
         .status(404)
@@ -372,7 +372,7 @@ exports.updateCertificate = async (req, res, next) => {
         certificateId: certificate.certificateId,
         signatureName: certificate.signatureName,
       },
-      pdfPath
+      pdfPath,
     );
 
     // Upload updated PDF to Cloudinary
@@ -404,7 +404,7 @@ exports.updateCertificate = async (req, res, next) => {
             completionDate: certificate.completionDate,
             certificateId: certificate.certificateId,
           },
-          result.secure_url
+          result.secure_url,
         );
 
         await sendEmail({
@@ -414,7 +414,9 @@ exports.updateCertificate = async (req, res, next) => {
           html: emailTemplate.html,
         });
 
-        console.log(`Updated certificate email sent successfully to ${userDoc.email}`);
+        console.log(
+          `Updated certificate email sent successfully to ${userDoc.email}`,
+        );
       }
     } catch (emailError) {
       console.error("Failed to send updated certificate email:", emailError);

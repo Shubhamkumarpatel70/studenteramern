@@ -39,7 +39,7 @@ const Transactions = () => {
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 sm:mb-6">
                         <h2 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2">
                             <Briefcase className="h-5 w-5 sm:h-6 sm:w-6 text-indigo-600" />
-                            My Applied Internships
+                            My Applications
                         </h2>
                         {applications.length > 0 && (
                             <Link 

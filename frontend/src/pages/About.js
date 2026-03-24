@@ -1,236 +1,228 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
-import { Users, Award, BookOpen, Target, MessageCircle } from "lucide-react";
+import { Users, Award, BookOpen, Target, MessageCircle, Lightbulb, ShieldCheck, Handshake, Sparkles } from "lucide-react";
+import api from "../config/api";
 
 const About = () => {
   const navigate = useNavigate();
+  const [stats, setStats] = useState({
+    studentsTrained: 1000,
+    certificatesIssued: 100,
+    internshipTracks: 5,
+    successRate: 95
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await api.get('/dashboard/public-stats');
+        if (res.data.success && res.data.data) {
+          setStats(res.data.data);
+        }
+      } catch (error) {
+        console.error("Failed to load public stats", error);
+      }
+    };
+    fetchStats();
+  }, []);
 
   return (
-    <div className="min-h-screen bg-[#FFFFFF] flex flex-col font-[Inter,sans-serif]">
-      {/* Hero Section */}
-      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
-          {/* Left: Image/Graphic */}
-          <div className="flex-1 flex justify-center w-full md:w-auto">
-            <div className="bg-[#0A2463] rounded-2xl shadow-2xl flex flex-col items-center justify-center w-full max-w-sm sm:w-80 h-auto min-h-[320px] sm:h-80 border border-[#0A2463] group transition-transform duration-300 hover:scale-105 p-4 sm:p-6">
-              <span className="text-[#FFFFFF] text-base sm:text-lg font-semibold mb-2 mt-2 sm:mt-4 tracking-wider">
-                STUDENT ERA
-              </span>
-              <div className="flex flex-col items-center justify-center flex-1">
-                <span className="bg-[#28A745] text-[#FFFFFF] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-lg sm:text-xl md:text-2xl font-bold mb-2 shadow">
-                  WHY YOU SHOULD
-                </span>
-                <span className="bg-[#FFFFFF] text-[#0A2463] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-2xl sm:text-3xl md:text-4xl font-extrabold mb-2 shadow">
-                  CHOOSE
-                </span>
-                <span className="bg-[#28A745] text-[#FFFFFF] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-lg sm:text-xl md:text-2xl font-bold mb-2 shadow">
-                  OUR PLATFORM
-                </span>
-                <span className="text-[#FFFFFF] text-xs mt-2 sm:mt-4 tracking-widest">
-                  OUR ADVANTAGES
-                </span>
-              </div>
-            </div>
-          </div>
-          {/* Right: Mission and Core Values */}
-          <div className="flex-1 w-full">
-            <div className="bg-[#F8F9FA] rounded-2xl shadow-2xl p-6 sm:p-8 md:p-10 border border-[#0A2463] transition-transform duration-300 hover:scale-105">
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0A2463] mb-4 flex items-center gap-2">
-                Our Mission
-              </h2>
-              <p className="mb-6 text-[#212529] text-base sm:text-lg">
-                To bridge the gap between education and industry by equipping
-                students with cutting-edge knowledge, practical skills, and
-                real-world experience through innovative programs and expert
-                mentorship.
-              </p>
-              <h3 className="text-xl sm:text-2xl font-bold text-[#0A2463] mb-2 mt-4 sm:mt-6">
-                Core Values
-              </h3>
-              <ul className="space-y-3 text-base sm:text-lg">
-                <li className="flex items-start gap-3">
-                  <span className="text-[#28A745] text-xl sm:text-2xl flex-shrink-0">
-                    💡
-                  </span>{" "}
-                  <span className="text-[#212529]">
-                    <b>Innovation</b>: Pioneering creative solutions and
-                    future-ready approaches to education.
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-[#0A2463] text-xl sm:text-2xl flex-shrink-0">
-                    🛡️
-                  </span>{" "}
-                  <span className="text-[#212529]">
-                    <b>Integrity</b>: Upholding trust, transparency and ethical
-                    practices in all we do.
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-[#FD7E14] text-xl sm:text-2xl flex-shrink-0">
-                    🤝
-                  </span>{" "}
-                  <span className="text-[#212529]">
-                    <b>Collaboration</b>: Partnering with students, educators
-                    and industry for collective success.
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-[#28A745] text-xl sm:text-2xl flex-shrink-0">
-                    🏆
-                  </span>{" "}
-                  <span className="text-[#212529]">
-                    <b>Excellence</b>: Committing to the highest standards in
-                    learning and innovation.
-                  </span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        {/* Empowering Section */}
-        <div className="text-center mt-12 sm:mt-16">
-          <span className="inline-block bg-[#0A2463] text-[#FFFFFF] px-3 py-1 rounded-full text-sm sm:text-base font-semibold mb-2">
-            About STUDENT ERA
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
+
+      {/* Intro Section */}
+      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-16 sm:pt-24 pb-12 sm:pb-20">
+        <div className="text-center mb-16 sm:mb-24">
+          <span className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-700 font-semibold text-xs border border-blue-200 mb-4 uppercase tracking-wider">
+            About Student Era
           </span>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0A2463] mb-4 px-4">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 mb-6 tracking-tight">
             Empowering Future Leaders
           </h1>
-          <p className="text-lg sm:text-xl md:text-2xl text-[#212529] max-w-2xl mx-auto font-medium px-4">
-            We create transformative learning experiences that bridge academia
-            and industry, preparing students to excel in tomorrow's world.
+          <p className="text-lg sm:text-xl text-gray-500 max-w-3xl mx-auto leading-relaxed">
+            We create transformative learning experiences that bridge the gap between academia and the tech industry, preparing you to excel in tomorrow's world.
           </p>
         </div>
-        {/* Stats Section */}
-        <div className="mt-12 sm:mt-16 md:mt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
-          <div className="bg-[#F8F9FA] rounded-2xl shadow-xl p-6 text-center border border-[#0A2463]">
-            <Users className="w-12 h-12 text-[#0A2463] mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-[#0A2463]">1000+</h3>
-            <p className="text-[#212529]">Students Trained</p>
-          </div>
-          <div className="bg-[#F8F9FA] rounded-2xl shadow-xl p-6 text-center border border-[#0A2463]">
-            <Award className="w-12 h-12 text-[#28A745] mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-[#0A2463]">100+</h3>
-            <p className="text-[#212529]">Certificates Issued</p>
-          </div>
-          <div className="bg-[#F8F9FA] rounded-2xl shadow-xl p-6 text-center border border-[#0A2463]">
-            <BookOpen className="w-12 h-12 text-[#FD7E14] mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-[#0A2463]">5+</h3>
-            <p className="text-[#212529]">Internship Programs</p>
-          </div>
-          <div className="bg-[#F8F9FA] rounded-2xl shadow-xl p-6 text-center border border-[#0A2463]">
-            <Target className="w-12 h-12 text-[#0A2463] mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-[#0A2463]">95%</h3>
-            <p className="text-[#212529]">Success Rate</p>
-          </div>
-        </div>
-        {/* Certifications & Recognition */}
-        <div className="mt-12 sm:mt-16 md:mt-20">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-center mb-6 sm:mb-8 text-[#0A2463] px-4">
-            Certifications & Recognition
-          </h2>
-          <div className="bg-[#F8F9FA] rounded-2xl shadow-xl p-6 sm:p-8 md:p-10 border border-[#0A2463]">
-            <p className="text-center text-lg sm:text-xl text-[#212529] mb-6 sm:mb-8 font-medium">
-              We are proud to be officially recognized and registered with
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+          {/* Left: Mission */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 sm:p-10 lg:p-12 h-full flex flex-col justify-center">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-4">
+              Our Mission
+            </h2>
+            <p className="text-gray-600 text-lg leading-relaxed">
+              To bridge the gap between education and industry by equipping
+              students with cutting-edge knowledge, practical skills, and
+              real-world experience through structured internship programs and
+              expert mentorship.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-12 md:gap-16">
-              {/* MSME Logo */}
-              <div className="flex flex-col items-center group">
-                <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 transition-transform duration-300 hover:scale-105 border-2 border-[#0A2463]">
-                  <img
-                    src="/msme.png"
-                    alt="MSME Registered"
-                    className="h-24 sm:h-28 md:h-32 w-auto object-contain"
-                  />
+          </div>
+
+          {/* Right: Core Values */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 sm:p-10 lg:p-12">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-8">
+              Core Values
+            </h2>
+            <ul className="space-y-6">
+              <li className="flex items-start gap-4">
+                <div className="bg-blue-50 p-2.5 rounded-lg text-blue-600 shrink-0 border border-blue-100 mt-0.5">
+                  <Lightbulb className="w-5 h-5" />
                 </div>
-                <p className="mt-4 text-[#0A2463] font-semibold text-base sm:text-lg">
-                  MSME Registered
-                </p>
-              </div>
-              {/* Startup India Logo */}
-              <div className="flex flex-col items-center group">
-                <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 transition-transform duration-300 hover:scale-105 border-2 border-[#0A2463]">
-                  <img
-                    src="/startup india.png"
-                    alt="Startup India Registered"
-                    className="h-24 sm:h-28 md:h-32 w-auto object-contain"
-                  />
+                <div>
+                  <h4 className="font-bold text-gray-900 text-lg mb-1">Innovation</h4>
+                  <p className="text-gray-600">Pioneering creative solutions and future-ready approaches to tech education.</p>
                 </div>
-                <p className="mt-4 text-[#0A2463] font-semibold text-base sm:text-lg">
-                  Startup India Registered
-                </p>
-              </div>
-            </div>
+              </li>
+              <li className="flex items-start gap-4">
+                <div className="bg-slate-50 p-2.5 rounded-lg text-slate-600 shrink-0 border border-slate-200 mt-0.5">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 text-lg mb-1">Integrity</h4>
+                  <p className="text-gray-600">Upholding absolute trust, transparency, and ethical practices in our certifications.</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-4">
+                <div className="bg-green-50 p-2.5 rounded-lg text-green-600 shrink-0 border border-green-100 mt-0.5">
+                  <Handshake className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 text-lg mb-1">Collaboration</h4>
+                  <p className="text-gray-600">Partnering with students, educators, and industry leaders for collective success.</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-4">
+                <div className="bg-indigo-50 p-2.5 rounded-lg text-indigo-600 shrink-0 border border-indigo-100 mt-0.5">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 text-lg mb-1">Excellence</h4>
+                  <p className="text-gray-600">Committing to the absolute highest standards in deliverables and platform quality.</p>
+                </div>
+              </li>
+            </ul>
           </div>
         </div>
+
+        {/* Stats Section */}
+        <div className="mt-16 sm:mt-24 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+          <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8 text-center border border-gray-200 flex flex-col items-center justify-center">
+            <Users className="w-8 h-8 text-blue-600 mb-4" />
+            <h3 className="text-3xl font-extrabold text-gray-900 mb-1">{stats.studentsTrained}+</h3>
+            <p className="text-gray-500 font-medium text-sm">Students Trained</p>
+          </div>
+          <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8 text-center border border-gray-200 flex flex-col items-center justify-center">
+            <Award className="w-8 h-8 text-green-500 mb-4" />
+            <h3 className="text-3xl font-extrabold text-gray-900 mb-1">{stats.certificatesIssued}+</h3>
+            <p className="text-gray-500 font-medium text-sm">Certificates Issued</p>
+          </div>
+          <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8 text-center border border-gray-200 flex flex-col items-center justify-center">
+            <BookOpen className="w-8 h-8 text-orange-500 mb-4" />
+            <h3 className="text-3xl font-extrabold text-gray-900 mb-1">{stats.internshipTracks}+</h3>
+            <p className="text-gray-500 font-medium text-sm">Internship Tracks</p>
+          </div>
+          <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8 text-center border border-gray-200 flex flex-col items-center justify-center">
+            <Target className="w-8 h-8 text-indigo-600 mb-4" />
+            <h3 className="text-3xl font-extrabold text-gray-900 mb-1">{stats.successRate}%</h3>
+            <p className="text-gray-500 font-medium text-sm">Success Rate</p>
+          </div>
+        </div>
+
         {/* Approach to Learning */}
-        <div className="mt-12 sm:mt-16 md:mt-20">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-center mb-6 sm:mb-8 md:mb-10 text-[#0A2463] px-4">
-            Our Approach to Learning
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
-            <div className="bg-[#F8F9FA] rounded-2xl shadow-xl p-8 flex flex-col items-center border border-[#0A2463] group transition-transform duration-300 hover:scale-105">
-              <div className="w-20 h-20 bg-[#0A2463] rounded-full flex items-center justify-center mb-4">
-                <span className="text-[#FFFFFF] text-3xl">💡</span>
+        <div className="mt-24 sm:mt-32">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">
+              Our Pedagogical Approach
+            </h2>
+            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+              We focus on building strong foundations, backed by real, deployable projects.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+            <div className="bg-white rounded-2xl shadow-sm p-8 lg:p-10 border border-gray-200 hover:border-blue-200 transition-colors">
+              <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6 border border-blue-100">
+                <Lightbulb className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-xl mb-2 text-[#0A2463]">
+              <h3 className="font-bold text-xl text-gray-900 mb-3">
                 Innovative Learning
               </h3>
-              <p className="text-[#212529] text-center text-lg">
+              <p className="text-gray-600 leading-relaxed">
                 Our programs foster creativity and critical thinking through
-                project-based learning, preparing students to lead with
-                innovative solutions.
+                project-based learning, preparing you to lead with innovative solutions in production environments.
               </p>
             </div>
-            <div className="bg-[#F8F9FA] rounded-2xl shadow-xl p-8 flex flex-col items-center border border-[#0A2463] group transition-transform duration-300 hover:scale-105">
-              <div className="w-20 h-20 bg-[#0A2463] rounded-full flex items-center justify-center mb-4">
-                <span className="text-[#FFFFFF] text-3xl">🧠</span>
+            <div className="bg-white rounded-2xl shadow-sm p-8 lg:p-10 border border-gray-200 hover:border-blue-200 transition-colors">
+              <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-6 border border-indigo-100">
+                <Users className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-xl mb-2 text-[#0A2463]">
+              <h3 className="font-bold text-xl text-gray-900 mb-3">
                 Empowering Minds
               </h3>
-              <p className="text-[#212529] text-center text-lg">
+              <p className="text-gray-600 leading-relaxed">
                 We equip students with technical skills, problem-solving
-                abilities, and the growth mindset needed to tackle real-world
-                challenges.
+                abilities, and the growth mindset needed to tackle highly complex
+                architectural challenges.
               </p>
             </div>
-            <div className="bg-[#F8F9FA] rounded-2xl shadow-xl p-8 flex flex-col items-center border border-[#0A2463] group transition-transform duration-300 hover:scale-105">
-              <div className="w-20 h-20 bg-[#0A2463] rounded-full flex items-center justify-center mb-4">
-                <span className="text-[#FFFFFF] text-3xl">🚀</span>
+            <div className="bg-white rounded-2xl shadow-sm p-8 lg:p-10 border border-gray-200 hover:border-blue-200 transition-colors">
+              <div className="w-14 h-14 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-6 border border-green-100">
+                <Target className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-xl mb-2 text-[#0A2463]">
-                Future-Ready Students
+              <h3 className="font-bold text-xl text-gray-900 mb-3">
+                Future-Ready Output
               </h3>
-              <p className="text-[#212529] text-center text-lg">
-                Our curriculum evolves with industry trends, helping students
-                adapt, innovate and succeed in an increasingly digital world.
+              <p className="text-gray-600 leading-relaxed">
+                Our curriculum evolves with industry trends, directly addressing the tech stack demands of modern SaaS organizations.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Contact Us Section */}
-        <div className="mt-12 sm:mt-16 md:mt-20">
-          <div className="bg-gradient-to-r from-[#0A2463] to-[#4f46e5] rounded-2xl shadow-2xl p-8 sm:p-12 md:p-16 text-center">
-            <MessageCircle className="w-16 h-16 text-white mx-auto mb-6" />
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-4">
-              Have Questions? We're Here to Help!
+        {/* Certifications & Recognition */}
+        <div className="mt-24 sm:mt-32">
+          <div className="text-center mb-10 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900">
+              Officially Recognized By
             </h2>
-            <p className="text-lg sm:text-xl text-white/90 max-w-2xl mx-auto mb-8">
-              Get in touch with us for any queries, support, or collaboration
-              opportunities. Our team is ready to assist you.
-            </p>
-            <button
-              onClick={() => navigate("/contact")}
-              className="bg-white text-[#0A2463] px-8 py-4 rounded-lg text-lg font-bold hover:bg-[#28A745] hover:text-white transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105"
-            >
-              Contact Us Now
-            </button>
+          </div>
+          <div className="bg-white rounded-2xl shadow-sm p-8 sm:p-12 border border-gray-200 flex flex-col sm:flex-row items-center justify-center gap-12 sm:gap-24">
+            <div className="flex flex-col items-center">
+              <img src="/msme.png" alt="MSME Registered" className="h-20 sm:h-24 w-auto object-contain grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all" />
+              <p className="mt-4 text-gray-500 font-semibold text-sm tracking-wide uppercase">MSME Certified</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <img src="/startup india.png" alt="Startup India Registered" className="h-20 sm:h-24 w-auto object-contain grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all" />
+              <p className="mt-4 text-gray-500 font-semibold text-sm tracking-wide uppercase">Startup India</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Contact CTA */}
+        <div className="mt-24 sm:mt-32">
+          <div className="bg-blue-600 rounded-2xl shadow-lg p-10 sm:p-16 text-center relative overflow-hidden">
+            {/* Background pattern */}
+            <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
+
+            <div className="relative z-10">
+              <MessageCircle className="w-12 h-12 text-white/90 mx-auto mb-6" />
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4">
+                Ready to accelerate your career?
+              </h2>
+              <p className="text-lg text-blue-100 max-w-2xl mx-auto mb-10">
+                Get in touch with us for any queries, support, or collaboration
+                opportunities. Our technical team is ready to assist you.
+              </p>
+              <button
+                onClick={() => navigate("/contact")}
+                className="bg-white text-blue-600 px-8 py-3.5 rounded-lg font-bold hover:bg-gray-50 transition-colors shadow-sm"
+              >
+                Reach Out Today
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
       <Footer />
     </div>
   );

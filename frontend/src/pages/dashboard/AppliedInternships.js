@@ -68,7 +68,7 @@ const AppliedInternships = () => {
         <div className="p-3 sm:p-4 md:p-6 lg:p-8 min-h-screen">
             <div className="w-full">
                 <div className="mb-6 sm:mb-8">
-                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-800 mb-2">My Applied Internships</h1>
+                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-800 mb-2">My Application</h1>
                     <p className="text-sm sm:text-base text-gray-600">Track the status of your internship applications</p>
                 </div>
 

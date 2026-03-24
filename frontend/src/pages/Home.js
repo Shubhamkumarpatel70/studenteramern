@@ -1,121 +1,48 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import api from "../config/api";
 import AuthContext from "../context/AuthContext";
-import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 import {
   Briefcase,
   ArrowRight,
   Server,
-  Code,
   ShieldCheck,
   Megaphone,
   CheckCircle2,
+  CheckCircle,
+  FileText,
+  Star
 } from "lucide-react";
 
-const internshipCategories = [
-  {
-    title: "Web Development",
-    desc: "Master modern web technologies while working on cutting-edge projects with industry experts.",
-    img: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=400&q=80",
-    color: "blue",
-  },
-  {
-    title: "Android Development",
-    desc: "Build mobile applications using the latest Android frameworks and development tools.",
-    img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80",
-    color: "green",
-  },
-  {
-    title: "Java Development",
-    desc: "Develop enterprise-level applications using Java and popular frameworks like Spring.",
-    img: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=400&q=80",
-    color: "purple",
-  },
-  {
-    title: "Python Development",
-    desc: "Work with Python for web development, data analysis, automation, and more.",
-    img: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=400&q=80",
-    color: "orange",
-  },
-  {
-    title: "Graphics Design",
-    desc: "Create visual concepts using industry-standard tools like Adobe Creative Suite.",
-    img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80",
-    color: "red",
-  },
-  {
-    title: "Data Analysis",
-    desc: "Learn to analyze complex datasets and extract valuable business insights.",
-    img: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80",
-    color: "teal",
-  },
-];
-
-const features = [
-  {
-    icon: "⚡",
-    title: "Innovative Approach",
-    desc: "Modern strategies that foster critical thinking and problem-solving skills.",
-    color: "blue-400",
-  },
-  {
-    icon: "🤝",
-    title: "Collaborative Learning",
-    desc: "Teamwork-driven programs that enhance shared learning experiences.",
-    color: "teal-400",
-  },
-  {
-    icon: "🛠️",
-    title: "Practical Experience",
-    desc: "Hands-on learning that bridges theory with real-world application.",
-    color: "purple-400",
-  },
-  {
-    icon: "🎯",
-    title: "Career Focused",
-    desc: "Industry-aligned programs that prepare you for workplace success.",
-    color: "indigo-400",
-  },
-];
-
+// --- Data ---
 const staticTestimonials = [
   {
-    quote:
-      "This was an amazing experience! I learned so much and built a real project that I could add to my portfolio. The mentorship was top-notch.",
+    quote: "This was an amazing experience! I learned so much and built a real project that I could add to my portfolio. The mentorship was top-notch.",
     name: "Ranjeet Kumar",
-    role: "Python Developer Intern",
+    role: "Python Developer",
   },
   {
-    quote:
-      "The virtual internship was flexible and incredibly informative. I was able to land a job at a major tech company thanks to the skills I gained here.",
+    quote: "Working on modern stacks allowed me to easily bridge the gap between academia and the real tech industry. Highly recommended for students.",
     name: "Azaz Alam",
     role: "Graphics Design Intern",
   },
   {
-    quote:
-      "I highly recommend Student-Era to any student looking to get a head start in their tech career. The projects are challenging and relevant.",
+    quote: "I highly recommend Student-Era to any student looking to get a head start. The structured layout and expert support is unparalleled.",
     name: "Gulshan Kumar",
-    role: "Web Developer Intern",
+    role: "Web Developer",
   },
 ];
 
-// Helper to parse URLs in text and make them clickable
+// --- Helpers ---
 function parseMessageWithLinks(message) {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
   const parts = message.split(urlRegex);
   return parts.map((part, i) => {
     if (urlRegex.test(part)) {
       return (
-        <a
-          key={i}
-          href={part}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline text-pink-200 hover:text-white font-semibold transition-colors duration-150"
-        >
+        <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="underline text-blue-200 hover:text-white transition-colors duration-150">
           {part}
         </a>
       );
@@ -124,25 +51,21 @@ function parseMessageWithLinks(message) {
   });
 }
 
-// Helper function for retry logic with exponential backoff
 const retryWithBackoff = async (fn, maxRetries = 3, baseDelay = 1000) => {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       return await fn();
     } catch (error) {
-      if (
-        attempt === maxRetries ||
-        (error.code !== "ECONNABORTED" && !error.message?.includes("timeout"))
-      ) {
+      if (attempt === maxRetries || (error.code !== "ECONNABORTED" && !error.message?.includes("timeout"))) {
         throw error;
       }
       const delay = baseDelay * Math.pow(2, attempt - 1);
-      console.warn(`Attempt ${attempt} failed, retrying in ${delay}ms...`);
       await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
 };
 
+// --- Components ---
 const AnnouncementBar = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [show, setShow] = useState(true);
@@ -164,106 +87,93 @@ const AnnouncementBar = () => {
     fetchAnnouncements();
   }, []);
 
-  if (!show || announcements.length === 0) {
-    return null;
-  }
+  if (!show || announcements.length === 0) return null;
 
-  // Join all announcement messages for a continuous marquee
-  const marqueeText = announcements.map((a, i) =>
-    i === 0 ? (
-      <span key={i} className="mr-8">
-        <span className="bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full mr-2 align-middle">
-          NEW
-        </span>
-        {parseMessageWithLinks(a.message)}
+  const marqueeText = announcements.map((a, i) => (
+    <span key={i} className={i === 0 ? "mr-12" : "ml-12"}>
+      <span className="bg-white text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider mr-3 align-middle shadow-sm">
+        New Update
       </span>
-    ) : (
-      <span key={i} className="ml-8">
-        {parseMessageWithLinks(a.message)}
-      </span>
-    ),
-  );
+      {parseMessageWithLinks(a.message)}
+    </span>
+  ));
 
   return (
-    <div className="bg-[#0A2463] shadow-lg">
-      <div className="max-w-7xl mx-auto py-2 px-3 sm:px-6 lg:px-8 relative">
-        <div className="flex items-center justify-between flex-wrap">
-          <div className="w-0 flex-1 flex items-center overflow-hidden">
-            <span className="flex p-2 rounded-lg bg-white bg-opacity-10 mr-2 animate-pulse">
-              <Megaphone className="h-7 w-7 text-white" aria-hidden="true" />
-            </span>
-            <div className="ml-2 font-semibold text-lg whitespace-nowrap overflow-x-hidden w-full">
-              <span className="inline-block animate-marquee-smooth">
-                {marqueeText}
-              </span>
-            </div>
-          </div>
+    <div className="bg-indigo-600 text-white shadow-sm relative z-50">
+      <div className="max-w-7xl mx-auto py-2.5 px-4 sm:px-6 lg:px-8 relative overflow-hidden flex items-center">
+        <span className="flex-shrink-0 mr-3 animate-pulse opacity-80">
+          <Megaphone className="h-4 w-4" />
+        </span>
+        <div className="w-full overflow-hidden text-sm font-medium tracking-wide">
+          <span className="inline-block animate-[marquee-smooth_20s_linear_infinite] whitespace-nowrap">
+            {marqueeText}
+          </span>
         </div>
       </div>
       <style>{`
-                @keyframes marquee-smooth {
-                  0% { transform: translateX(100%); }
-                  100% { transform: translateX(-100%); }
-                }
-                .animate-marquee-smooth {
-                  display: inline-block;
-                  min-width: 100%;
-                  animation: marquee-smooth 18s linear infinite;
-                }
-            `}</style>
+        @keyframes marquee-smooth {
+          0% { transform: translateX(100%); }
+          100% { transform: translateX(-100%); }
+        }
+      `}</style>
     </div>
   );
 };
 
 const HeroSection = () => {
   const { isAuthenticated } = useContext(AuthContext);
+
   return (
-    <div className="text-center py-24 px-4 sm:px-6 lg:px-8 bg-[#0A2463] text-white font-[Inter,sans-serif] shadow-2xl rounded-b-3xl relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0A2463] via-[#1C1C1E] to-[#0A2463] opacity-50"></div>
-      <div className="relative z-10">
-        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight mb-4">
-          Launch Your Tech Career with{" "}
-          <span className="block text-[#28A745]">Student-Era</span>
+    <div className="relative pt-24 pb-32 overflow-hidden bg-slate-50">
+      {/* Subtle modern background gradient mesh */}
+      <div className="absolute top-0 inset-x-0 h-full w-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-100 via-slate-50 to-white -z-10"></div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 font-semibold text-xs border border-blue-200 mb-6 uppercase tracking-wider">
+          <Briefcase className="h-3.5 w-3.5" /> Virtual Internships Active
+        </span>
+        <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold text-gray-900 tracking-tight mb-6 leading-tight max-w-4xl mx-auto">
+          Launch Your Tech Career with <span className="text-blue-600 block sm:inline">Student-Era</span>
         </h1>
-        <p className="mt-6 max-w-3xl mx-auto text-xl sm:text-2xl text-[#F8F9FA] font-medium leading-relaxed">
-          Gain real-world experience with our virtual internships. Work on live
-          projects, get mentored by experts, and build a portfolio that stands
-          out.
+        <p className="mt-4 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto mb-10">
+          Gain real-world experience through premium virtual internships. Work on live projects, collaborate with experts, and build a verified portfolio.
         </p>
-        <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
           <Link
             to="/internships"
-            className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl text-[#212529] bg-[#28A745] hover:bg-[#218838] shadow-lg transition-all duration-200 transform hover:scale-105"
+            className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 border border-transparent text-base font-bold rounded-lg text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-colors"
           >
-            Browse Internships
+            Explore Programs <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
           {!isAuthenticated && (
             <Link
               to="/register"
-              className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl text-[#212529] bg-[#FD7E14] hover:bg-[#E8680F] shadow-lg transition-all duration-200 transform hover:scale-105"
+              className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 border border-gray-300 text-base font-bold rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors shadow-sm"
             >
-              Sign Up Now
+              Create Free Account
             </Link>
           )}
           <Link
             to="/verify-certificate"
-            className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl text-white bg-[#0A2463] hover:bg-[#1C1C1E] shadow-lg transition-all duration-200 transform hover:scale-105"
+            className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 border border-gray-200 text-base font-semibold rounded-lg text-gray-600 bg-transparent hover:bg-gray-100 hover:text-gray-900 transition-colors"
           >
-            Verify Certificate
+            Verify Credential
           </Link>
         </div>
-        <div className="mt-12 flex justify-center items-center space-x-8 text-sm text-[#F8F9FA]">
-          <div className="flex items-center">
-            <CheckCircle2 className="w-5 h-5 text-[#28A745] mr-2" />
-            <span>Verified Certificates</span>
+
+        <div className="mt-14 flex flex-wrap justify-center items-center gap-6 sm:gap-10 text-sm font-medium text-gray-500">
+          <div className="flex items-center gap-2">
+            <CheckCircle className="w-5 h-5 text-gray-400" />
+            <span>Industry Standard Tech</span>
           </div>
-          <div className="flex items-center">
-            <Briefcase className="w-5 h-5 text-[#FD7E14] mr-2" />
-            <span>Live Projects</span>
+          <div className="flex items-center gap-2">
+            <FileText className="w-5 h-5 text-gray-400" />
+            <span>Verified Certification</span>
           </div>
-          <div className="flex items-center">
-            <ShieldCheck className="w-5 h-5 text-[#0A84FF] mr-2" />
-            <span>Expert Mentorship</span>
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-gray-400" />
+            <span>Expert Curated Projects</span>
           </div>
         </div>
       </div>
@@ -272,96 +182,55 @@ const HeroSection = () => {
 };
 
 const CertifiedSection = () => (
-  <div className="bg-[#FFFFFF] py-10 px-4 sm:px-6 lg:px-8 flex justify-center">
-    <div className="max-w-3xl w-full flex flex-col items-center text-center">
-      <CheckCircle2 size={48} className="text-[#28A745] mb-2" />
-      <h2 className="text-2xl sm:text-3xl font-bold text-[#212529] mb-2">
-        Officially Certified & Recognized
+  <div className="bg-white py-12 border-b border-gray-100">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center">
+      <CheckCircle2 className="w-10 h-10 text-green-500 mb-3" />
+      <h2 className="text-xl font-bold text-gray-900 mb-2">
+        Officially Recognized Organization
       </h2>
-      <p className="text-[#212529] text-lg max-w-2xl">
-        Our accreditations reflect our commitment to quality education and
-        compliance with national standards.
+      <p className="text-gray-500 text-sm max-w-xl">
+        All certificates issued by Student Era meet high compliance standards, giving you a verifiable credential to display on LinkedIn and resumes.
       </p>
     </div>
   </div>
 );
 
 const Feature = ({ icon, title, description }) => (
-  <div className="flex flex-col items-center p-6 text-center">
-    <div className="bg-indigo-100 text-indigo-600 rounded-full p-4 mb-4">
+  <div className="bg-white flex flex-col items-start p-8 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-blue-50 text-blue-600 rounded-lg p-3 mb-5 border border-blue-100">
       {icon}
     </div>
-    <h3 className="text-xl font-bold mb-2">{title}</h3>
-    <p className="text-gray-600">{description}</p>
+    <h3 className="text-lg font-bold text-gray-900 mb-2">{title}</h3>
+    <p className="text-gray-500 text-sm leading-relaxed">{description}</p>
   </div>
 );
 
 const FeaturesSection = () => (
-  <div className="py-20 bg-[#F8F9FA] font-[Inter,sans-serif]">
+  <div className="py-24 bg-gray-50">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="text-center mb-12">
-        <h2 className="text-4xl font-extrabold text-[#0A2463] mb-2">
-          Why Choose Us?
+      <div className="text-center mb-16 max-w-3xl mx-auto">
+        <h2 className="text-3xl font-extrabold text-gray-900 mb-4">
+          A Better Way to Build Your Portfolio
         </h2>
-        <p className="mt-2 max-w-2xl mx-auto text-xl text-[#212529] font-semibold">
-          We provide a structured path from learning to earning in the tech
-          world.
+        <p className="text-lg text-gray-500">
+          Our platform bridges the gap between academic theory and real-world execution. Here's what you get when you join our internship programs.
         </p>
       </div>
-      <div className="mt-14 grid gap-12 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Feature
-          icon={
-            <div className="bg-[#0A2463] p-4 rounded-full shadow-lg">
-              <Briefcase size={40} className="text-[#FFFFFF]" />
-            </div>
-          }
-          title={
-            <span className="font-bold text-[#212529]">
-              Real-World Projects
-            </span>
-          }
-          description={
-            <span className="text-[#212529]">
-              Work on industry-standard projects and gain hands-on experience
-              that employers are looking for.
-            </span>
-          }
+          icon={<Briefcase className="h-6 w-6" />}
+          title="Real-World Execution"
+          description="Complete standardized deliverables simulating exact workflows expected by top tech employers today."
         />
         <Feature
-          icon={
-            <div className="bg-[#0A2463] p-4 rounded-full shadow-lg">
-              <Server size={40} className="text-[#FFFFFF]" />
-            </div>
-          }
-          title={
-            <span className="font-bold text-[#212529]">
-              Live Project Hosting
-            </span>
-          }
-          description={
-            <span className="text-[#212529]">
-              We provide the hosting, so you can focus on building and
-              showcasing your work to the world.
-            </span>
-          }
+          icon={<Server className="h-6 w-6" />}
+          title="Live Project Deployment"
+          description="We guide you on deploying your frontend and backend so your work exists live on the internet."
         />
         <Feature
-          icon={
-            <div className="bg-[#0A2463] p-4 rounded-full shadow-lg">
-              <ShieldCheck size={40} className="text-[#FFFFFF]" />
-            </div>
-          }
-          title={
-            <span className="font-bold text-[#212529]">
-              Verified Certificates
-            </span>
-          }
-          description={
-            <span className="text-[#212529]">
-              Receive a verifiable certificate upon completion to boost your
-              resume and LinkedIn profile.
-            </span>
-          }
+          icon={<ShieldCheck className="h-6 w-6" />}
+          title="Verifiable Credentials"
+          description="Each completed internship grants a unique cryptographic certificate easily verifiable by HR teams."
         />
       </div>
     </div>
@@ -369,55 +238,38 @@ const FeaturesSection = () => (
 );
 
 const InternshipCard = ({ internship }) => (
-  <div className="bg-[#F8F9FA] rounded-2xl shadow-xl overflow-hidden border border-[#0A2463] group flex flex-col relative">
-    {internship.image && (
-      <div className="relative overflow-hidden">
-        <img
-          src={internship.image}
-          alt={internship.title}
-          className="h-40 w-full object-cover group-hover:scale-110 transition-transform duration-300"
-        />
-        {internship.tag && (
-          <span
-            className="absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-semibold text-white shadow-lg z-10"
-            style={{ backgroundColor: internship.tagColor || "#3B82F6" }}
-          >
-            {internship.tag}
-          </span>
-        )}
-      </div>
-    )}
-    {!internship.image && internship.tag && (
-      <span
-        className="absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-semibold text-white shadow-lg z-10"
-        style={{ backgroundColor: internship.tagColor || "#3B82F6" }}
-      >
-        {internship.tag}
-      </span>
-    )}
-    <div className="p-6 flex-1 flex flex-col">
-      <h3 className="text-2xl font-extrabold text-[#0A2463] mb-2 font-sans">
+  <div className="bg-white rounded-xl border border-gray-200 p-6 flex flex-col hover:border-blue-300 transition-colors shadow-sm">
+    <div className="flex items-start justify-between mb-4">
+      <h3 className="text-xl font-bold text-gray-900 line-clamp-2">
         {internship.title}
       </h3>
-      <p className="text-[#212529] mb-4 h-24 overflow-hidden flex-1 font-sans">
-        {internship.shortDescription}
-      </p>
-      <div className="flex flex-wrap gap-2 mb-4">
-        {Array.isArray(internship.technologies) &&
-          internship.technologies.slice(0, 4).map((tech) => (
-            <span
-              key={tech}
-              className="bg-[#0A2463] text-[#FFFFFF] text-xs font-semibold px-2.5 py-0.5 rounded-full"
-            >
-              {tech}
-            </span>
-          ))}
+      {internship.tag && (
+        <span className="px-2.5 py-1 rounded bg-blue-50 text-blue-700 text-[10px] font-bold uppercase tracking-wider border border-blue-200 shrink-0 ml-3">
+          {internship.tag}
+        </span>
+      )}
+    </div>
+    <p className="text-sm text-gray-500 mb-6 flex-1 line-clamp-3 leading-relaxed">
+      {internship.shortDescription || internship.description}
+    </p>
+    {Array.isArray(internship.technologies) && (
+      <div className="flex flex-wrap gap-1.5 mb-6">
+        {internship.technologies.slice(0, 4).map((tech) => (
+          <span
+            key={tech}
+            className="bg-gray-100 text-gray-600 text-xs font-medium px-2 py-0.5 rounded border border-gray-200"
+          >
+            {tech}
+          </span>
+        ))}
       </div>
+    )}
+    <div className="pt-4 border-t border-gray-100 mt-auto">
       <Link
         to={`/internships/${internship._id}`}
-        className="font-semibold text-[#0A2463] hover:text-[#28A745] flex items-center mt-auto"
+        className="flex items-center text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors"
       >
-        View Details <ArrowRight className="ml-2 h-5 w-5" />
+        View Details <ArrowRight className="ml-1.5 h-4 w-4" />
       </Link>
     </div>
   </div>
@@ -447,33 +299,45 @@ const LatestInternships = () => {
   }, []);
 
   return (
-    <div className="py-16 bg-[#FFFFFF] font-sans">
+    <div className="py-24 bg-white border-t border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-extrabold text-[#0A2463]">
-            Latest Internships
+        <div className="text-center mb-16">
+          <h2 className="text-3xl font-extrabold text-gray-900 mb-4">
+            Open Internship Programs
           </h2>
-          <p className="mt-4 max-w-2xl mx-auto text-lg text-[#212529]">
-            Apply now for our latest virtual internship programs.
+          <p className="max-w-2xl mx-auto text-lg text-gray-500">
+            Select a learning track tailored to modern tech stacks.
           </p>
         </div>
 
         {loading && (
-          <p className="text-center text-[#212529]">Loading internships...</p>
+          <div className="flex justify-center p-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          </div>
         )}
-        {error && <p className="text-center text-red-500">{error}</p>}
+        {error && <div className="text-center text-red-600 p-4 bg-red-50 border border-red-200 rounded-lg">{error}</div>}
 
         {!loading && !error && (
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {internships.length > 0 ? (
               internships.map((internship) => (
                 <InternshipCard key={internship._id} internship={internship} />
               ))
             ) : (
-              <p className="text-center col-span-full text-[#212529]">
-                No open internships at the moment. Please check back later!
-              </p>
+              <div className="col-span-full text-center p-12 bg-gray-50 border border-gray-200 rounded-xl">
+                <Briefcase className="h-8 w-8 text-gray-400 mx-auto mb-3" />
+                <h3 className="text-lg font-bold text-gray-900">No Openings Currently</h3>
+                <p className="text-gray-500 mt-1">Please check back later for new batches.</p>
+              </div>
             )}
+          </div>
+        )}
+
+        {!loading && !error && internships.length > 0 && (
+          <div className="mt-12 text-center">
+            <Link to="/internships" className="inline-flex items-center justify-center px-6 py-2.5 border border-gray-300 text-sm font-bold rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors shadow-sm">
+              View All Programs
+            </Link>
           </div>
         )}
       </div>
@@ -493,55 +357,48 @@ const TestimonialsSection = () => {
           return data;
         });
         setTestimonials(result.data);
-        setLoading(false);
       } catch (error) {
         console.error("Could not fetch testimonials", error);
+      } finally {
         setLoading(false);
       }
     };
     fetchTestimonials();
   }, []);
 
-  const displayTestimonials =
-    loading || testimonials.length === 0 ? staticTestimonials : testimonials;
+  const displayTestimonials = loading || testimonials.length === 0 ? staticTestimonials : testimonials;
 
   return (
-    <div className="py-16 bg-[#F8F9FA] font-sans">
+    <div className="py-24 bg-gray-50 border-t border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-extrabold text-[#0A2463]">
-            What Our Interns Say
+        <div className="text-center mb-16">
+          <h2 className="text-3xl font-extrabold text-gray-900 mb-4">
+            Hear from Our Students
           </h2>
-          <p className="mt-4 max-w-2xl mx-auto text-lg text-[#212529]">
-            Real stories from students who have launched their careers with us.
+          <p className="max-w-2xl mx-auto text-lg text-gray-500">
+            Real success stories from developers who built their careers here.
           </p>
         </div>
-        <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-3">
-          {displayTestimonials.map((testimonial, index) => (
-            <div
-              key={index}
-              className="bg-[#FFFFFF] rounded-2xl shadow-xl p-8 group transition-transform duration-300 hover:scale-105 border border-[#0A2463]"
-            >
-              <p className="text-[#212529] mb-6 font-sans">
-                "{testimonial.message || testimonial.quote}"
-              </p>
+        <div className="grid gap-6 md:grid-cols-3">
+          {displayTestimonials.slice(0, 3).map((testimonial, index) => (
+            <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 flex flex-col justify-between">
+              <div>
+                <div className="flex text-yellow-400 mb-4">
+                  {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
+                </div>
+                <p className="text-gray-600 text-sm leading-relaxed mb-6 italic">
+                  "{testimonial.message || testimonial.quote}"
+                </p>
+              </div>
               <div className="flex items-center">
                 <img
-                  className="w-12 h-12 rounded-full mr-4"
-                  src={
-                    testimonial.image ||
-                    testimonial.avatar ||
-                    "https://i.pravatar.cc/150"
-                  }
+                  className="w-10 h-10 rounded-full border border-gray-200 bg-gray-100 object-cover"
+                  src={testimonial.image || testimonial.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(testimonial.name)}&background=f3f4f6&color=111827`}
                   alt={testimonial.name}
                 />
-                <div>
-                  <p className="font-semibold text-[#0A2463] font-sans">
-                    {testimonial.name}
-                  </p>
-                  <p className="text-[#212529] text-sm font-sans">
-                    {testimonial.designation || testimonial.role}
-                  </p>
+                <div className="ml-3">
+                  <p className="font-bold text-gray-900 text-sm">{testimonial.name}</p>
+                  <p className="text-gray-500 text-xs">{testimonial.designation || testimonial.role}</p>
                 </div>
               </div>
             </div>
@@ -554,7 +411,7 @@ const TestimonialsSection = () => {
 
 const Home = () => {
   return (
-    <div className="bg-[#FFFFFF] font-sans">
+    <div className="bg-white font-sans text-gray-900 border-t-0">
       <AnnouncementBar />
       <HeroSection />
       <CertifiedSection />

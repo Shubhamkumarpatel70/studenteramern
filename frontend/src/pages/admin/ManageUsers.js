@@ -15,11 +15,17 @@ const ManageUsers = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalUsers, setTotalUsers] = useState(0);
+  const [roleFilter, setRoleFilter] = useState("");
+  const [verifiedFilter, setVerifiedFilter] = useState("");
 
   const fetchUsers = async (page = 1) => {
     setLoading(true);
     try {
-      const res = await api.get(`/users?page=${page}&limit=10`);
+      let url = `/users?page=${page}&limit=10`;
+      if (roleFilter) url += `&role=${roleFilter}`;
+      if (verifiedFilter !== "") url += `&isVerified=${verifiedFilter}`;
+
+      const res = await api.get(url);
       const usersData = res.data.data || [];
       setUsers(usersData);
       setTotalPages(res.data.totalPages || 1);
@@ -35,7 +41,7 @@ const ManageUsers = () => {
 
   useEffect(() => {
     fetchUsers(currentPage);
-  }, [currentPage]);
+  }, [currentPage, roleFilter, verifiedFilter]);
 
   const handleEdit = (user) => {
     setSelectedUser(user);
@@ -86,7 +92,31 @@ const ManageUsers = () => {
 
   return (
     <div className="p-4 sm:p-6 md:p-8">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-6">Manage Users</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold">Manage Users</h1>
+        <div className="flex flex-wrap gap-3">
+          <select
+            value={roleFilter}
+            onChange={(e) => { setRoleFilter(e.target.value); setCurrentPage(1); }}
+            className="border rounded-lg px-3 py-2 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <option value="">All Roles</option>
+            <option value="user">User</option>
+            <option value="co-admin">Co-Admin</option>
+            <option value="accountant">Accountant</option>
+            <option value="admin">Admin</option>
+          </select>
+          <select
+            value={verifiedFilter}
+            onChange={(e) => { setVerifiedFilter(e.target.value); setCurrentPage(1); }}
+            className="border rounded-lg px-3 py-2 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <option value="">All Statuses</option>
+            <option value="true">Verified</option>
+            <option value="false">Not Verified</option>
+          </select>
+        </div>
+      </div>
       {loading ? (
         <p>Loading users...</p>
       ) : (
@@ -182,11 +212,10 @@ const ManageUsers = () => {
                     </td>
                     <td className="px-2 sm:px-4 md:px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          user.isVerified
+                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.isVerified
                             ? "bg-green-100 text-green-800"
                             : "bg-yellow-100 text-yellow-800"
-                        }`}
+                          }`}
                       >
                         {user.isVerified ? "Yes" : "No"}
                       </span>
@@ -245,7 +274,7 @@ const ManageUsers = () => {
                 <ChevronLeft size={16} />
                 Previous
               </button>
-              
+
               {/* Page Numbers */}
               <div className="flex items-center gap-1">
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
@@ -259,17 +288,16 @@ const ManageUsers = () => {
                   } else {
                     pageNum = currentPage - 2 + i;
                   }
-                  
+
                   return (
                     <button
                       key={pageNum}
                       onClick={() => setCurrentPage(pageNum)}
                       disabled={loading}
-                      className={`px-3 py-2 text-sm font-medium rounded-md ${
-                        currentPage === pageNum
+                      className={`px-3 py-2 text-sm font-medium rounded-md ${currentPage === pageNum
                           ? "bg-indigo-600 text-white"
                           : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
-                      } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        } disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
                       {pageNum}
                     </button>
