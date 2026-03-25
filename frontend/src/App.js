@@ -47,6 +47,7 @@ import HelpQueries from "./pages/admin/HelpQueries";
 import Feedback from "./pages/dashboard/Feedback";
 import ManageFeedback from "./pages/admin/ManageFeedback";
 import ManageSocialLinks from "./pages/admin/ManageSocialLinks";
+import ManageRefunds from "./pages/admin/ManageRefunds";
 
 // Admin Pages
 import AdminHome from "./pages/admin/AdminHome";
@@ -271,6 +272,7 @@ const AppContent = () => {
                 path="manage-social-links"
                 element={<ManageSocialLinks />}
               />
+              <Route path="manage-refunds" element={<ManageRefunds />} />
             </Route>
           </Route>
 
