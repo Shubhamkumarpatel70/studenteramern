@@ -156,12 +156,12 @@ const VerifyCertificate = () => {
                     Verification Failed
                   </h3>
                   <p className="text-gray-500 mb-8">{error}</p>
-                  <a
+                  {/* <a
                     href="/contact"
                     className="w-full flex justify-center items-center gap-2 py-3 bg-gray-50 text-gray-700 font-semibold rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors"
                   >
                     <Mail className="w-4 h-4" /> Contact Support
-                  </a>
+                  </a> */}
                 </div>
               ) : (
                 <div className="text-center">

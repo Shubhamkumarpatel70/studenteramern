@@ -61,7 +61,7 @@ exports.register = async (req, res, next) => {
     // Create welcome notification
     await createNotification(
       user._id,
-      `Welcome to Student Era! Your registration was successful. Your Student ID is ${user.internId}.`
+      `Welcome to Student Era! Your registration was successful. Your Student/Intern ID is ${user.internId}.`
     );
 
     // Return success - user is automatically verified

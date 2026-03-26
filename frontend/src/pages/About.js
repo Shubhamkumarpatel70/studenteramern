@@ -108,12 +108,12 @@ const About = () => {
         <div className="mt-16 sm:mt-24 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
           <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8 text-center border border-gray-200 flex flex-col items-center justify-center">
             <Users className="w-8 h-8 text-blue-600 mb-4" />
-            <h3 className="text-3xl font-extrabold text-gray-900 mb-1">{stats.studentsTrained}+</h3>
+            <h3 className="text-3xl font-extrabold text-gray-900 mb-1">{stats.studentsTrained}0+</h3>
             <p className="text-gray-500 font-medium text-sm">Students Trained</p>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8 text-center border border-gray-200 flex flex-col items-center justify-center">
             <Award className="w-8 h-8 text-green-500 mb-4" />
-            <h3 className="text-3xl font-extrabold text-gray-900 mb-1">{stats.certificatesIssued}+</h3>
+            <h3 className="text-3xl font-extrabold text-gray-900 mb-1">{stats.certificatesIssued}0+</h3>
             <p className="text-gray-500 font-medium text-sm">Certificates Issued</p>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8 text-center border border-gray-200 flex flex-col items-center justify-center">
