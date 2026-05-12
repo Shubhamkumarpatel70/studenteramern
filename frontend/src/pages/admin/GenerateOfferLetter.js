@@ -435,7 +435,7 @@ const GenerateOfferLetter = () => {
                 background: #FFFFFF; 
                 width: 100%; 
                 max-width: 850px; 
-                padding: 40px 50px; 
+                padding: 70px 60px; 
                 box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); 
                 position: relative; 
                 border-top: 10px solid var(--primary-color); 
@@ -446,7 +446,7 @@ const GenerateOfferLetter = () => {
                 display: flex; 
                 justify-content: space-between; 
                 align-items: center; 
-                margin-bottom: 30px; 
+                margin-bottom: 50px; 
                 padding-bottom: 20px;
                 border-bottom: 2px solid var(--border-color);
             }
@@ -458,12 +458,12 @@ const GenerateOfferLetter = () => {
             .company-name { font-size: 20px; font-weight: 800; color: var(--primary-color); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
             .address-block { font-size: 11px; color: var(--text-muted); line-height: 1.5; font-weight: 500; }
             
-            .meta-info { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 13px; color: var(--secondary-color); font-weight: 600; }
+            .meta-info { display: flex; justify-content: space-between; margin-bottom: 45px; font-size: 13px; color: var(--secondary-color); font-weight: 600; }
             .ref-no { color: var(--primary-color); }
             
             .subject-line { 
                 text-align: center; 
-                margin-bottom: 20px; 
+                margin-bottom: 40px; 
             }
             .subject-line h1 { 
                 font-size: 22px; 
@@ -486,7 +486,7 @@ const GenerateOfferLetter = () => {
                 border-radius: 9999px;
                 font-size: 12px;
                 font-weight: 700;
-                margin-bottom: 15px;
+                margin-bottom: 30px;
                 border: 1px solid #DBEAFE;
             }
             
@@ -494,7 +494,7 @@ const GenerateOfferLetter = () => {
                 font-size: 16px; 
                 font-weight: 700; 
                 color: var(--primary-color); 
-                margin-bottom: 15px; 
+                margin-bottom: 25px; 
             }
             
             .confidential-tag { 
@@ -506,35 +506,35 @@ const GenerateOfferLetter = () => {
                 padding: 6px;
                 border-radius: 4px;
                 letter-spacing: 2px;
-                margin-bottom: 15px;
+                margin-bottom: 35px;
                 border: 1px solid #FEE2E2;
             }
             
-            .letter-content { font-size: 14px; line-height: 1.6; color: #374151; margin-bottom: 15px; }
+            .letter-content { font-size: 14px; line-height: 1.8; color: #374151; margin-bottom: 30px; }
             
             .stipend-highlight { 
                 background: #F0FDF4;
                 border: 1px solid #DCFCE7;
                 padding: 15px 20px;
                 border-radius: 8px;
-                margin: 10px 0;
+                margin: 25px 0;
                 display: flex;
                 align-items: center;
                 gap: 10px;
             }
             .stipend-amount { font-weight: 800; color: #15803D; font-size: 16px; }
             
-            .terms-list { margin-left: 20px; margin-bottom: 20px; }
-            .terms-list li { margin-bottom: 6px; padding-left: 10px; }
+            .terms-list { margin-left: 20px; margin-bottom: 40px; }
+            .terms-list li { margin-bottom: 12px; padding-left: 10px; }
             .bold-text { font-weight: 700; color: #111827; }
             
-            .closing-section { margin-bottom: 20px; font-size: 14px; }
+            .closing-section { margin-bottom: 50px; font-size: 14px; }
             
             .signature-grid { 
                 display: flex; 
                 justify-content: space-between; 
                 align-items: flex-end; 
-                margin-top: 30px;
+                margin-top: 60px;
                 position: relative;
             }
             
@@ -554,7 +554,7 @@ const GenerateOfferLetter = () => {
             .official-stamp img { width: 90px; }
             
             .acceptance-section { 
-                margin-top: 40px; 
+                margin-top: 80px; 
                 display: grid; 
                 grid-template-columns: repeat(3, 1fr); 
                 gap: 30px;
@@ -600,7 +600,7 @@ const GenerateOfferLetter = () => {
             </header>
             
             <div class='meta-info'>
-                <div class='ref-no'>REF: SE/INTERNSHIP/OFFER</div>
+                <div class='ref-no'>REF: SE/INTERNSHIP/OFFER/${userDoc.internId}</div>
                 <div class='date'>Date: ${formattedIssueDate}</div>
             </div>
             
@@ -681,215 +681,215 @@ const GenerateOfferLetter = () => {
                 {/* Form Section */}
                 <div className="lg:col-span-1 bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 p-8">
                     <form onSubmit={onSubmit} className="space-y-6">
-                    <div className="relative">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Student ID (internId)</label>
-                        {loadingUsers ? (
-                            <div className="mt-1 block w-full px-3 py-2 border rounded-md bg-gray-100 text-gray-500">
-                                Loading users...
-                            </div>
-                        ) : (
-                            <>
-                                <div className="relative" ref={searchInputRef}>
-                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                                    <input
-                                        type="text"
-                                        value={selectedUserDisplay || searchTerm}
-                                        onChange={handleSearchChange}
-                                        onFocus={() => {
-                                            if (!selectedUserDisplay) {
-                                                setShowUserDropdown(true);
-                                            }
-                                        }}
-                                        placeholder={selectedUserDisplay || "Search by Student ID, Name, or Email..."}
-                                        className="mt-1 block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                    />
-                                    {selectedUserDisplay && (
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                setFormData(prev => ({ ...prev, user: '', candidateName: '', internId: '' }));
-                                                setSelectedUserDisplay('');
-                                                setSearchTerm('');
-                                                setShowUserDropdown(false);
-                                            }}
-                                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                                        >
-                                            <X size={18} />
-                                        </button>
-                                    )}
-                                </div>
-
-                                {showUserDropdown && searchTerm && filteredUsers.length > 0 && (
-                                    <div
-                                        ref={dropdownRef}
-                                        className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
-                                    >
-                                        {filteredUsers.map(u => (
-                                            <div
-                                                key={u._id}
-                                                onClick={() => handleUserSelect(u)}
-                                                className="px-4 py-3 hover:bg-indigo-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
-                                            >
-                                                <div className="font-semibold text-indigo-600">{u.internId}</div>
-                                                <div className="text-sm text-gray-700">{u.name}</div>
-                                                {u.email && (
-                                                    <div className="text-xs text-gray-500">{u.email}</div>
-                                                )}
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-
-                                {showUserDropdown && searchTerm && filteredUsers.length === 0 && (
-                                    <div className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg p-4 text-center text-gray-500">
-                                        No students found
-                                    </div>
-                                )}
-
-                                <p className="mt-1 text-xs text-gray-500">
-                                    {selectedUserDisplay ? 'Student selected. Click X to clear.' : 'Type to search for a student by ID, name, or email'}
-                                </p>
-                                <input type="hidden" name="user" value={user} required />
-                            </>
-                        )}
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Candidate Name</label>
-                        <input type="text" name="candidateName" value={candidateName} onChange={onChange} required className="mt-1 block w-full px-3 py-2 border rounded-md" />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Intern ID</label>
-                        <input type="text" name="internId" value={internId} onChange={onChange} className="mt-1 block w-full px-3 py-2 border rounded-md" readOnly />
-                    </div>
-                    <div className="relative">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Job Title (Internship Title)</label>
-                        {loadingInternships ? (
-                            <div className="mt-1 block w-full px-3 py-2 border rounded-md bg-gray-100 text-gray-500">
-                                Loading internships...
-                            </div>
-                        ) : (
-                            <>
-                                <div className="relative" ref={jobTitleSearchInputRef}>
-                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                                    <input
-                                        type="text"
-                                        value={selectedJobTitleDisplay || jobTitleSearchTerm}
-                                        onChange={handleJobTitleSearchChange}
-                                        onFocus={() => {
-                                            if (!selectedJobTitleDisplay) {
-                                                setShowJobTitleDropdown(true);
-                                            }
-                                        }}
-                                        placeholder={selectedJobTitleDisplay || "Search by Internship Title..."}
-                                        className="mt-1 block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                    />
-                                    {selectedJobTitleDisplay && (
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                setFormData(prev => ({ ...prev, title: '', stipend: '' }));
-                                                setSelectedJobTitleDisplay('');
-                                                setJobTitleSearchTerm('');
-                                                setShowJobTitleDropdown(false);
-                                                setSelectedHR('');
-                                                setFormData(prev => ({ ...prev, hrName: '' }));
-                                            }}
-                                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                                        >
-                                            <X size={18} />
-                                        </button>
-                                    )}
-                                </div>
-
-                                {showJobTitleDropdown && jobTitleSearchTerm && filteredJobTitles.length > 0 && (
-                                    <div
-                                        ref={jobTitleDropdownRef}
-                                        className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
-                                    >
-                                        {filteredJobTitles.map(internship => (
-                                            <div
-                                                key={internship._id}
-                                                onClick={() => handleJobTitleSelect(internship)}
-                                                className="px-4 py-3 hover:bg-indigo-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
-                                            >
-                                                <div className="font-semibold text-indigo-600">{internship.title}</div>
-                                                {internship.company && (
-                                                    <div className="text-sm text-gray-700">{internship.company}</div>
-                                                )}
-                                                {internship.stipend > 0 && (
-                                                    <div className="text-xs text-green-600 font-semibold">Stipend: ₹{internship.stipend}/{internship.stipendType || 'month'}</div>
-                                                )}
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-
-                                {showJobTitleDropdown && jobTitleSearchTerm && filteredJobTitles.length === 0 && (
-                                    <div className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg p-4 text-center text-gray-500">
-                                        No internships found
-                                    </div>
-                                )}
-
-                                <p className="mt-1 text-xs text-gray-500">
-                                    {selectedJobTitleDisplay ? 'Job title selected. Stipend auto-filled. Click X to clear.' : 'Type to search for an internship title'}
-                                </p>
-                                <input type="hidden" name="title" value={title} required />
-                            </>
-                        )}
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Company Name</label>
-                        <input type="text" name="company" value={company} onChange={onChange} required className="mt-1 block w-full px-3 py-2 border rounded-md bg-gray-100" />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Issue Date</label>
-                        <input type="date" name="issueDate" value={issueDate} onChange={onChange} required className="mt-1 block w-full px-3 py-2 border rounded-md" />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Internship Start Date</label>
-                        <input type="date" name="startDate" value={startDate} onChange={onChange} className="mt-1 block w-full px-3 py-2 border rounded-md" />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Tech Partner</label>
-                        <input type="text" name="techPartner" value={techPartner} onChange={onChange} className="mt-1 block w-full px-3 py-2 border rounded-md" placeholder="Bridge4Engineers.com" />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Stipend (per month) - ₹</label>
                         <div className="relative">
-                            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-semibold">₹</span>
-                            <input
-                                type="number"
-                                name="stipend"
-                                value={stipend}
-                                onChange={onChange}
-                                required
-                                className="mt-1 block w-full pl-8 pr-3 py-2 border rounded-md"
-                                placeholder="Auto-filled when job title is selected"
-                            />
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Student ID (internId)</label>
+                            {loadingUsers ? (
+                                <div className="mt-1 block w-full px-3 py-2 border rounded-md bg-gray-100 text-gray-500">
+                                    Loading users...
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="relative" ref={searchInputRef}>
+                                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                        <input
+                                            type="text"
+                                            value={selectedUserDisplay || searchTerm}
+                                            onChange={handleSearchChange}
+                                            onFocus={() => {
+                                                if (!selectedUserDisplay) {
+                                                    setShowUserDropdown(true);
+                                                }
+                                            }}
+                                            placeholder={selectedUserDisplay || "Search by Student ID, Name, or Email..."}
+                                            className="mt-1 block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        />
+                                        {selectedUserDisplay && (
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setFormData(prev => ({ ...prev, user: '', candidateName: '', internId: '' }));
+                                                    setSelectedUserDisplay('');
+                                                    setSearchTerm('');
+                                                    setShowUserDropdown(false);
+                                                }}
+                                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                            >
+                                                <X size={18} />
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    {showUserDropdown && searchTerm && filteredUsers.length > 0 && (
+                                        <div
+                                            ref={dropdownRef}
+                                            className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+                                        >
+                                            {filteredUsers.map(u => (
+                                                <div
+                                                    key={u._id}
+                                                    onClick={() => handleUserSelect(u)}
+                                                    className="px-4 py-3 hover:bg-indigo-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+                                                >
+                                                    <div className="font-semibold text-indigo-600">{u.internId}</div>
+                                                    <div className="text-sm text-gray-700">{u.name}</div>
+                                                    {u.email && (
+                                                        <div className="text-xs text-gray-500">{u.email}</div>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {showUserDropdown && searchTerm && filteredUsers.length === 0 && (
+                                        <div className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg p-4 text-center text-gray-500">
+                                            No students found
+                                        </div>
+                                    )}
+
+                                    <p className="mt-1 text-xs text-gray-500">
+                                        {selectedUserDisplay ? 'Student selected. Click X to clear.' : 'Type to search for a student by ID, name, or email'}
+                                    </p>
+                                    <input type="hidden" name="user" value={user} required />
+                                </>
+                            )}
                         </div>
-                        {stipend && (
-                            <p className="mt-1 text-xs text-green-600">Stipend: ₹{stipend} /month (auto-filled from selected internship)</p>
-                        )}
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">HR Name</label>
-                        {selectedHR ? (
-                            <div className="mt-1 p-2 bg-green-50 border border-green-200 rounded-md">
-                                <span className="text-green-800 font-semibold">{selectedHR}</span>
-                                <span className="text-xs text-green-600 ml-2">(Auto-selected based on internship)</span>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Candidate Name</label>
+                            <input type="text" name="candidateName" value={candidateName} onChange={onChange} required className="mt-1 block w-full px-3 py-2 border rounded-md" />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Intern ID</label>
+                            <input type="text" name="internId" value={internId} onChange={onChange} className="mt-1 block w-full px-3 py-2 border rounded-md" readOnly />
+                        </div>
+                        <div className="relative">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Job Title (Internship Title)</label>
+                            {loadingInternships ? (
+                                <div className="mt-1 block w-full px-3 py-2 border rounded-md bg-gray-100 text-gray-500">
+                                    Loading internships...
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="relative" ref={jobTitleSearchInputRef}>
+                                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                        <input
+                                            type="text"
+                                            value={selectedJobTitleDisplay || jobTitleSearchTerm}
+                                            onChange={handleJobTitleSearchChange}
+                                            onFocus={() => {
+                                                if (!selectedJobTitleDisplay) {
+                                                    setShowJobTitleDropdown(true);
+                                                }
+                                            }}
+                                            placeholder={selectedJobTitleDisplay || "Search by Internship Title..."}
+                                            className="mt-1 block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        />
+                                        {selectedJobTitleDisplay && (
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setFormData(prev => ({ ...prev, title: '', stipend: '' }));
+                                                    setSelectedJobTitleDisplay('');
+                                                    setJobTitleSearchTerm('');
+                                                    setShowJobTitleDropdown(false);
+                                                    setSelectedHR('');
+                                                    setFormData(prev => ({ ...prev, hrName: '' }));
+                                                }}
+                                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                            >
+                                                <X size={18} />
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    {showJobTitleDropdown && jobTitleSearchTerm && filteredJobTitles.length > 0 && (
+                                        <div
+                                            ref={jobTitleDropdownRef}
+                                            className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+                                        >
+                                            {filteredJobTitles.map(internship => (
+                                                <div
+                                                    key={internship._id}
+                                                    onClick={() => handleJobTitleSelect(internship)}
+                                                    className="px-4 py-3 hover:bg-indigo-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+                                                >
+                                                    <div className="font-semibold text-indigo-600">{internship.title}</div>
+                                                    {internship.company && (
+                                                        <div className="text-sm text-gray-700">{internship.company}</div>
+                                                    )}
+                                                    {internship.stipend > 0 && (
+                                                        <div className="text-xs text-green-600 font-semibold">Stipend: ₹{internship.stipend}/{internship.stipendType || 'month'}</div>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {showJobTitleDropdown && jobTitleSearchTerm && filteredJobTitles.length === 0 && (
+                                        <div className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg p-4 text-center text-gray-500">
+                                            No internships found
+                                        </div>
+                                    )}
+
+                                    <p className="mt-1 text-xs text-gray-500">
+                                        {selectedJobTitleDisplay ? 'Job title selected. Stipend auto-filled. Click X to clear.' : 'Type to search for an internship title'}
+                                    </p>
+                                    <input type="hidden" name="title" value={title} required />
+                                </>
+                            )}
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Company Name</label>
+                            <input type="text" name="company" value={company} onChange={onChange} required className="mt-1 block w-full px-3 py-2 border rounded-md bg-gray-100" />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Issue Date</label>
+                            <input type="date" name="issueDate" value={issueDate} onChange={onChange} required className="mt-1 block w-full px-3 py-2 border rounded-md" />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Internship Start Date</label>
+                            <input type="date" name="startDate" value={startDate} onChange={onChange} className="mt-1 block w-full px-3 py-2 border rounded-md" />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Tech Partner</label>
+                            <input type="text" name="techPartner" value={techPartner} onChange={onChange} className="mt-1 block w-full px-3 py-2 border rounded-md" placeholder="Bridge4Engineers.com" />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Stipend (per month) - ₹</label>
+                            <div className="relative">
+                                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-semibold">₹</span>
+                                <input
+                                    type="number"
+                                    name="stipend"
+                                    value={stipend}
+                                    onChange={onChange}
+                                    required
+                                    className="mt-1 block w-full pl-8 pr-3 py-2 border rounded-md"
+                                    placeholder="Auto-filled when job title is selected"
+                                />
                             </div>
-                        ) : (
-                            <input
-                                type="text"
-                                name="hrName"
-                                value={hrName}
-                                onChange={onChange}
-                                required
-                                className="mt-1 block w-full px-3 py-2 border rounded-md"
-                                placeholder="HR Manager Name"
-                            />
-                        )}
-                    </div>
+                            {stipend && (
+                                <p className="mt-1 text-xs text-green-600">Stipend: ₹{stipend} /month (auto-filled from selected internship)</p>
+                            )}
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">HR Name</label>
+                            {selectedHR ? (
+                                <div className="mt-1 p-2 bg-green-50 border border-green-200 rounded-md">
+                                    <span className="text-green-800 font-semibold">{selectedHR}</span>
+                                    <span className="text-xs text-green-600 ml-2">(Auto-selected based on internship)</span>
+                                </div>
+                            ) : (
+                                <input
+                                    type="text"
+                                    name="hrName"
+                                    value={hrName}
+                                    onChange={onChange}
+                                    required
+                                    className="mt-1 block w-full px-3 py-2 border rounded-md"
+                                    placeholder="HR Manager Name"
+                                />
+                            )}
+                        </div>
                         <div className="pt-4">
                             <button
                                 type="submit"
@@ -904,123 +904,123 @@ const GenerateOfferLetter = () => {
 
                 {/* Preview / List Section */}
                 <div className="lg:col-span-2 space-y-10">
-                        {showPreview ? (
-                            <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 p-1 border border-gray-100 overflow-hidden sticky top-8">
-                                <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                                    <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest">Live Document Preview</h2>
-                                    <div className="flex gap-2">
-                                        <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                                        <div className="w-3 h-3 rounded-full bg-amber-400"></div>
-                                        <div className="w-3 h-3 rounded-full bg-green-400"></div>
-                                    </div>
-                                </div>
-                                <div className="p-6 bg-gray-100 flex justify-center">
-                                    <div className="shadow-2xl origin-top scale-[0.6] md:scale-[0.8] lg:scale-[0.85] xl:scale-100 transition-transform">
-                                        <iframe
-                                            title="Offer Letter Preview"
-                                            srcDoc={offerLetterHTML}
-                                            className="w-[850px] h-[1100px] border-none bg-white"
-                                        />
-                                    </div>
+                    {showPreview ? (
+                        <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 p-1 border border-gray-100 overflow-hidden sticky top-8">
+                            <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                                <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest">Live Document Preview</h2>
+                                <div className="flex gap-2">
+                                    <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                                    <div className="w-3 h-3 rounded-full bg-amber-400"></div>
+                                    <div className="w-3 h-3 rounded-full bg-green-400"></div>
                                 </div>
                             </div>
-                        ) : (
-                            <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
-                                <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between">
-                                    <h2 className="text-xl font-bold text-gray-900">Recently Generated</h2>
-                                    <div className="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold">
-                                        {allLetters.length} Letters
-                                    </div>
+                            <div className="p-6 bg-gray-100 flex justify-center">
+                                <div className="shadow-2xl origin-top scale-[0.6] md:scale-[0.8] lg:scale-[0.85] xl:scale-100 transition-transform">
+                                    <iframe
+                                        title="Offer Letter Preview"
+                                        srcDoc={offerLetterHTML}
+                                        className="w-[850px] h-[1100px] border-none bg-white"
+                                    />
                                 </div>
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-left border-collapse">
-                                        <thead>
-                                            <tr className="bg-gray-50/50 text-gray-400 text-xs font-bold uppercase tracking-wider">
-                                                <th className="px-8 py-4">Candidate</th>
-                                                <th className="px-8 py-4">Domain</th>
-                                                <th className="px-8 py-4">Issued</th>
-                                                <th className="px-8 py-4">Status</th>
-                                                <th className="px-8 py-4 text-right">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-gray-100">
-                                            {allLetters.map(letter => (
-                                                <tr key={letter._id} className="hover:bg-indigo-50/30 transition-colors group">
-                                                    <td className="px-8 py-5">
-                                                        <div className="font-bold text-gray-900">{letter.candidateName || '-'}</div>
-                                                        <div className="text-xs text-gray-500">ID: {letter.user?.internId || 'N/A'}</div>
-                                                    </td>
-                                                    <td className="px-8 py-5">
-                                                        <span className="inline-block px-3 py-1 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-600">
-                                                            {letter.title}
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
+                            <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between">
+                                <h2 className="text-xl font-bold text-gray-900">Recently Generated</h2>
+                                <div className="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold">
+                                    {allLetters.length} Letters
+                                </div>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr className="bg-gray-50/50 text-gray-400 text-xs font-bold uppercase tracking-wider">
+                                            <th className="px-8 py-4">Candidate</th>
+                                            <th className="px-8 py-4">Domain</th>
+                                            <th className="px-8 py-4">Issued</th>
+                                            <th className="px-8 py-4">Status</th>
+                                            <th className="px-8 py-4 text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {allLetters.map(letter => (
+                                            <tr key={letter._id} className="hover:bg-indigo-50/30 transition-colors group">
+                                                <td className="px-8 py-5">
+                                                    <div className="font-bold text-gray-900">{letter.candidateName || '-'}</div>
+                                                    <div className="text-xs text-gray-500">ID: {letter.user?.internId || 'N/A'}</div>
+                                                </td>
+                                                <td className="px-8 py-5">
+                                                    <span className="inline-block px-3 py-1 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-600">
+                                                        {letter.title}
+                                                    </span>
+                                                </td>
+                                                <td className="px-8 py-5 text-sm text-gray-500">
+                                                    {new Date(letter.issueDate).toLocaleDateString()}
+                                                </td>
+                                                <td className="px-8 py-5">
+                                                    {letter.fileUrl ? (
+                                                        <span className="flex items-center gap-1.5 text-green-600 text-xs font-bold">
+                                                            <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                                                            Generated
                                                         </span>
-                                                    </td>
-                                                    <td className="px-8 py-5 text-sm text-gray-500">
-                                                        {new Date(letter.issueDate).toLocaleDateString()}
-                                                    </td>
-                                                    <td className="px-8 py-5">
-                                                        {letter.fileUrl ? (
-                                                            <span className="flex items-center gap-1.5 text-green-600 text-xs font-bold">
-                                                                <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                                                                Generated
-                                                            </span>
-                                                        ) : (
-                                                            <span className="text-gray-400 text-xs">Pending</span>
+                                                    ) : (
+                                                        <span className="text-gray-400 text-xs">Pending</span>
+                                                    )}
+                                                </td>
+                                                <td className="px-8 py-5 text-right">
+                                                    <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        {letter.fileUrl && (
+                                                            <a
+                                                                href={letter.fileUrl}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                                                                title="View PDF"
+                                                            >
+                                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                                            </a>
                                                         )}
-                                                    </td>
-                                                    <td className="px-8 py-5 text-right">
-                                                        <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                            {letter.fileUrl && (
-                                                                <a 
-                                                                    href={letter.fileUrl} 
-                                                                    target="_blank" 
-                                                                    rel="noopener noreferrer"
-                                                                    className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
-                                                                    title="View PDF"
-                                                                >
-                                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                                                </a>
-                                                            )}
-                                                            <button 
-                                                                onClick={() => handleSendEmail(letter._id)}
-                                                                className="p-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors"
-                                                                title="Send Email"
-                                                            >
-                                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                                                            </button>
-                                                            <button 
-                                                                onClick={() => handleEdit(letter._id)}
-                                                                className="p-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors"
-                                                                title="Edit"
-                                                            >
-                                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                                            </button>
-                                                            <button 
-                                                                onClick={() => deleteOfferLetter(letter._id)}
-                                                                className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
-                                                                title="Delete"
-                                                            >
-                                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                    {allLetters.length === 0 && (
-                                        <div className="p-20 text-center text-gray-400">
-                                            <div className="mb-4">
-                                                <svg className="w-16 h-16 mx-auto opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                                            </div>
-                                            <p className="font-semibold">No offer letters generated yet.</p>
-                                            <p className="text-sm">Letters you create will appear here.</p>
+                                                        <button
+                                                            onClick={() => handleSendEmail(letter._id)}
+                                                            className="p-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors"
+                                                            title="Send Email"
+                                                        >
+                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleEdit(letter._id)}
+                                                            className="p-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors"
+                                                            title="Edit"
+                                                        >
+                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                                        </button>
+                                                        <button
+                                                            onClick={() => deleteOfferLetter(letter._id)}
+                                                            className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                                                            title="Delete"
+                                                        >
+                                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                                {allLetters.length === 0 && (
+                                    <div className="p-20 text-center text-gray-400">
+                                        <div className="mb-4">
+                                            <svg className="w-16 h-16 mx-auto opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                                         </div>
-                                    )}
-                                </div>
+                                        <p className="font-semibold">No offer letters generated yet.</p>
+                                        <p className="text-sm">Letters you create will appear here.</p>
+                                    </div>
+                                )}
                             </div>
-                        )}
-                    </div>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
