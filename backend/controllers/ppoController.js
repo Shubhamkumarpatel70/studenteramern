@@ -87,7 +87,7 @@ exports.issuePPO = async (req, res) => {
       if (userDoc.email) {
         await sendEmail({
           email: userDoc.email,
-          from: "careers@studentera.online",
+          from: "noreply@studentera.online",
           subject: `Congratulations! Pre-Placement Offer (PPO) from Student Era`,
           message: `Dear ${userDoc.name},\n\nWe are delighted to offer you a full-time position as ${jobTitle} at Student Era. Please find your Pre-Placement Offer letter attached/linked below.\n\nLink: ${result.secure_url}\n\nBest Regards,\nHR Team`,
           html: `<h3>Congratulations ${userDoc.name}!</h3><p>We are delighted to offer you a full-time position as <b>${jobTitle}</b> at Student Era.</p><p>Please find your Pre-Placement Offer letter at the link below:</p><p><a href="${result.secure_url}" style="padding: 10px 20px; background: #0A2463; color: white; text-decoration: none; border-radius: 5px;">View PPO Letter</a></p><p>Best Regards,<br>HR Team</p>`

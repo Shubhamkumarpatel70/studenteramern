@@ -60,8 +60,8 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
       .text((offerLetter.companyEmail || "contact@studentera.online") + " | " + (offerLetter.companyWebsite || "www.studentera.online"), { align: "right", width: usableWidth });
 
     // Divider Line
-    doc.moveDown().moveTo(margin, doc.y).lineTo(width - margin, doc.y).lineWidth(1.5).strokeColor("#E5E7EB").stroke();
-    doc.y += 15;
+    doc.moveDown(0.5).moveTo(margin, doc.y).lineTo(width - margin, doc.y).lineWidth(1.5).strokeColor("#E5E7EB").stroke();
+    doc.y += 5;
 
     // Meta Info (Ref & Date)
     const formattedDate = offerLetter.issueDate
@@ -73,26 +73,26 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
     doc.fillColor("#3E5C76").text(`Date: ${formattedDate}`, margin, metaY, { align: "right", width: usableWidth });
 
     // Subject
-    doc.moveDown(2.5);
+    doc.moveDown(1);
     doc.fontSize(20).font("Helvetica-Bold").fillColor("#0A2463").text("LETTER OF OFFER", { align: "center", underline: true });
     
     // Greeting
-    doc.moveDown(2.5);
+    doc.moveDown(1.5);
     doc.fontSize(12).font("Helvetica").fillColor("#1F2937").text("Dear ", margin, doc.y, { continued: true }).font("Helvetica-Bold").fillColor("#0A2463").text(`${offerLetter.candidateName || "Candidate"},`);
     
     // Intern ID Badge
-    doc.moveDown(1.5);
+    doc.moveDown(1);
     const idBadgeY = doc.y;
     doc.rect(margin, idBadgeY, 150, 22).fill("#EFF6FF");
     doc.fontSize(10).font("Helvetica-Bold").fillColor("#1E40AF").text(`Intern ID: ${offerLetter.internId || "NOT ASSIGNED"}`, margin + 10, idBadgeY + 6);
     doc.y = idBadgeY + 22;
 
     // Announcement
-    doc.moveDown(1.5);
+    doc.moveDown(1);
     doc.fontSize(13).font("Helvetica-Bold").fillColor("#0A2463").text("Congratulations! We are delighted to welcome you.");
     
     // Confidential Tag
-    doc.moveDown(1.5);
+    doc.moveDown(1);
     const confidentialY = doc.y;
     doc.rect(margin, confidentialY, usableWidth, 20).fill("#FEF2F2");
     doc.fontSize(9).font("Helvetica-Bold").fillColor("#B91C1C").text("STRICTLY PRIVATE & CONFIDENTIAL", margin, confidentialY + 6, { align: "center", characterSpacing: 1 });
@@ -138,7 +138,7 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
 
     // Signature Block - Ensure this stays together
     checkPageBreak(220);
-    doc.moveDown(3);
+    doc.moveDown(1.5);
     const signBlockY = doc.y;
 
     doc.font("Helvetica-Bold").fontSize(11).fillColor("#0A2463").text(`For ${offerLetter.company || "Student Era"}`, margin, signBlockY);
@@ -156,7 +156,7 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
     }
 
     // Acceptance Boxes
-    const boxY = signBlockY + 130;
+    const boxY = signBlockY + 110;
     const boxWidth = (usableWidth - 60) / 3;
     
     [ "Intern's Signature", "Date of Acceptance", "Institution / College" ].forEach((label, i) => {
