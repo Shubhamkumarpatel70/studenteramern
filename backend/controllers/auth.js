@@ -377,7 +377,7 @@ exports.forgotPassword = async (req, res, next) => {
     console.error("Forgot password error:", err);
     res.status(500).json({
       success: false,
-      message: "Failed to send password reset OTP. Please try again.",
+      message: err.message || "Failed to send password reset OTP. Please try again.",
     });
   }
 };

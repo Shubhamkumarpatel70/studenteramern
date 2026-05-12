@@ -91,7 +91,7 @@ const getOTPEmailTemplate = (userName, otp, expiryMinutes = 10) => {
                             </div>
                             
                             <p style="margin: 24px 0 0 0; color: #718096; font-size: 14px; line-height: 1.6;">
-                                If you didn't create an account with Student Era, please ignore this email or contact our support team.
+                                If you didn't create an account with Student Era, please ignore this email or contact our support team at <a href="mailto:support@studentera.online" style="color: #0A2463; text-decoration: none; font-weight: 600;">support@studentera.online</a>.
                             </p>
                         </td>
                     </tr>
@@ -103,7 +103,7 @@ const getOTPEmailTemplate = (userName, otp, expiryMinutes = 10) => {
                                 Need Help?
                             </p>
                             <p style="margin: 0 0 20px 0; color: #718096; font-size: 13px; line-height: 1.6;">
-                                If you're having trouble verifying your email, please contact our support team or visit our help center.
+                                If you're having trouble verifying your email, please contact our support team at <a href="mailto:support@studentera.online" style="color: #0A2463; text-decoration: none; font-weight: 600;">support@studentera.online</a> or visit our help center.
                             </p>
                             <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
                                 <p style="margin: 0; color: #a0aec0; font-size: 12px;">
@@ -132,10 +132,131 @@ This code will expire in ${expiryMinutes} minutes.
 
 🔒 Security Tip: Never share this code with anyone. Student Era staff will never ask for your OTP.
 
-If you didn't create an account with Student Era, please ignore this email or contact our support team.
+If you didn't create an account with Student Era, please ignore this email or contact our support team at support@studentera.online.
 
 © ${new Date().getFullYear()} Student Era. All rights reserved.
 This is an automated email, please do not reply.`
+    };
+};
+
+const getForgotPasswordOTPTemplate = (userName, otp, expiryMinutes = 10) => {
+    // Validate inputs
+    if (!userName || typeof userName !== 'string') {
+        userName = 'User';
+    }
+    if (!otp || typeof otp !== 'string') {
+        throw new Error('OTP is required and must be a string');
+    }
+    if (typeof expiryMinutes !== 'number' || expiryMinutes <= 0) {
+        expiryMinutes = 10;
+    }
+
+    const frontendUrl = process.env.FRONTEND_URL || process.env.CLIENT_URL || 'https://studentera.online';
+
+    // Escape HTML to prevent XSS
+    const escapeHtml = (str) => {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    };
+
+    const safeUserName = escapeHtml(userName);
+    const safeOtp = otp;
+
+    return {
+        subject: "Student Era - Password Reset Request",
+        html: `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Reset - Student Era</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f7fa;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f5f7fa; padding: 20px 0;">
+        <tr>
+            <td align="center" style="padding: 20px 0;">
+                <table role="presentation" style="width: 100%; max-width: 600px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); overflow: hidden;">
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #0A2463 0%, #1a3d7a 100%); padding: 40px 30px; text-align: center;">
+                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">
+                                Student Era
+                            </h1>
+                            <p style="margin: 8px 0 0 0; color: #e0e7ff; font-size: 16px; font-weight: 400;">
+                                Password Reset Request
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <h2 style="margin: 0 0 20px 0; color: #1a202c; font-size: 24px; font-weight: 600;">
+                                Hello ${safeUserName}!
+                            </h2>
+                            
+                            <p style="margin: 0 0 24px 0; color: #4a5568; font-size: 16px; line-height: 1.6;">
+                                We received a request to reset your password. Please use the following OTP code to proceed with the password reset process.
+                            </p>
+                            
+                            <!-- OTP Box -->
+                            <div style="background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%); border: 2px dashed #e53e3e; border-radius: 12px; padding: 30px; text-align: center; margin: 32px 0;">
+                                <p style="margin: 0 0 12px 0; color: #c53030; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+                                    Reset Verification Code
+                                </p>
+                                <div style="font-size: 42px; font-weight: 700; color: #c53030; letter-spacing: 8px; font-family: 'Courier New', monospace; margin: 16px 0;">
+                                    ${safeOtp}
+                                </div>
+                                <p style="margin: 12px 0 0 0; color: #718096; font-size: 13px;">
+                                    Valid for ${expiryMinutes} minutes
+                                </p>
+                            </div>
+                            
+                            <!-- Security Notice -->
+                            <div style="background-color: #fefcbf; border-left: 4px solid #ecc94b; padding: 16px; margin: 24px 0; border-radius: 6px;">
+                                <p style="margin: 0; color: #744210; font-size: 14px; line-height: 1.5;">
+                                    <strong>🔒 Security Notice:</strong> If you did not request a password reset, you can safely ignore this email. Your password will remain unchanged.
+                                </p>
+                            </div>
+                            
+                            <p style="margin: 24px 0 0 0; color: #718096; font-size: 14px; line-height: 1.6;">
+                                Need help? Contact our support team for assistance at <a href="mailto:support@studentera.online" style="color: #0A2463; text-decoration: none; font-weight: 600;">support@studentera.online</a>.
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f7fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+                            <p style="margin: 0; color: #a0aec0; font-size: 12px;">
+                                © ${new Date().getFullYear()} Student Era. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+    `,
+        text: `Hello ${userName}!
+
+We received a request to reset your password. Please use the following OTP code to proceed:
+
+Your Reset Verification Code: ${safeOtp}
+
+This code will expire in ${expiryMinutes} minutes.
+
+🔒 Security Notice: If you did not request a password reset, you can safely ignore this email. For support, mail us at support@studentera.online.
+
+© ${new Date().getFullYear()} Student Era. All rights reserved.`
     };
 };
 
@@ -209,7 +330,7 @@ const getOfferLetterEmailTemplate = (userName, offerLetterDetails, downloadUrl) 
                                 Need Help?
                             </p>
                             <p style="margin: 0 0 20px 0; color: #718096; font-size: 13px; line-height: 1.6;">
-                                If you have any questions about your offer letter, please contact our support team.
+                                If you have any questions about your offer letter, please contact our support team at <a href="mailto:support@studentera.online" style="color: #0A2463; text-decoration: none; font-weight: 600;">support@studentera.online</a>.
                             </p>
                             <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
                                 <p style="margin: 0; color: #a0aec0; font-size: 12px;">
@@ -238,7 +359,7 @@ ${offerLetterDetails.startDate ? `Start Date: ${new Date(offerLetterDetails.star
 
 Download your offer letter: ${downloadUrl}
 
-You can also access your offer letter anytime from your dashboard.
+You can also access your offer letter anytime from your dashboard. For support, mail us at support@studentera.online.
 
 © ${new Date().getFullYear()} Student Era. All rights reserved.`
     };
@@ -315,7 +436,7 @@ const getCertificateEmailTemplate = (userName, certificateDetails, downloadUrl) 
                                 Need Help?
                             </p>
                             <p style="margin: 0 0 20px 0; color: #718096; font-size: 13px; line-height: 1.6;">
-                                If you have any questions about your certificate, please contact our support team.
+                                If you have any questions about your certificate, please contact our support team at <a href="mailto:support@studentera.online" style="color: #0A2463; text-decoration: none; font-weight: 600;">support@studentera.online</a>.
                             </p>
                             <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
                                 <p style="margin: 0; color: #a0aec0; font-size: 12px;">
@@ -345,7 +466,7 @@ ${certificateDetails.certificateId ? `Certificate ID: ${certificateDetails.certi
 
 Download your certificate: ${downloadUrl}
 
-You can also access your certificate anytime from your dashboard. This certificate can be verified using the Certificate ID.
+You can also access your certificate anytime from your dashboard. This certificate can be verified using the Certificate ID. For support, mail us at support@studentera.online.
 
 © ${new Date().getFullYear()} Student Era. All rights reserved.`
     };
@@ -353,6 +474,7 @@ You can also access your certificate anytime from your dashboard. This certifica
 
 module.exports = {
     getOTPEmailTemplate,
+    getForgotPasswordOTPTemplate,
     getOfferLetterEmailTemplate,
     getCertificateEmailTemplate
 };

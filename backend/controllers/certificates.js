@@ -107,6 +107,7 @@ exports.generateCertificate = async (req, res, next) => {
 
         await sendEmail({
           email: userDoc.email,
+          from: "noreply@studentera.online",
           subject: emailTemplate.subject,
           message: emailTemplate.text,
           html: emailTemplate.html,
@@ -409,6 +410,7 @@ exports.updateCertificate = async (req, res, next) => {
 
         await sendEmail({
           email: userDoc.email,
+          from: "noreply@studentera.online",
           subject: `Updated: ${emailTemplate.subject}`,
           message: emailTemplate.text,
           html: emailTemplate.html,
