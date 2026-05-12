@@ -25,20 +25,29 @@ exports.issuePPO = async (req, res) => {
       referenceNo
     } = req.body;
 
-    // Find user
-    const userDoc = await User.findById(userId);
+    // Find user by ID or internId
+    let userDoc;
+    if (mongoose.Types.ObjectId.isValid(userId)) {
+      userDoc = await User.findById(userId);
+    } else {
+      userDoc = await User.findOne({ internId: userId });
+    }
+
     if (!userDoc) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
+    // Use the actual Mongo _id from the userDoc
+    const actualUserId = userDoc._id;
+
     // Check if PPO already exists for this job title
-    const existing = await PPO.findOne({ user: userId, jobTitle });
+    const existing = await PPO.findOne({ user: actualUserId, jobTitle });
     if (existing) {
       return res.status(400).json({ success: false, message: "PPO already issued for this role" });
     }
 
     const ppoData = {
-      user: userId,
+      user: actualUserId,
       candidateName: userDoc.name,
       internId: userDoc.internId,
       jobTitle,
@@ -90,7 +99,7 @@ exports.issuePPO = async (req, res) => {
 
     // Create notification
     await createNotification(
-      userId,
+      actualUserId,
       `Congratulations! You have received a Pre-Placement Offer (PPO) for the position of "${jobTitle}". Check your dashboard to view details.`
     );
 
