@@ -71,6 +71,19 @@ const ManagePPO = () => {
     }
   };
 
+  const handleDeletePPO = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this PPO? This will remove it from the student's dashboard as well.")) return;
+    
+    try {
+      await api.delete(`/ppo/${id}`);
+      toast.success("PPO Deleted Successfully");
+      fetchPPOs();
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Failed to delete PPO");
+    }
+  };
+
   const filteredPPOs = ppos.filter(ppo => 
     ppo.candidateName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     ppo.internId?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -177,15 +190,24 @@ const ManagePPO = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a
-                          href={ppo.fileUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-indigo-600 hover:text-indigo-900 inline-flex items-center gap-1"
-                        >
-                          <Download size={16} />
-                          View
-                        </a>
+                        <div className="flex items-center justify-end gap-3">
+                          <a
+                            href={ppo.fileUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-indigo-600 hover:text-indigo-900 inline-flex items-center gap-1 bg-indigo-50 px-2 py-1 rounded"
+                          >
+                            <Download size={14} />
+                            View
+                          </a>
+                          <button
+                            onClick={() => handleDeletePPO(ppo._id)}
+                            className="text-red-600 hover:text-red-900 inline-flex items-center gap-1 bg-red-50 px-2 py-1 rounded"
+                          >
+                            <Trash size={14} />
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))

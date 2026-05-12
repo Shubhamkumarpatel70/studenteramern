@@ -66,9 +66,9 @@ function generatePPOLetterPDF(ppo, outputPath) {
       .fillColor(mutedTextColor)
       .moveDown(0.5)
       .text("Patna, Bihar India, BR 800002", { align: "right", width: usableWidth });
-    
+
     doc.text("www.studentera.online | contact@studentera.online", { align: "right", width: usableWidth });
-    doc.text("CIN: U72900BR2022PTC058421", { align: "right", width: usableWidth });
+    // doc.text("CIN: U72900BR2022PTC058421", { align: "right", width: usableWidth });
 
     // Divider
     doc.moveDown(0.5).moveTo(margin, doc.y).lineTo(width - margin, doc.y).lineWidth(1).strokeColor("#E5E7EB").stroke();
@@ -92,7 +92,7 @@ function generatePPOLetterPDF(ppo, outputPath) {
 
     // Greeting
     doc.fontSize(12).font("Helvetica").fillColor(textColor).text("Dear ", { continued: true }).font("Helvetica-Bold").fillColor(primaryColor).text(`${ppo.candidateName},`);
-    
+
     // Intro
     doc.moveDown(1);
     doc.fontSize(11).font("Helvetica").fillColor(textColor).text(`We are thrilled to extend this formal Pre-Placement Offer (PPO) to you, following your exceptional performance during your internship with `, { continued: true, lineGap: 3 }).font("Helvetica-Bold").text(`${ppo.company || "Student Era"}`, { continued: true }).font("Helvetica").text(`. Your dedication, technical acumen, and cultural fit have significantly contributed to our team's success.`);
@@ -102,25 +102,25 @@ function generatePPOLetterPDF(ppo, outputPath) {
     const summaryY = doc.y;
     doc.rect(margin, summaryY, usableWidth, 110).fill("#F0F9FF");
     doc.rect(margin, summaryY, usableWidth, 1).strokeColor("#BAE6FD").stroke();
-    
+
     doc.fontSize(10).font("Helvetica-Bold").fillColor("#0369A1").text("OFFER SUMMARY", margin + 15, summaryY + 15);
-    
+
     const gridY = summaryY + 40;
     // Row 1
     doc.fontSize(9).font("Helvetica-Bold").fillColor(mutedTextColor).text("DESIGNATION", margin + 15, gridY);
     doc.fontSize(11).font("Helvetica-Bold").fillColor(primaryColor).text(ppo.jobTitle || "Software Engineer", margin + 15, gridY + 12);
-    
-    doc.fontSize(9).font("Helvetica-Bold").fillColor(mutedTextColor).text("DEPARTMENT", margin + usableWidth/2 + 15, gridY);
-    doc.fontSize(11).font("Helvetica-Bold").fillColor(primaryColor).text(ppo.department || "Engineering", margin + usableWidth/2 + 15, gridY + 12);
+
+    doc.fontSize(9).font("Helvetica-Bold").fillColor(mutedTextColor).text("DEPARTMENT", margin + usableWidth / 2 + 15, gridY);
+    doc.fontSize(11).font("Helvetica-Bold").fillColor(primaryColor).text(ppo.department || "Engineering", margin + usableWidth / 2 + 15, gridY + 12);
 
     // Row 2
     const gridY2 = gridY + 40;
     doc.fontSize(9).font("Helvetica-Bold").fillColor(mutedTextColor).text("JOINING DATE", margin + 15, gridY2);
     const joinDate = ppo.joiningDate ? new Date(ppo.joiningDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "TBD";
     doc.fontSize(11).font("Helvetica-Bold").fillColor(primaryColor).text(joinDate, margin + 15, gridY2 + 12);
-    
-    doc.fontSize(9).font("Helvetica-Bold").fillColor(mutedTextColor).text("WORK LOCATION", margin + usableWidth/2 + 15, gridY2);
-    doc.fontSize(11).font("Helvetica-Bold").fillColor(primaryColor).text(ppo.workLocation || "Remote / Office", margin + usableWidth/2 + 15, gridY2 + 12);
+
+    doc.fontSize(9).font("Helvetica-Bold").fillColor(mutedTextColor).text("WORK LOCATION", margin + usableWidth / 2 + 15, gridY2);
+    doc.fontSize(11).font("Helvetica-Bold").fillColor(primaryColor).text(ppo.workLocation || "Remote / Office", margin + usableWidth / 2 + 15, gridY2 + 12);
 
     doc.y = summaryY + 120;
 
@@ -128,14 +128,14 @@ function generatePPOLetterPDF(ppo, outputPath) {
     doc.fontSize(12).font("Helvetica-Bold").fillColor(primaryColor).text("Compensation & Benefits");
     doc.moveDown(0.5);
     doc.fontSize(11).font("Helvetica").fillColor(textColor).text("Your annual total compensation package is designed to reward your expertise and potential.");
-    
+
     doc.moveDown(0.5);
     const ctcY = doc.y;
     doc.rect(margin, ctcY, usableWidth, 45).fill("#F0FDF4");
     doc.rect(margin, ctcY, usableWidth, 1).strokeColor("#BBF7D0").stroke();
     doc.fontSize(11).font("Helvetica-Bold").fillColor("#166534").text("Annual Cost to Company (CTC)", margin + 15, ctcY + 16);
     doc.fontSize(18).font("Helvetica-Bold").fillColor("#15803D").text(`Rs. ${ppo.ctc}`, margin, ctcY + 13, { align: "right", width: usableWidth - 15 });
-    
+
     doc.y = ctcY + 55;
 
     // Terms
@@ -166,7 +166,7 @@ function generatePPOLetterPDF(ppo, outputPath) {
     // Stamp
     const stampPath = path.join(__dirname, "../templates/stamp.png");
     if (fs.existsSync(stampPath)) {
-      doc.opacity(0.15).image(stampPath, width/2 - 40, sigBlockY + 10, { width: 80 }).opacity(1);
+      doc.opacity(0.15).image(stampPath, width / 2 - 40, sigBlockY + 10, { width: 80 }).opacity(1);
     }
 
     // Candidate Signature

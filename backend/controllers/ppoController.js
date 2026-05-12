@@ -167,3 +167,21 @@ exports.updatePPOStatus = async (req, res) => {
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+
+// @desc    Delete PPO
+// @route   DELETE /api/ppo/:id
+// @access  Private/Admin
+exports.deletePPO = async (req, res) => {
+  try {
+    const ppo = await PPO.findById(req.params.id);
+
+    if (!ppo) {
+      return res.status(404).json({ success: false, message: "PPO not found" });
+    }
+
+    await ppo.deleteOne();
+    res.status(200).json({ success: true, message: "PPO deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};

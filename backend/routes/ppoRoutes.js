@@ -4,7 +4,8 @@ const {
     issuePPO,
     getAllPPOs,
     getMyPPOs,
-    updatePPOStatus
+    updatePPOStatus,
+    deletePPO
 } = require('../controllers/ppoController');
 
 const { protect, authorize } = require('../middleware/auth');
@@ -18,5 +19,6 @@ router.put('/:id/status', updatePPOStatus);
 router.use(authorize('admin'));
 router.post('/issue', issuePPO);
 router.get('/', getAllPPOs);
+router.delete('/:id', deletePPO);
 
 module.exports = router;
