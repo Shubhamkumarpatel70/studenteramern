@@ -600,7 +600,7 @@ const GenerateOfferLetter = () => {
             </header>
             
             <div class='meta-info'>
-                <div class='ref-no'>REF: SE/INTERNSHIP/OFFER/${userDoc.internId}</div>
+                <div class='ref-no'>REF: SE/INTERNSHIP/OFFER/${internId}</div>
                 <div class='date'>Date: ${formattedIssueDate}</div>
             </div>
             
