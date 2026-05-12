@@ -89,9 +89,9 @@ const Refund = () => (
               For refund inquiries or payment-related questions, please reach out to us at:
             </p>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-8">
-              <a href="mailto:contact.studentera@gmail.com" className="group flex items-center text-gray-600 hover:text-primary transition-colors">
+              <a href="mailto:contact@studentera.online" className="group flex items-center text-gray-600 hover:text-primary transition-colors">
                 <Mail className="h-5 w-5 mr-3 text-gray-400 group-hover:text-primary" />
-                <span className="font-medium">contact.studentera@gmail.com</span>
+                <span className="font-medium">contact@studentera.online</span>
               </a>
               <a href="tel:+15551234567" className="group flex items-center text-gray-600 hover:text-primary transition-colors">
                 <Phone className="h-5 w-5 mr-3 text-gray-400 group-hover:text-primary" />

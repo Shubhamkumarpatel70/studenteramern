@@ -20,7 +20,7 @@ const faqs = [
   },
   {
     question: "How do I contact support?",
-    answer: "Use the Contact Us link in the footer or email us at contact.studentera@gmail.com.",
+    answer: "Use the Contact Us link in the footer or email us at contact@studentera.online.",
     icon: ChatBubbleLeftRightIcon
   }
 ];

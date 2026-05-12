@@ -139,7 +139,7 @@ const Contact = () => {
                     Email
                   </h3>
                   <p className="text-gray-700 text-lg">
-                    contact.studentera@gmail.com
+                    contact@studentera.online
                   </p>
                 </div>
               </div>

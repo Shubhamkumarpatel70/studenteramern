@@ -11,6 +11,8 @@ import {
   Phone,
 } from "lucide-react";
 import AuthContext from "../context/AuthContext";
+import OTPModal from "../components/OTPModal";
+import api from "../config/api";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -23,6 +25,8 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  
   const { register } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -34,190 +38,197 @@ const Register = () => {
     e.preventDefault();
     setError("");
     setLoading(true);
-    // Basic client-side password validation
+    
     if (password.length < 6) {
       setError("Password must be at least 6 characters long.");
       setLoading(false);
       return;
     }
+
     try {
-      const res = await register({
+      // Step 1: Trigger registration (Backend sends OTP)
+      await api.post("/auth/register", {
         name,
         email: email.toLowerCase(),
         password,
         mobile,
         role,
       });
-      // Registration successful - redirect to login
-      navigate("/login", { 
-        state: { 
-          message: "Registration successful! Please login to continue.",
-          email: res?.email || email.toLowerCase()
-        } 
-      });
+      
+      // Step 2: Show OTP Modal
+      setShowOtpModal(true);
     } catch (err) {
-      const message =
-        err.response?.data?.message ||
-        err.message ||
-        "Registration failed. Please try again.";
+      const message = err.response?.data?.message || "Registration failed. Please try again.";
       setError(message);
-      // If user already exists, redirect to login
       if (message.includes("already exists")) {
-        setTimeout(() => {
-          navigate("/login");
-        }, 3000);
+        setTimeout(() => navigate("/login"), 3000);
       }
     } finally {
       setLoading(false);
     }
   };
 
+  const handleVerifyOtp = async (otp) => {
+    setLoading(true);
+    try {
+      const res = await api.post("/auth/verify-otp", {
+        email: email.toLowerCase(),
+        otp,
+        type: "registration"
+      });
+
+      if (res.data.success) {
+        setShowOtpModal(false);
+        navigate("/login", { 
+          state: { 
+            message: "Account verified successfully! You can now login.",
+            email: email.toLowerCase()
+          } 
+        });
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "OTP verification failed.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    try {
+      await api.post("/auth/register", { ...formData, email: email.toLowerCase() });
+    } catch (err) {
+      setError("Failed to resend OTP. Please try again.");
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FFFFFF] font-[Inter,sans-serif] px-4">
-      <div className="bg-[#F8F9FA] rounded-2xl shadow-2xl p-8 max-w-md w-full border border-[#0A2463]">
-        <div className="text-center mb-6">
-          <UserPlus className="w-16 h-16 text-[#0A2463] mx-auto mb-4" />
-          <h1 className="text-3xl font-extrabold text-[#0A2463] mb-2">
+    <div className="min-h-screen flex items-center justify-center bg-[#FFFFFF] font-[Inter,sans-serif] px-4 py-12">
+      <div className="bg-[#F8F9FA] rounded-3xl shadow-2xl p-8 md:p-10 max-w-md w-full border border-gray-100 relative">
+        {/* Registration Form */}
+        <div className="text-center mb-8">
+          <div className="w-20 h-20 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
+            <UserPlus className="w-10 h-10 text-indigo-600" />
+          </div>
+          <h1 className="text-3xl font-extrabold text-gray-900 mb-2">
             Create Account
           </h1>
-          <p className="text-[#212529] text-sm">
-            Already have an account?{" "}
-            <Link
-              to="/login"
-              className="font-medium text-[#28A745] hover:text-[#218838] underline"
-            >
-              Sign in
-            </Link>
+          <p className="text-gray-500 text-sm">
+            Join Student Era today and start your journey.
           </p>
-          {error && (
-            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-              <div className="flex items-center gap-2">
-                <AlertCircle className="w-5 h-5 text-red-500" />
-                <p className="text-red-700 text-sm">{error}</p>
-              </div>
-              {error.includes("already exists") && (
-                <p className="text-red-600 text-xs mt-1">
-                  Redirecting to login page...
-                </p>
-              )}
-            </div>
-          )}
         </div>
 
-        <form className="space-y-6" onSubmit={onSubmit}>
-          <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-[#212529] mb-2"
-            >
-              Full Name
-            </label>
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-xl flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
+            <p className="text-red-700 text-sm font-medium">{error}</p>
+          </div>
+        )}
+
+        <form className="space-y-5" onSubmit={onSubmit}>
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-gray-700 ml-1">Full Name</label>
             <div className="relative">
-              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#0A2463] w-5 h-5" />
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
-                id="name"
                 name="name"
                 type="text"
                 required
                 value={name}
                 onChange={onChange}
-                className="appearance-none block w-full pl-10 pr-4 py-3 border border-[#0A2463] rounded-lg shadow-sm placeholder-[#6C757D] focus:outline-none focus:ring-2 focus:ring-[#28A745] focus:border-[#28A745] sm:text-sm bg-[#FFFFFF]"
-                placeholder="Enter your full name"
+                className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all shadow-sm"
+                placeholder="John Doe"
               />
             </div>
           </div>
 
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-[#212529] mb-2"
-            >
-              Email address
-            </label>
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-gray-700 ml-1">Email Address</label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#0A2463] w-5 h-5" />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
-                id="email"
                 name="email"
                 type="email"
-                autoComplete="email"
                 required
                 value={email}
                 onChange={onChange}
-                className="appearance-none block w-full pl-10 pr-4 py-3 border border-[#0A2463] rounded-lg shadow-sm placeholder-[#6C757D] focus:outline-none focus:ring-2 focus:ring-[#28A745] focus:border-[#28A745] sm:text-sm bg-[#FFFFFF]"
-                placeholder="Enter your email"
+                className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all shadow-sm"
+                placeholder="john@example.com"
               />
             </div>
           </div>
 
-          <div>
-            <label
-              htmlFor="mobile"
-              className="block text-sm font-medium text-[#212529] mb-2"
-            >
-              Mobile Number
-            </label>
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-gray-700 ml-1">Mobile Number</label>
             <div className="relative">
-              <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#0A2463] w-5 h-5" />
+              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
-                id="mobile"
                 name="mobile"
                 type="tel"
                 required
                 value={mobile}
                 onChange={onChange}
-                className="appearance-none block w-full pl-10 pr-4 py-3 border border-[#0A2463] rounded-lg shadow-sm placeholder-[#6C757D] focus:outline-none focus:ring-2 focus:ring-[#28A745] focus:border-[#28A745] sm:text-sm bg-[#FFFFFF]"
-                placeholder="Enter your 10-digit mobile number"
+                className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all shadow-sm"
+                placeholder="9876543210"
                 pattern="[6-9]{1}[0-9]{9}"
                 maxLength="10"
               />
             </div>
           </div>
 
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-[#212529] mb-2"
-            >
-              Password
-            </label>
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-gray-700 ml-1">Password</label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#0A2463] w-5 h-5" />
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
-                id="password"
                 name="password"
                 type={showPassword ? "text" : "password"}
                 required
                 value={password}
                 onChange={onChange}
-                className="appearance-none block w-full pl-10 pr-12 py-3 border border-[#0A2463] rounded-lg shadow-sm placeholder-[#6C757D] focus:outline-none focus:ring-2 focus:ring-[#28A745] focus:border-[#28A745] sm:text-sm bg-[#FFFFFF]"
-                placeholder="Create a password"
+                className="w-full pl-12 pr-12 py-3.5 bg-white border border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all shadow-sm"
+                placeholder="••••••••"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#0A2463] hover:text-[#28A745]"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-indigo-600 transition-colors"
               >
-                {showPassword ? (
-                  <EyeOff className="w-5 h-5" />
-                ) : (
-                  <Eye className="w-5 h-5" />
-                )}
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
           </div>
 
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-[#FFFFFF] bg-[#0A2463] hover:bg-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#28A745] transition duration-200 disabled:opacity-50"
-            >
-              {loading ? "Creating Account..." : "Create Account"}
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold text-lg hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all active:scale-[0.98] disabled:opacity-50 mt-4"
+          >
+            {loading ? "Please wait..." : "Create Account"}
+          </button>
         </form>
+
+        <div className="mt-8 text-center">
+          <p className="text-gray-500 text-sm">
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="font-bold text-indigo-600 hover:text-indigo-800 transition-colors"
+            >
+              Sign in
+            </Link>
+          </p>
+        </div>
       </div>
+
+      {/* OTP Verification Modal */}
+      <OTPModal 
+        isOpen={showOtpModal}
+        onClose={() => setShowOtpModal(false)}
+        email={email}
+        onVerify={handleVerifyOtp}
+        onResend={handleResendOtp}
+        loading={loading}
+      />
     </div>
   );
 };

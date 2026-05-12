@@ -428,3 +428,41 @@ exports.deleteOfferLetter = async (req, res) => {
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+// @desc    Admin: Send existing offer letter by email
+// @route   POST /api/offer-letters/:id/send-email
+// @access  Private/Admin
+exports.sendExistingOfferLetterEmail = async (req, res, next) => {
+  try {
+    const offerLetter = await OfferLetter.findById(req.params.id).populate("user");
+    if (!offerLetter) {
+      return res.status(404).json({ success: false, message: "Offer letter not found" });
+    }
+
+    const userEmail = offerLetter.user?.email || req.body.email;
+    if (!userEmail) {
+      return res.status(400).json({ success: false, message: "User email not found" });
+    }
+
+    const emailTemplate = getOfferLetterEmailTemplate(
+      offerLetter.candidateName || offerLetter.user?.name,
+      {
+        title: offerLetter.title,
+        company: offerLetter.company,
+        startDate: offerLetter.startDate,
+      },
+      offerLetter.fileUrl
+    );
+
+    await sendEmail({
+      email: userEmail,
+      subject: emailTemplate.subject,
+      message: emailTemplate.text,
+      html: emailTemplate.html,
+    });
+
+    res.status(200).json({ success: true, message: "Email sent successfully" });
+  } catch (err) {
+    console.error("Send email error:", err);
+    res.status(500).json({ success: false, message: "Failed to send email" });
+  }
+};

@@ -375,6 +375,20 @@ const GenerateOfferLetter = () => {
         }
     };
 
+    const handleSendEmail = async (id) => {
+        if (!window.confirm('Send this offer letter to the student via email?')) return;
+        try {
+            const token = localStorage.getItem('token');
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            const res = await api.post(`/offer-letters/${id}/send-email`, {}, config);
+            if (res.data.success) {
+                alert('Offer letter sent to student email successfully!');
+            }
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to send offer letter email.');
+        }
+    };
+
     // Helper to format date
     const formatDate = (date) => {
         if (!date) return '__________';
@@ -391,94 +405,268 @@ const GenerateOfferLetter = () => {
 
     const offerLetterHTML = `
     <!DOCTYPE html>
-    <html><head><meta charset='utf-8'>
-    <style>
-    body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; background: #f8fafc; display: flex; justify-content: center; padding: 20px; }
-    .container { background: #fff; width: 100%; max-width: 850px; padding: 60px 80px; box-sizing: border-box; box-shadow: 0 10px 40px rgba(0,0,0,0.05); position: relative; border-top: 8px solid #4f46e5; border-radius: 8px; }
-    .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
-    .logo { height: 60px; object-fit: contain; }
-    .company-details { text-align: right; }
-    .company-name { font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 8px; }
-    .address-block { font-size: 11px; color: #64748b; line-height: 1.6; }
-    .line { height: 1px; background: #e2e8f0; border: none; margin: 0 0 30px 0; }
-    .ref-date-row { display: flex; justify-content: space-between; margin-bottom: 40px; font-size: 13px; color: #475569; font-weight: bold; }
-    .subject { font-weight: 800; font-size: 18px; color: #0f172a; text-align: center; margin-bottom: 40px; letter-spacing: 1px; }
-    .greeting { font-size: 14px; color: #334155; margin-bottom: 20px; }
-    .greeting .highlight { font-weight: bold; color: #0f172a; }
-    .intern-id { font-size: 13px; color: #64748b; margin-bottom: 25px; }
-    .congrats { font-weight: 800; font-size: 15px; color: #0f172a; margin-bottom: 20px; }
-    .confidential { font-weight: bold; text-align: center; margin: 25px 0; color: #b91c1c; font-size: 13px; }
-    .content { font-size: 13px; color: #334155; line-height: 1.8; margin-bottom: 30px; }
-    .stipend { font-weight: bold; color: #4f46e5; font-size: 14px; margin: 25px 0; }
-    .terms { margin: 0 0 30px 0; padding-left: 20px; }
-    .terms li { margin-bottom: 8px; padding-left: 10px; }
-    .footer-text { font-weight: bold; font-size: 13px; color: #0f172a; margin-top: 20px; }
-    .signatures-section { display: flex; justify-content: space-between; margin-top: 60px; align-items: flex-end; position: relative; }
-    .company-sig { width: 200px; }
-    .company-sig-name { font-weight: 800; font-size: 14px; color: #0f172a; margin-bottom: 15px; }
-    .company-sig-img { height: 40px; margin-bottom: 10px; display: block; }
-    .hr-name { font-size: 12px; color: #64748b; }
-    .stamp-container { position: absolute; left: 220px; bottom: -20px; opacity: 0.4; pointer-events: none; }
-    .stamp-img { width: 80px; }
-    .intern-sigs { display: flex; justify-content: space-between; gap: 40px; margin-top: 100px; }
-    .sig-box { flex: 1; text-align: left; }
-    .sig-line { border-top: 1px solid #cbd5e1; padding-top: 8px; font-size: 11px; color: #64748b; }
-    .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-size: 8rem; font-weight: 800; color: #4f46e5; opacity: 0.02; pointer-events: none; z-index: 0; user-select: none; }
-    </style></head><body>
-    <div class='container'>
-      <div class='watermark'>Student Era</div>
-      <div class='header'>
-        <img src='/logo512.png' alt='Logo' class='logo' onerror="this.style.display='none'" />
-        <div class='company-details'>
-          <div class='company-name'>${formData.company || 'Student Era'}</div>
-          <div class='address-block'>Patna, Bihar India, BR 800002<br />contact.studentera@gmail.com | www.studentera.com</div>
+    <html lang='en'>
+    <head>
+        <meta charset='utf-8'>
+        <title>Offer Letter - ${formData.company || 'Student Era'}</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+        <style>
+            :root {
+                --primary-color: #0A2463;
+                --secondary-color: #3E5C76;
+                --accent-color: #28A745;
+                --text-main: #1F2937;
+                --text-muted: #6B7280;
+                --border-color: #E5E7EB;
+            }
+            
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { 
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
+                line-height: 1.6; 
+                color: var(--text-main); 
+                background: #F3F4F6; 
+                display: flex; 
+                justify-content: center; 
+                padding: 40px 20px; 
+            }
+            
+            .container { 
+                background: #FFFFFF; 
+                width: 100%; 
+                max-width: 850px; 
+                padding: 70px 60px; 
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); 
+                position: relative; 
+                border-top: 10px solid var(--primary-color); 
+                border-radius: 4px;
+            }
+            
+            .header { 
+                display: flex; 
+                justify-content: space-between; 
+                align-items: center; 
+                margin-bottom: 50px; 
+                padding-bottom: 20px;
+                border-bottom: 2px solid var(--border-color);
+            }
+            
+            .logo-section { display: flex; align-items: center; gap: 15px; }
+            .logo { height: 50px; width: auto; object-fit: contain; }
+            
+            .company-info { text-align: right; }
+            .company-name { font-size: 20px; font-weight: 800; color: var(--primary-color); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+            .address-block { font-size: 11px; color: var(--text-muted); line-height: 1.5; font-weight: 500; }
+            
+            .meta-info { display: flex; justify-content: space-between; margin-bottom: 45px; font-size: 13px; color: var(--secondary-color); font-weight: 600; }
+            .ref-no { color: var(--primary-color); }
+            
+            .subject-line { 
+                text-align: center; 
+                margin-bottom: 40px; 
+            }
+            .subject-line h1 { 
+                font-size: 22px; 
+                font-weight: 800; 
+                color: var(--primary-color); 
+                text-decoration: underline;
+                text-underline-offset: 8px;
+                text-decoration-thickness: 3px;
+                display: inline-block;
+            }
+            
+            .greeting { font-size: 15px; margin-bottom: 20px; font-weight: 500; }
+            .candidate-name { font-weight: 700; color: var(--primary-color); }
+            
+            .id-badge { 
+                display: inline-block;
+                background: #EFF6FF;
+                color: #1E40AF;
+                padding: 4px 12px;
+                border-radius: 9999px;
+                font-size: 12px;
+                font-weight: 700;
+                margin-bottom: 30px;
+                border: 1px solid #DBEAFE;
+            }
+            
+            .announcement { 
+                font-size: 16px; 
+                font-weight: 700; 
+                color: var(--primary-color); 
+                margin-bottom: 25px; 
+            }
+            
+            .confidential-tag { 
+                text-align: center; 
+                background: #FEF2F2;
+                color: #B91C1C;
+                font-size: 11px;
+                font-weight: 800;
+                padding: 6px;
+                border-radius: 4px;
+                letter-spacing: 2px;
+                margin-bottom: 35px;
+                border: 1px solid #FEE2E2;
+            }
+            
+            .letter-content { font-size: 14px; line-height: 1.8; color: #374151; margin-bottom: 30px; }
+            
+            .stipend-highlight { 
+                background: #F0FDF4;
+                border: 1px solid #DCFCE7;
+                padding: 15px 20px;
+                border-radius: 8px;
+                margin: 25px 0;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .stipend-amount { font-weight: 800; color: #15803D; font-size: 16px; }
+            
+            .terms-list { margin-left: 20px; margin-bottom: 40px; }
+            .terms-list li { margin-bottom: 12px; padding-left: 10px; }
+            .bold-text { font-weight: 700; color: #111827; }
+            
+            .closing-section { margin-bottom: 50px; font-size: 14px; }
+            
+            .signature-grid { 
+                display: flex; 
+                justify-content: space-between; 
+                align-items: flex-end; 
+                margin-top: 60px;
+                position: relative;
+            }
+            
+            .sig-block { min-width: 200px; }
+            .sig-title { font-weight: 800; font-size: 14px; color: var(--primary-color); margin-bottom: 20px; }
+            .sig-img { height: 45px; margin-bottom: 5px; display: block; filter: contrast(150%); }
+            .hr-info { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+            
+            .official-stamp { 
+                position: absolute; 
+                left: 180px; 
+                bottom: -10px; 
+                opacity: 0.5; 
+                mix-blend-mode: multiply;
+                z-index: 10;
+            }
+            .official-stamp img { width: 90px; }
+            
+            .acceptance-section { 
+                margin-top: 80px; 
+                display: grid; 
+                grid-template-columns: repeat(3, 1fr); 
+                gap: 30px;
+            }
+            .accept-box { border-top: 2px solid var(--border-color); padding-top: 10px; text-align: center; }
+            .accept-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+            
+            .watermark { 
+                position: absolute; 
+                top: 50%; 
+                left: 50%; 
+                transform: translate(-50%, -50%) rotate(-35deg); 
+                font-size: 120px; 
+                font-weight: 900; 
+                color: var(--primary-color); 
+                opacity: 0.03; 
+                pointer-events: none; 
+                z-index: 0; 
+                white-space: nowrap;
+            }
+            
+            @media print {
+                body { background: white; padding: 0; }
+                .container { box-shadow: none; border-radius: 0; width: 100%; max-width: none; }
+            }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='watermark'>${formData.company || 'Student Era'}</div>
+            
+            <header class='header'>
+                <div class='logo-section'>
+                    <img src='/logo512.png' alt='Logo' class='logo' onerror="this.style.display='none'" />
+                </div>
+                <div class='company-info'>
+                    <div class='company-name'>${formData.company || 'Student Era'}</div>
+                    <div class='address-block'>
+                        Patna, Bihar India, BR 800002<br />
+                        contact@studentera.online | www.studentera.online
+                    </div>
+                </div>
+            </header>
+            
+            <div class='meta-info'>
+                <div class='ref-no'>REF: SE/INTERNSHIP/OFFER</div>
+                <div class='date'>Date: ${formattedIssueDate}</div>
+            </div>
+            
+            <div class='subject-line'>
+                <h1>LETTER OF OFFER</h1>
+            </div>
+            
+            <div class='greeting'>Dear <span class='candidate-name'>${candidateName || 'Candidate Name'}</span>,</div>
+            
+            <div class='id-badge'>Intern ID: ${internId && internId.trim() !== '' ? internId : 'NOT ASSIGNED'}</div>
+            
+            <div class='announcement'>Congratulations! We are delighted to welcome you.</div>
+            
+            <div class='confidential-tag'>STRICTLY PRIVATE & CONFIDENTIAL</div>
+            
+            <div class='letter-content'>
+                Following your recent application and successful interview for the internship position, we are pleased to offer you an internship with <span class='bold-text'>${formData.company || 'Student Era'}</span>. We were impressed with your credentials and believe you will be a valuable addition to our team.
+            </div>
+            
+            ${stipend && stipend > 0 ? `
+            <div class='stipend-highlight'>
+                <span class='bold-text'>Stipend:</span>
+                <span class='stipend-amount'>₹${stipend} / month</span>
+            </div>
+            ` : ''}
+            
+            <ol class='terms-list letter-content'>
+                <li><span class='bold-text'>Position:</span> You will be designated as <span class='bold-text'>${title || 'Intern'}</span>.</li>
+                <li><span class='bold-text'>Commencement:</span> Your internship will officially begin on <span class='bold-text'>${formattedStartDate}</span>.</li>
+                <li><span class='bold-text'>Mode of Work:</span> The internship will be conducted in <span class='bold-text'>Work From Home (WFH)</span> mode, with occasional requirements for office coordination if necessary.</li>
+                <li><span class='bold-text'>Technology Partner:</span> <span class='bold-text'>${techPartner || 'Student Era'}</span> shall be the official Technology Partner for this program.</li>
+                <li><span class='bold-text'>Confidentiality:</span> You must maintain absolute confidentiality regarding company projects, intellectual property, and internal operations. Disclosure to any third party is strictly prohibited.</li>
+                <li><span class='bold-text'>Responsibilities:</span> In addition to your core domain, you may be assigned cross-functional tasks to enhance your professional growth.</li>
+                <li><span class='bold-text'>Withdrawal:</span> The company reserves the right to terminate or withdraw this offer at its discretion based on performance or organizational requirements.</li>
+            </ol>
+            
+            <div class='closing-section letter-content'>
+                Please signify your acceptance of this offer by signing and returning a copy of this letter. We look forward to a productive and mutually rewarding association.
+            </div>
+            
+            <div class='signature-grid'>
+                <div class='sig-block'>
+                    <div class='sig-title'>For ${formData.company || 'Student Era'}</div>
+                    <img src='' alt='' class='sig-img' onerror="this.style.display='none'" />
+                    <div class='hr-info'>${hrName || 'HR Name'}<br>Human Resources Department</div>
+                </div>
+                
+                <div class='official-stamp'>
+                    <img src='/stamp.png' alt='Stamp' onerror="this.style.display='none'" />
+                </div>
+            </div>
+            
+            <div class='acceptance-section'>
+                <div class='accept-box'>
+                    <div class='accept-label'>Intern's Signature</div>
+                </div>
+                <div class='accept-box'>
+                    <div class='accept-label'>Date of Acceptance</div>
+                </div>
+                <div class='accept-box'>
+                    <div class='accept-label'>Institution / College</div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class='line'></div>
-      <div class='ref-date-row'>
-        <div>REF: SE/INTERNSHIP/OFFER</div>
-        <div>Date: ${formattedIssueDate}</div>
-      </div>
-      <div class='subject'>LETTER OF OFFER</div>
-      <div class='greeting'>Dear <span class='highlight'>${candidateName || 'Candidate Name'}</span>,</div>
-      <div class='intern-id'>Intern ID: ${internId && internId.trim() !== '' ? internId : '__________'}</div>
-      <div class='congrats'>Congratulations!</div>
-      <div class='confidential'>STRICTLY PRIVATE & CONFIDENTIAL</div>
-      <div class='content'>
-        We are pleased to offer you an Internship with ${formData.company || 'Student Era'}, based on your application and interview. Details of the terms & conditions of the offer are as under:
-      </div>
-      ${stipend && stipend > 0 ? `<div class='stipend'>Stipend: ₹${stipend} /month</div>` : ''}
-      <ol class='terms content'>
-        <li>You must always maintain utmost secrecy and confidentiality of your offer, its terms, and of any information about the company, and shall not disclose any such details to outsiders.</li>
-        <li>You will be designated as <span style="font-weight:bold">${title || 'Intern'}</span>.</li>
-        <li>Your date of commencement of internship will be from <span style="font-weight:bold">${formattedStartDate}</span> in WFH mode.</li>
-        <li>You will be entitled to receive compensation and benefits as discussed at the time of interview.</li>
-        <li>You agree to work in both work environments i.e., WFH, Work from office.</li>
-        <li>${techPartner || 'Student Era'} shall be the official Technology Partner for this internship.</li>
-        <li>The company reserves all rights to withdraw this internship offer at any time without giving any reasons.</li>
-        <li>In addition to core responsibilities of this internship, the company may assign additional tasks or projects based on operational needs and availability. The intern is expected to contribute effectively to such assignments as per the company's discretion.</li>
-      </ol>
-      <div class='content'>Kindly sign and return a copy of this letter as a token of your acceptance of the offer.</div>
-      <div class='footer-text'>Looking forward to a long and mutually beneficial career with us.</div>
-      
-      <div class='signatures-section'>
-        <div class='company-sig'>
-          <div class='company-sig-name'>For ${formData.company || 'Student Era'}</div>
-          <img src='' alt='' class='company-sig-img' onerror="this.style.display='none'" />
-          <div class='hr-name'>${hrName || 'HR Name'} (HR)</div>
-        </div>
-        <div class='stamp-container'>
-          <img src='/stamp.png' alt='Stamp' class='stamp-img' onerror="this.style.display='none'" />
-        </div>
-      </div>
-
-      <div class='intern-sigs'>
-        <div class='sig-box'><div class='sig-line'>Intern's Signature</div></div>
-        <div class='sig-box'><div class='sig-line'>Date</div></div>
-        <div class='sig-box'><div class='sig-line'>College</div></div>
-      </div>
-    </div>
-    </body></html>
+    </body>
+    </html>
     `;
 
     return (
@@ -489,8 +677,10 @@ const GenerateOfferLetter = () => {
                     <p className="text-yellow-800 font-semibold">⚠️ An offer letter already exists for this student and job title. Only one offer letter per job title is allowed per student.</p>
                 </div>
             )}
-            <div className="bg-white p-4 sm:p-6 rounded-lg shadow-lg">
-                <form onSubmit={onSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
+                {/* Form Section */}
+                <div className="lg:col-span-1 bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 p-8">
+                    <form onSubmit={onSubmit} className="space-y-6">
                     <div className="relative">
                         <label className="block text-sm font-medium text-gray-700 mb-2">Student ID (internId)</label>
                         {loadingUsers ? (
@@ -696,110 +886,144 @@ const GenerateOfferLetter = () => {
                                 onChange={onChange}
                                 required
                                 className="mt-1 block w-full px-3 py-2 border rounded-md"
-                                placeholder="Enter HR Name"
+                                placeholder="HR Manager Name"
                             />
                         )}
-                        {selectedHR && (
+                    </div>
+                        <div className="pt-4">
                             <button
-                                type="button"
-                                onClick={() => {
-                                    setSelectedHR('');
-                                    setFormData(prev => ({ ...prev, hrName: '' }));
-                                }}
-                                className="mt-2 text-xs text-red-600 hover:text-red-800"
+                                type="submit"
+                                disabled={offerLetterExists && !editingId}
+                                className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold text-lg hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all active:scale-[0.98] disabled:bg-gray-200 disabled:shadow-none"
                             >
-                                Clear auto-selected HR
+                                {editingId ? 'Update Professional Offer Letter' : 'Generate Professional Offer Letter'}
                             </button>
-                        )}
-                    </div>
-                    <div className="flex gap-2 flex-wrap">
-                        {editingId && (
-                            <button
-                                type="button"
-                                onClick={handleCancelEdit}
-                                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
-                            >
-                                Cancel Edit
-                            </button>
-                        )}
-                        <button
-                            type="button"
-                            onClick={() => setShowPreview(!showPreview)}
-                            className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
-                        >
-                            {showPreview ? 'Hide' : 'Preview'}
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={offerLetterExists && !editingId}
-                            className={`px-4 py-2 rounded-md text-white flex-1 ${(offerLetterExists && !editingId)
-                                    ? 'bg-gray-400 cursor-not-allowed'
-                                    : 'bg-blue-600 hover:bg-blue-700'
-                                }`}
-                        >
-                            {editingId ? 'Update Offer Letter' : 'Generate Offer Letter'}
-                        </button>
-                    </div>
-                </form>
-                {showPreview && (
-                    <div className="mt-8 p-4 border rounded bg-gray-50">
-                        <h2 className="text-xl font-bold mb-2">Offer Letter Preview</h2>
-                        <iframe
-                            title="Offer Letter Preview"
-                            srcDoc={offerLetterHTML}
-                            width="900"
-                            height="1200"
-                            style={{ border: 'none', background: 'transparent' }}
-                        />
-                    </div>
-                )}
-                {generatedLetter && generatedLetter.fileUrl && (
-                    <div className="mt-8 p-4 border rounded bg-green-50 text-center">
-                        <h2 className="text-lg font-semibold mb-2 text-green-700">Offer Letter Generated!</h2>
-                        <a href={generatedLetter.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-700 underline font-bold">View / Download Offer Letter PDF</a>
-                    </div>
-                )}
-                <div className="mt-6 sm:mt-10">
-                    <h2 className="text-xl sm:text-2xl font-bold mb-4">All Generated Offer Letters</h2>
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-2 sm:px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Candidate Name</th>
-                                    <th className="px-2 sm:px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
-                                    <th className="px-2 sm:px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Issue Date</th>
-                                    <th className="px-2 sm:px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">PDF</th>
-                                    <th className="px-2 sm:px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                                {allLetters.map(letter => (
-                                    <tr key={letter._id} className="hover:bg-gray-50">
-                                        <td className="px-2 sm:px-4 py-2 whitespace-nowrap">{letter.candidateName || '-'}</td>
-                                        <td className="px-2 sm:px-4 py-2 whitespace-nowrap">{letter.title}</td>
-                                        <td className="px-2 sm:px-4 py-2 whitespace-nowrap">{new Date(letter.issueDate).toLocaleDateString()}</td>
-                                        <td className="px-2 sm:px-4 py-2 whitespace-nowrap">
-                                            {letter.fileUrl ? (
-                                                <a href={letter.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-700 underline font-bold text-sm">View PDF</a>
-                                            ) : (
-                                                <span className="text-gray-400 text-sm">Not Available</span>
-                                            )}
-                                        </td>
-                                        <td className="px-2 sm:px-4 py-2 whitespace-nowrap">
-                                            <div className="flex gap-2">
-                                                <button onClick={() => handleEdit(letter._id)} className="text-blue-600 hover:text-blue-800 font-bold text-sm">Edit</button>
-                                                <button onClick={() => deleteOfferLetter(letter._id)} className="text-red-600 hover:text-red-800 font-bold text-sm">Delete</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                        </div>
+                    </form>
                 </div>
+
+                {/* Preview / List Section */}
+                <div className="lg:col-span-2 space-y-10">
+                        {showPreview ? (
+                            <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 p-1 border border-gray-100 overflow-hidden sticky top-8">
+                                <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                                    <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest">Live Document Preview</h2>
+                                    <div className="flex gap-2">
+                                        <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                                        <div className="w-3 h-3 rounded-full bg-amber-400"></div>
+                                        <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                                    </div>
+                                </div>
+                                <div className="p-6 bg-gray-100 flex justify-center">
+                                    <div className="shadow-2xl origin-top scale-[0.6] md:scale-[0.8] lg:scale-[0.85] xl:scale-100 transition-transform">
+                                        <iframe
+                                            title="Offer Letter Preview"
+                                            srcDoc={offerLetterHTML}
+                                            className="w-[850px] h-[1100px] border-none bg-white"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
+                                <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between">
+                                    <h2 className="text-xl font-bold text-gray-900">Recently Generated</h2>
+                                    <div className="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold">
+                                        {allLetters.length} Letters
+                                    </div>
+                                </div>
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left border-collapse">
+                                        <thead>
+                                            <tr className="bg-gray-50/50 text-gray-400 text-xs font-bold uppercase tracking-wider">
+                                                <th className="px-8 py-4">Candidate</th>
+                                                <th className="px-8 py-4">Domain</th>
+                                                <th className="px-8 py-4">Issued</th>
+                                                <th className="px-8 py-4">Status</th>
+                                                <th className="px-8 py-4 text-right">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-100">
+                                            {allLetters.map(letter => (
+                                                <tr key={letter._id} className="hover:bg-indigo-50/30 transition-colors group">
+                                                    <td className="px-8 py-5">
+                                                        <div className="font-bold text-gray-900">{letter.candidateName || '-'}</div>
+                                                        <div className="text-xs text-gray-500">ID: {letter.user?.internId || 'N/A'}</div>
+                                                    </td>
+                                                    <td className="px-8 py-5">
+                                                        <span className="inline-block px-3 py-1 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-600">
+                                                            {letter.title}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-8 py-5 text-sm text-gray-500">
+                                                        {new Date(letter.issueDate).toLocaleDateString()}
+                                                    </td>
+                                                    <td className="px-8 py-5">
+                                                        {letter.fileUrl ? (
+                                                            <span className="flex items-center gap-1.5 text-green-600 text-xs font-bold">
+                                                                <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                                                                Generated
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-gray-400 text-xs">Pending</span>
+                                                        )}
+                                                    </td>
+                                                    <td className="px-8 py-5 text-right">
+                                                        <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            {letter.fileUrl && (
+                                                                <a 
+                                                                    href={letter.fileUrl} 
+                                                                    target="_blank" 
+                                                                    rel="noopener noreferrer"
+                                                                    className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                                                                    title="View PDF"
+                                                                >
+                                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                                                </a>
+                                                            )}
+                                                            <button 
+                                                                onClick={() => handleSendEmail(letter._id)}
+                                                                className="p-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors"
+                                                                title="Send Email"
+                                                            >
+                                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                                            </button>
+                                                            <button 
+                                                                onClick={() => handleEdit(letter._id)}
+                                                                className="p-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors"
+                                                                title="Edit"
+                                                            >
+                                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                                            </button>
+                                                            <button 
+                                                                onClick={() => deleteOfferLetter(letter._id)}
+                                                                className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                                                                title="Delete"
+                                                            >
+                                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                    {allLetters.length === 0 && (
+                                        <div className="p-20 text-center text-gray-400">
+                                            <div className="mb-4">
+                                                <svg className="w-16 h-16 mx-auto opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                            </div>
+                                            <p className="font-semibold">No offer letters generated yet.</p>
+                                            <p className="text-sm">Letters you create will appear here.</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </div>
             </div>
         </div>
     );
 };
 
-export default GenerateOfferLetter; 
+export default GenerateOfferLetter;

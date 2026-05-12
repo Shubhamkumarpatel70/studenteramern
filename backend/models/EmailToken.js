@@ -9,7 +9,18 @@ const EmailTokenSchema = new mongoose.Schema({
   },
   tokenHash: {
     type: String,
-    required: true,
+    required: false,
+    index: true,
+  },
+  otp: {
+    type: String,
+    required: false,
+    index: true,
+  },
+  type: {
+    type: String,
+    enum: ["registration", "forgot_password", "verification"],
+    default: "verification",
     index: true,
   },
   used: {

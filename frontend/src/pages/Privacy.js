@@ -119,9 +119,9 @@ const Privacy = () => (
             <p className="text-gray-600 leading-relaxed mb-4">
               If you have any questions about our privacy practices or want to exercise your rights, please contact us:
             </p>
-            <a href="mailto:contact.studentera@gmail.com" className="group inline-flex items-center text-gray-600 hover:text-primary transition-colors">
+            <a href="mailto:contact@studentera.online" className="group inline-flex items-center text-gray-600 hover:text-primary transition-colors">
               <Mail className="h-5 w-5 mr-3 text-gray-400 group-hover:text-primary" />
-              <span className="font-medium">contact.studentera@gmail.com</span>
+              <span className="font-medium">contact@studentera.online</span>
             </a>
           </div>
         </div>

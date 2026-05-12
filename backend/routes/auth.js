@@ -56,6 +56,7 @@ router.post("/login", loginLimiter, login);
 router.post("/check-email", checkEmail);
 router.put("/reset-password-direct", resetPasswordDirect);
 router.post("/forgot-password", forgotPasswordLimiter, forgotPassword);
+router.post("/verify-otp", require("../controllers/auth").verifyOTP);
 router.post("/forgotpassword", forgotPasswordLimiter, forgotPassword); // Legacy route support
 router.post("/send-email-token", require("../controllers/auth").sendEmailToken);
 router.get(

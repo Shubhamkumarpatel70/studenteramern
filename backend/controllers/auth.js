@@ -38,71 +38,64 @@ exports.register = async (req, res, next) => {
     }
 
     if (user && !user.isVerified) {
-      // Update existing unverified user and verify them
-      user.name = name; // Update name in case it changed
-      user.password = password; // This will trigger the pre-save hook to re-hash
-      user.mobile = mobile; // Update mobile number
-      user.isVerified = true; // Auto-verify on registration
+      // Update existing unverified user
+      user.name = name;
+      user.password = password;
+      user.mobile = mobile;
       await user.save();
     } else {
-      // Create new user and verify them automatically
+      // Create new user (unverified by default)
       const internId = `SE${Date.now()}`;
       user = await User.create({
         name,
         email: normalizedEmail,
         password,
         mobile,
-        role: "user", // Force role to user for all new registrations
+        role: "user",
         internId,
-        isVerified: true, // Auto-verify on registration
+        isVerified: false, 
       });
     }
 
-    // Create welcome notification
-    await createNotification(
-      user._id,
-      `Welcome to Student Era! Your registration was successful. Your Student/Intern ID is ${user.internId}.`
-    );
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // Save OTP to EmailToken
+    const EmailToken = require("../models/EmailToken");
+    await EmailToken.create({
+      email: normalizedEmail,
+      otp,
+      type: "registration",
+      expiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
+    });
 
-    // Return success - user is automatically verified
+    // Send OTP Email
+    const { getOTPEmailTemplate } = require("../utils/emailTemplates");
+    const emailData = getOTPEmailTemplate(user.name, otp);
+    
+    await sendEmail({
+      email: user.email,
+      subject: emailData.subject,
+      message: emailData.text,
+      html: emailData.html,
+    });
+
     return res.status(200).json({
       success: true,
-      message: `Registration successful! You can now login to your account.`,
+      message: "Registration initiated! Please verify your email with the OTP sent.",
       email: normalizedEmail,
-      internId: user.internId,
-      isVerified: true,
     });
   } catch (err) {
     console.error("Registration error:", err);
-    console.error("Registration error details:", {
-      name: err.name,
-      message: err.message,
-      stack: err.stack,
-      code: err.code,
-    });
-    
-    // Check for duplicate key error
     if (err.code === 11000) {
       return res.status(400).json({
         success: false,
-        message:
-          "An account with this email already exists. Please login instead.",
+        message: "An account with this email already exists. Please login instead.",
       });
     }
-    // Handle validation errors
-    if (err.name === "ValidationError") {
-      const messages = Object.values(err.errors).map((val) => val.message);
-      return res
-        .status(400)
-        .json({ success: false, message: messages.join(". ") });
-    }
-    
-    // Return 500 for server errors, 400 for client errors
-    const statusCode = err.statusCode || (err.name === "ValidationError" ? 400 : 500);
-    res.status(statusCode).json({ 
+    res.status(500).json({ 
       success: false, 
       message: err.message || "Failed to register user.",
-      error: process.env.NODE_ENV === "development" ? err.message : undefined
     });
   }
 };
@@ -340,93 +333,123 @@ exports.resetPasswordDirect = async (req, res, next) => {
 // @route   POST /api/auth/forgotpassword
 // @access  Public
 exports.forgotPassword = async (req, res, next) => {
-  const normalizedEmail = req.body.email.toLowerCase();
-  const user = await User.findOne({ email: normalizedEmail });
-
-  if (!user) {
-    // We don't want to reveal if a user exists or not
-    return res.status(200).json({
-      success: true,
-      data: "If a user with that email exists, a password reset email has been sent.",
-    });
-  }
-
-  // Get reset token
-  const resetToken = user.getResetPasswordToken();
-
-  await user.save({ validateBeforeSave: false });
-
-  // Create reset URL - prefer FRONTEND URL when available so the user lands on the client app
-  const frontendBase =
-    process.env.FRONTEND_URL ||
-    process.env.CLIENT_URL ||
-    (process.env.NODE_ENV !== "production"
-      ? "http://localhost:3000"
-      : `${req.protocol}://${req.get("host")}`);
-  const resetUrl = `${frontendBase}/reset-password/${resetToken}`;
-
-  const text = `You are receiving this email because you (or someone else) has requested the reset of a password.
-Please copy and paste the following link into your browser to reset your password:
-
-${resetUrl}
-
-If you did not request this, please ignore this email.`;
-
-  const html = `
-    <div style="font-family: Inter, Arial, sans-serif; background:#f8f9fa; padding:24px; max-width:600px; margin:0 auto; border-radius:8px;">
-      <h2 style="color:#0A2463;">Student Era — Password Reset Request</h2>
-      <p style="color:#333; font-size:16px;">Hello <strong>${user.name}</strong>,</p>
-      <p style="color:#333; font-size:15px;">We received a request to reset the password for your account (${user.email}). Click the button below to reset your password. This link will expire in a short time.</p>
-      <div style="text-align:center; margin:20px 0;">
-        <a href="${resetUrl}" style="background:#0A2463;color:#fff;padding:12px 20px;border-radius:6px;text-decoration:none;font-weight:600;display:inline-block;">Reset Password</a>
-      </div>
-      <p style="color:#666; font-size:13px;">If the button doesn't work, copy and paste the following URL into your browser:</p>
-      <p style="word-break:break-all;color:#0A2463;font-size:13px;">${resetUrl}</p>
-      <hr style="border:none;border-top:1px solid #eee;margin:20px 0;" />
-      <p style="color:#888;font-size:13px;">If you did not request a password reset, please ignore this email or contact support.</p>
-      <p style="color:#888;font-size:13px;">Best regards,<br/>Student Era Team</p>
-    </div>
-    `;
-
   try {
-    await sendEmail({
-      email: user.email,
-      subject: "Student Era — Password Reset",
-      message: text,
-      html,
-    });
+    const normalizedEmail = req.body.email.toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
 
-    res.status(200).json({ 
-      success: true, 
-      data: "If a user with that email exists, a password reset email has been sent.",
-      message: "Password reset email sent successfully. Please check your inbox and spam folder."
-    });
-  } catch (err) {
-    console.error("Failed to send password reset email:", err);
-    
-    // Revert the token generation
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpire = undefined;
-    await user.save({ validateBeforeSave: false });
-
-    // Provide more specific error message
-    let errorMessage = "Email could not be sent. Please try again later.";
-    
-    if (err.message && err.message.includes("Missing EMAIL_USER")) {
-      errorMessage = "Email service is not configured. Please contact support.";
-    } else if (err.message && err.message.includes("authentication")) {
-      errorMessage = "Email authentication failed. Please contact support.";
-    } else if (err.message && err.message.includes("timeout")) {
-      errorMessage = "Email service timeout. Please try again in a few moments.";
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "No account found with this email address.",
+      });
     }
 
-    return res
-      .status(500)
-      .json({ 
-        success: false, 
-        message: errorMessage,
-        error: process.env.NODE_ENV === "development" ? err.message : undefined
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // Save OTP to EmailToken
+    const EmailToken = require("../models/EmailToken");
+    await EmailToken.create({
+      email: normalizedEmail,
+      otp,
+      type: "forgot_password",
+      expiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
+    });
+
+    // Send OTP Email
+    const { getForgotPasswordOTPTemplate } = require("../utils/emailTemplates");
+    const emailData = getForgotPasswordOTPTemplate(user.name, otp);
+
+    await sendEmail({
+      email: user.email,
+      subject: emailData.subject,
+      message: emailData.text,
+      html: emailData.html,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Password reset OTP sent to your email.",
+    });
+  } catch (err) {
+    console.error("Forgot password error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to send password reset OTP. Please try again.",
+    });
+  }
+};
+
+// @desc    Verify OTP for Forgot Password or Registration
+// @route   POST /api/auth/verify-otp
+// @access  Public
+exports.verifyOTP = async (req, res, next) => {
+  try {
+    const { email, otp, type } = req.body;
+    const normalizedEmail = email.toLowerCase();
+
+    if (!email || !otp || !type) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide email, OTP, and verification type.",
       });
+    }
+
+    const EmailToken = require("../models/EmailToken");
+    const tokenRecord = await EmailToken.findOne({
+      email: normalizedEmail,
+      otp,
+      type,
+      used: false,
+      expiresAt: { $gt: Date.now() },
+    });
+
+    if (!tokenRecord) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired OTP code.",
+      });
+    }
+
+    // Mark as used
+    tokenRecord.used = true;
+    await tokenRecord.save();
+
+    let resetToken = null;
+
+    // If registration, verify user now
+    if (type === "registration") {
+      const user = await User.findOne({ email: normalizedEmail });
+      if (user) {
+        user.isVerified = true;
+        await user.save();
+        
+        // Create welcome notification
+        await createNotification(
+          user._id,
+          `Welcome to Student Era! Your registration was successful. Your Student/Intern ID is ${user.internId}.`
+        );
+      }
+    } else if (type === "forgot_password") {
+      const user = await User.findOne({ email: normalizedEmail });
+      if (user) {
+        // Generate reset token for the final password reset step
+        resetToken = user.getResetPasswordToken();
+        await user.save({ validateBeforeSave: false });
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "OTP verified successfully.",
+      resetToken // Will be null for registration, string for forgot_password
+    });
+  } catch (err) {
+    console.error("OTP verification error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server error during OTP verification.",
+    });
   }
 };
 

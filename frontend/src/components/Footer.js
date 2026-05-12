@@ -39,6 +39,7 @@ const Footer = () => {
     }
   };
 
+  /*
   const getWhatsAppUrl = () => {
     if (socialLinks.whatsapp) {
       if (socialLinks.whatsapp.includes('?text=')) return socialLinks.whatsapp;
@@ -46,6 +47,7 @@ const Footer = () => {
     }
     return 'https://wa.me/919027880288?text=Hi, I came across your website STUDENT ERA';
   };
+  */
 
   return (
     <footer className="w-full bg-slate-900 text-gray-300 pt-16 pb-8 font-sans border-t border-slate-800">
@@ -61,11 +63,11 @@ const Footer = () => {
             Empowering students to bridge the gap between academic theory and real-world execution through verified virtual internships and professional training.
           </p>
           <div className="flex space-x-4">
-            {socialLinks.whatsapp && (
+            {/* socialLinks.whatsapp && (
               <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-green-400 transition-colors bg-slate-800 p-2.5 rounded-full hover:bg-slate-700">
                 <FaWhatsapp className="h-5 w-5" />
               </a>
-            )}
+            ) */}
             {socialLinks.linkedin && (
               <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-400 transition-colors bg-slate-800 p-2.5 rounded-full hover:bg-slate-700">
                 <FaLinkedin className="h-5 w-5" />
@@ -109,14 +111,14 @@ const Footer = () => {
             <div className="flex items-start gap-3">
               <FaPhoneAlt className="h-4 w-4 text-slate-500 mt-1 shrink-0" />
               <span>
-                +91- 90278 80288<br />
+                +91- 90XXX XXX88<br />
                 <span className="text-slate-500 text-xs">Mon - Sat: 10 AM - 4 PM</span>
               </span>
             </div>
             <div className="flex items-center gap-3">
               <FaEnvelope className="h-4 w-4 text-slate-500 shrink-0" />
-              <a href="mailto:contact.studentera@gmail.com" className="hover:text-white transition-colors truncate">
-                contact.studentera@gmail.com
+              <a href="mailto:contact@studentera.online" className="hover:text-white transition-colors truncate">
+                contact@studentera.online
               </a>
             </div>
           </div>

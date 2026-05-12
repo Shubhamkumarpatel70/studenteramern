@@ -4,37 +4,37 @@
  */
 
 const getOTPEmailTemplate = (userName, otp, expiryMinutes = 10) => {
-  // Validate inputs
-  if (!userName || typeof userName !== 'string') {
-    userName = 'User';
-  }
-  if (!otp || typeof otp !== 'string') {
-    throw new Error('OTP is required and must be a string');
-  }
-  if (typeof expiryMinutes !== 'number' || expiryMinutes <= 0) {
-    expiryMinutes = 10;
-  }
-  
-  const frontendUrl = process.env.FRONTEND_URL || process.env.CLIENT_URL || 'https://studentera.live';
-  
-  // Escape HTML to prevent XSS
-  const escapeHtml = (str) => {
-    if (!str) return '';
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  };
-  
-  const safeUserName = escapeHtml(userName);
-  // OTP is just numbers, no need to escape
-  const safeOtp = otp;
-  
-  return {
-    subject: "Student Era - Verify Your Email Address",
-    html: `
+    // Validate inputs
+    if (!userName || typeof userName !== 'string') {
+        userName = 'User';
+    }
+    if (!otp || typeof otp !== 'string') {
+        throw new Error('OTP is required and must be a string');
+    }
+    if (typeof expiryMinutes !== 'number' || expiryMinutes <= 0) {
+        expiryMinutes = 10;
+    }
+
+    const frontendUrl = process.env.FRONTEND_URL || process.env.CLIENT_URL || 'https://studentera.online';
+
+    // Escape HTML to prevent XSS
+    const escapeHtml = (str) => {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    };
+
+    const safeUserName = escapeHtml(userName);
+    // OTP is just numbers, no need to escape
+    const safeOtp = otp;
+
+    return {
+        subject: "Student Era - Verify Your Email Address",
+        html: `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -122,7 +122,7 @@ const getOTPEmailTemplate = (userName, otp, expiryMinutes = 10) => {
 </body>
 </html>
     `,
-    text: `Hello ${userName}!
+        text: `Hello ${userName}!
 
 Thank you for registering with Student Era! To complete your registration, please use the following OTP code to verify your email address:
 
@@ -136,15 +136,15 @@ If you didn't create an account with Student Era, please ignore this email or co
 
 © ${new Date().getFullYear()} Student Era. All rights reserved.
 This is an automated email, please do not reply.`
-  };
+    };
 };
 
 const getOfferLetterEmailTemplate = (userName, offerLetterDetails, downloadUrl) => {
-  const frontendUrl = process.env.FRONTEND_URL || process.env.CLIENT_URL || 'https://studentera.live';
-  
-  return {
-    subject: "Student Era - Your Offer Letter is Ready!",
-    html: `
+    const frontendUrl = process.env.FRONTEND_URL || process.env.CLIENT_URL || 'https://studentera.online';
+
+    return {
+        subject: "Student Era - Your Offer Letter is Ready!",
+        html: `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -225,7 +225,7 @@ const getOfferLetterEmailTemplate = (userName, offerLetterDetails, downloadUrl) 
 </body>
 </html>
     `,
-    text: `Congratulations, ${userName}!
+        text: `Congratulations, ${userName}!
 
 We're excited to inform you that your offer letter has been generated and is ready for download!
 
@@ -241,15 +241,15 @@ Download your offer letter: ${downloadUrl}
 You can also access your offer letter anytime from your dashboard.
 
 © ${new Date().getFullYear()} Student Era. All rights reserved.`
-  };
+    };
 };
 
 const getCertificateEmailTemplate = (userName, certificateDetails, downloadUrl) => {
-  const frontendUrl = process.env.FRONTEND_URL || process.env.CLIENT_URL || 'https://studentera.live';
-  
-  return {
-    subject: "Student Era - Your Certificate is Ready!",
-    html: `
+    const frontendUrl = process.env.FRONTEND_URL || process.env.CLIENT_URL || 'https://studentera.online';
+
+    return {
+        subject: "Student Era - Your Certificate is Ready!",
+        html: `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -331,7 +331,7 @@ const getCertificateEmailTemplate = (userName, certificateDetails, downloadUrl) 
 </body>
 </html>
     `,
-    text: `Congratulations, ${userName}!
+        text: `Congratulations, ${userName}!
 
 We're delighted to inform you that your certificate has been generated and is ready for download!
 
@@ -348,12 +348,12 @@ Download your certificate: ${downloadUrl}
 You can also access your certificate anytime from your dashboard. This certificate can be verified using the Certificate ID.
 
 © ${new Date().getFullYear()} Student Era. All rights reserved.`
-  };
+    };
 };
 
 module.exports = {
-  getOTPEmailTemplate,
-  getOfferLetterEmailTemplate,
-  getCertificateEmailTemplate
+    getOTPEmailTemplate,
+    getOfferLetterEmailTemplate,
+    getCertificateEmailTemplate
 };
 

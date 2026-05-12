@@ -7,6 +7,7 @@ const {
   updateOfferLetter,
   deleteOfferLetter,
   sendOfferLetterByAdmin,
+  sendExistingOfferLetterEmail,
 } = require("../controllers/offerLetters");
 const router = express.Router();
 const { protect, authorize } = require("../middleware/auth");
@@ -17,6 +18,13 @@ router.post(
   protect,
   authorize("admin"),
   sendOfferLetterByAdmin,
+);
+
+router.post(
+  "/:id/send-email",
+  protect,
+  authorize("admin"),
+  sendExistingOfferLetterEmail
 );
 
 router
