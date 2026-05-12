@@ -27,10 +27,10 @@ const sendEmail = async (options) => {
       } catch (e) {
         console.log("Resend package not installed. Install with: npm install resend");
       }
-      
+
       if (resend) {
         const resendClient = new resend.Resend(process.env.RESEND_API_KEY);
-        
+
         const result = await resendClient.emails.send({
           from: process.env.FROM_EMAIL || process.env.EMAIL_USER || 'onboarding@resend.dev',
           to: options.email,
@@ -38,7 +38,7 @@ const sendEmail = async (options) => {
           html: options.html,
           text: options.message,
         });
-        
+
         console.log("Email sent via Resend:", result.id || result.data?.id);
         return result;
       }
@@ -57,18 +57,18 @@ const sendEmail = async (options) => {
       } catch (e) {
         console.log("SendGrid package not installed. Install with: npm install @sendgrid/mail");
       }
-      
+
       if (sgMail) {
         sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-        
+
         const msg = {
           to: options.email,
-          from: process.env.FROM_EMAIL || process.env.EMAIL_USER || 'noreply@studentera.live',
+          from: process.env.FROM_EMAIL || process.env.EMAIL_USER || 'noreply@studentera.online',
           subject: options.subject,
           text: options.message,
           html: options.html,
         };
-        
+
         const result = await sgMail.send(msg);
         console.log("Email sent via SendGrid");
         return result;
@@ -93,14 +93,13 @@ const sendEmail = async (options) => {
   }
 
   console.log(
-    `Email config: host=${host}, port=${port}, secure=${secure}, user=${
-      user ? "set" : "not set"
+    `Email config: host=${host}, port=${port}, secure=${secure}, user=${user ? "set" : "not set"
     }`
   );
 
   // Try SMTP with Gmail-optimized configuration
   let lastError;
-  
+
   // Try multiple Gmail configurations for better compatibility
   const gmailConfigs = host.includes('gmail.com') ? [
     // Configuration 1: Standard Gmail SMTP with TLS
@@ -210,7 +209,7 @@ const sendEmail = async (options) => {
       response: lastError.response,
       responseCode: lastError.responseCode,
     });
-    
+
     // Provide more specific error messages
     let errorMessage = "Failed to send email";
     if (lastError.code === "EAUTH") {
@@ -222,10 +221,10 @@ const sendEmail = async (options) => {
     } else if (lastError.message) {
       errorMessage = lastError.message;
     }
-    
+
     throw new Error(errorMessage);
   }
-  
+
   throw new Error("Email sending failed - no configuration available");
 };
 

@@ -68,6 +68,7 @@ exports.sendOfferLetterByAdmin = async (req, res, next) => {
       );
     await require("../utils/sendEmail")({
       email,
+      from: "careers@studentera.online",
       subject: emailTemplate.subject,
       message: emailTemplate.text,
       html: emailTemplate.html,
@@ -199,6 +200,7 @@ exports.generateOfferLetter = async (req, res, next) => {
 
         await sendEmail({
           email: user.email,
+          from: "careers@studentera.online",
           subject: emailTemplate.subject,
           message: emailTemplate.text,
           html: emailTemplate.html,
@@ -375,6 +377,7 @@ exports.updateOfferLetter = async (req, res, next) => {
 
         await sendEmail({
           email: userDoc.email,
+          from: "careers@studentera.online",
           subject: `Updated: ${emailTemplate.subject}`,
           message: emailTemplate.text,
           html: emailTemplate.html,
@@ -455,6 +458,7 @@ exports.sendExistingOfferLetterEmail = async (req, res, next) => {
 
     await sendEmail({
       email: userEmail,
+      from: "careers@studentera.online",
       subject: emailTemplate.subject,
       message: emailTemplate.text,
       html: emailTemplate.html,

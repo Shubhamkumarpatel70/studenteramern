@@ -75,6 +75,7 @@ exports.register = async (req, res, next) => {
     
     await sendEmail({
       email: user.email,
+      from: "noreply@studentera.online",
       subject: emailData.subject,
       message: emailData.text,
       html: emailData.html,
@@ -362,6 +363,7 @@ exports.forgotPassword = async (req, res, next) => {
 
     await sendEmail({
       email: user.email,
+      from: "noreply@studentera.online",
       subject: emailData.subject,
       message: emailData.text,
       html: emailData.html,
@@ -505,6 +507,7 @@ exports.resetPassword = async (req, res, next) => {
                 `;
     await sendEmail({
       email: user.email,
+      from: "noreply@studentera.online",
       subject: "Student Era — Password Reset Successful",
       message: text,
       html,
