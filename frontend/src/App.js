@@ -35,6 +35,7 @@ import Transactions from "./pages/dashboard/Transactions";
 import Profile from "./pages/dashboard/Profile";
 import Certificates from "./pages/dashboard/Certificates";
 import OfferLetters from "./pages/dashboard/OfferLetters";
+import PPOs from "./pages/dashboard/PPOs";
 import Documents from "./pages/dashboard/Documents";
 import UploadTask from "./pages/dashboard/UploadTask";
 import MyTasks from "./pages/dashboard/MyTasks";
@@ -58,6 +59,7 @@ import GenerateCertificate from "./pages/admin/GenerateCertificate";
 import CertificateVerification from "./pages/admin/CertificateVerification";
 import GenerateOfferLetter from "./pages/admin/GenerateOfferLetter";
 import SendOfferLetter from "./pages/admin/SendOfferLetter";
+import ManagePPO from "./pages/admin/ManagePPO";
 import AddInternship from "./pages/admin/AddInternship";
 import InternshipRegistrations from "./pages/admin/InternshipRegistrations";
 import ManageTestimonials from "./pages/admin/ManageTestimonials";
@@ -215,6 +217,8 @@ const AppContent = () => {
               <Route path="billing" element={<Transactions />} />
               <Route path="documents" element={<Documents />} />
               <Route path="profile" element={<Profile />} />
+              <Route path="offer-letters" element={<OfferLetters />} />
+              <Route path="ppo" element={<PPOs />} />
               <Route
                 path="applied-internships"
                 element={<AppliedInternships />}
@@ -263,6 +267,7 @@ const AppContent = () => {
                 element={<GenerateOfferLetter />}
               />
               <Route path="send-offer-letter" element={<SendOfferLetter />} />
+              <Route path="manage-ppo" element={<ManagePPO />} />
               <Route path="manage-hr" element={<ManageHR />} />
               <Route path="queries" element={<Queries />} />
               <Route path="help-queries" element={<HelpQueries />} />

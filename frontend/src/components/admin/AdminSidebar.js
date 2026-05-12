@@ -123,6 +123,11 @@ const AdminSidebar = ({ isSidebarOpen, setSidebarOpen }) => {
           label: "Send Offer Letter",
         },
         {
+          to: "/admin-dashboard/manage-ppo",
+          icon: <Award size={18} />,
+          label: "Manage PPO",
+        },
+        {
           to: "/admin-dashboard/certificate-verification",
           icon: <ShieldCheck size={18} />,
           label: "Verification",

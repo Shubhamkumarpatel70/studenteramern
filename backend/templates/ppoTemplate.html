@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pre-Placement Offer (PPO) - Student Era</title>
+    <style>
+        :root {
+            --primary: #0A2463;
+            --secondary: #3E5C76;
+            --accent: #4f46e5;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --border: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            background: var(--bg-light);
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .letter {
+            background: var(--white);
+            width: 100%;
+            max-width: 850px;
+            padding: 60px 80px;
+            box-sizing: border-box;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            position: relative;
+            border-top: 10px solid var(--primary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        /* Decorative Elements */
+        .letter::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, transparent 50%, rgba(10, 36, 99, 0.05) 50%);
+            z-index: 0;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .logo {
+            height: 65px;
+            object-fit: contain;
+        }
+
+        .company-details {
+            text-align: right;
+        }
+
+        .company-name {
+            font-size: 26px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+
+        .address-block {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, var(--primary), transparent);
+            border: none;
+            margin: 0 0 30px 0;
+            opacity: 0.2;
+        }
+
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .subject-box {
+            background: rgba(10, 36, 99, 0.03);
+            padding: 15px;
+            border-left: 4px solid var(--primary);
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .subject {
+            font-weight: 800;
+            font-size: 20px;
+            color: var(--primary);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .greeting {
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        .candidate-name {
+            font-weight: 700;
+            color: var(--primary);
+            border-bottom: 2px solid rgba(10, 36, 99, 0.1);
+        }
+
+        .main-content {
+            font-size: 14px;
+            margin-bottom: 30px;
+            text-align: justify;
+        }
+
+        .offer-highlight {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+
+        .highlight-title {
+            font-weight: 700;
+            color: #0369a1;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .detail-item {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 40px 0 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .terms-list {
+            padding-left: 20px;
+            font-size: 13px;
+        }
+
+        .terms-list li {
+            margin-bottom: 12px;
+        }
+
+        .compensation-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 15px 25px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .ctc-label {
+            font-weight: 700;
+            color: #166534;
+        }
+
+        .ctc-value {
+            font-size: 24px;
+            font-weight: 900;
+            color: #15803d;
+        }
+
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 80px;
+            position: relative;
+        }
+
+        .sig-block {
+            width: 250px;
+        }
+
+        .sig-line {
+            border-top: 2px solid var(--primary);
+            margin-top: 50px;
+            padding-top: 10px;
+        }
+
+        .sig-name {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--primary);
+        }
+
+        .sig-title {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .stamp-placeholder {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -20px;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .footer {
+            margin-top: 80px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+        }
+
+        @media print {
+            body { background: none; padding: 0; }
+            .letter { box-shadow: none; border-radius: 0; width: 100%; max-width: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="letter">
+        <div class="header">
+            <div class="logo-section">
+                <img src="{{companyLogo}}" alt="Student Era Logo" class="logo" onerror="this.style.display='none'">
+            </div>
+            <div class="company-details">
+                <div class="company-name">{{company}}</div>
+                <div class="address-block">
+                    {{companyAddress}}<br>
+                    {{companyWebsite}} | {{companyEmail}}<br>
+                    CIN: U72900BR2022PTC058421
+                </div>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="meta-row">
+            <div>REF: {{referenceNo}}</div>
+            <div>Date: {{issueDate}}</div>
+        </div>
+
+        <div class="subject-box">
+            <div class="subject">Pre-Placement Offer (PPO)</div>
+        </div>
+
+        <div class="greeting">
+            Dear <span class="candidate-name">{{candidateName}}</span>,
+        </div>
+
+        <div class="main-content">
+            We are thrilled to extend this formal <strong>Pre-Placement Offer (PPO)</strong> to you, following your exceptional performance during your internship with <strong>{{company}}</strong>. Your dedication, technical acumen, and cultural fit have significantly contributed to our team's success, and we are eager to have you join us as a permanent member.
+        </div>
+
+        <div class="offer-highlight">
+            <div class="highlight-title">OFFER SUMMARY</div>
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Designation</div>
+                    <div class="detail-value">{{jobTitle}}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Department</div>
+                    <div class="detail-value">{{department}}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Joining Date</div>
+                    <div class="detail-value">{{joiningDate}}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Location</div>
+                    <div class="detail-value">{{workLocation}}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">Compensation & Benefits</div>
+        <div class="main-content">
+            Your annual total compensation package is designed to reward your expertise and potential.
+        </div>
+        
+        <div class="compensation-box">
+            <div class="ctc-label">Annual Cost to Company (CTC)</div>
+            <div class="ctc-value">₹{{ctc}}</div>
+        </div>
+
+        <div class="section-title">Terms of Employment</div>
+        <ul class="terms-list">
+            <li><strong>Probation:</strong> You will be on a probation period of {{probationPeriod}}, during which your performance will be reviewed.</li>
+            <li><strong>Confidentiality:</strong> You agree to maintain the highest level of confidentiality regarding company secrets, client data, and proprietary technology.</li>
+            <li><strong>Notice Period:</strong> Post-confirmation, a notice period of 60 days will be applicable for either party to terminate the employment.</li>
+            <li><strong>Code of Conduct:</strong> You are expected to adhere to the professional standards and code of ethics as defined in the Employee Handbook.</li>
+        </ul>
+
+        <div class="main-content" style="margin-top: 40px;">
+            Please signify your acceptance of this offer by signing and returning the duplicate copy of this letter within 7 days. We look forward to a long and successful career journey together.
+        </div>
+
+        <div class="signature-section">
+            <div class="sig-block">
+                <div class="sig-line"></div>
+                <div class="sig-name">{{hrName}}</div>
+                <div class="sig-title">Head of Human Resources<br>{{company}}</div>
+            </div>
+
+            <div class="stamp-placeholder">
+                <img src="{{companyStamp}}" alt="Stamp" style="width: 120px;" onerror="this.style.display='none'">
+            </div>
+
+            <div class="sig-block" style="text-align: right;">
+                <div class="sig-line"></div>
+                <div class="sig-name">Accepted By</div>
+                <div class="sig-title">{{candidateName}}<br>Date: ________________</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            This is a computer-generated document and does not require a physical signature if electronically accepted.<br>
+            © 2024 {{company}}. All Rights Reserved.
+        </div>
+    </div>
+</body>
+</html>

@@ -47,6 +47,16 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen }) => {
       label: "Documents",
     },
     {
+      href: "/dashboard/offer-letters",
+      icon: <FileText className="h-5 w-5" />,
+      label: "Offer Letters",
+    },
+    {
+      href: "/dashboard/ppo",
+      icon: <Award className="h-5 w-5" />,
+      label: "PPO Offers",
+    },
+    {
       href: "/dashboard/meetings",
       icon: <Calendar className="h-5 w-5" />,
       label: "Meetings",
