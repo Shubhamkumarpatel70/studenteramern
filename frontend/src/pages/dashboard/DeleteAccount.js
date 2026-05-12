@@ -7,8 +7,9 @@ import { AlertCircle } from 'lucide-react';
 const DeleteAccount = () => {
   const [reason, setReason] = useState('');
   const [status, setStatus] = useState('confirm'); // confirm | pending | error
+  const [sudoInput, setSudoInput] = useState('');
   const [error, setError] = useState('');
-  const { logout } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleDelete = async (e) => {
@@ -63,6 +64,19 @@ const DeleteAccount = () => {
               placeholder="Please let us know why you are leaving..."
             />
           </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Type <code className="bg-gray-100 px-1 rounded text-red-600">sudo {user?.username}</code> to confirm <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              value={sudoInput}
+              onChange={e => setSudoInput(e.target.value)}
+              required
+              placeholder={`sudo ${user?.username}`}
+            />
+          </div>
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-800 text-sm rounded-xl p-3">
               {error}
@@ -78,7 +92,8 @@ const DeleteAccount = () => {
             </button>
             <button 
               type="submit" 
-              className="flex-1 py-3 rounded-xl bg-gray-600 hover:bg-gray-700 text-white font-bold shadow-lg transition-all duration-200"
+              disabled={sudoInput !== `sudo ${user?.username}`}
+              className="flex-1 py-3 rounded-xl bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-bold shadow-lg transition-all duration-200"
             >
               Yes, Delete
             </button>

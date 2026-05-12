@@ -17,6 +17,7 @@ const ManageUsers = () => {
   const [totalUsers, setTotalUsers] = useState(0);
   const [roleFilter, setRoleFilter] = useState("");
   const [verifiedFilter, setVerifiedFilter] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchUsers = async (page = 1) => {
     setLoading(true);
@@ -24,6 +25,7 @@ const ManageUsers = () => {
       let url = `/users?page=${page}&limit=10`;
       if (roleFilter) url += `&role=${roleFilter}`;
       if (verifiedFilter !== "") url += `&isVerified=${verifiedFilter}`;
+      if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
 
       const res = await api.get(url);
       const usersData = res.data.data || [];
@@ -40,8 +42,11 @@ const ManageUsers = () => {
   };
 
   useEffect(() => {
-    fetchUsers(currentPage);
-  }, [currentPage, roleFilter, verifiedFilter]);
+    const timer = setTimeout(() => {
+      fetchUsers(currentPage);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [currentPage, roleFilter, verifiedFilter, searchQuery]);
 
   const handleEdit = (user) => {
     setSelectedUser(user);
@@ -95,9 +100,22 @@ const ManageUsers = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
         <h1 className="text-2xl sm:text-3xl font-bold">Manage Users</h1>
         <div className="flex flex-wrap gap-3">
+          <input
+            type="text"
+            placeholder="Search name, email or ID..."
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="border rounded-lg px-4 py-2 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 min-w-[200px]"
+          />
           <select
             value={roleFilter}
-            onChange={(e) => { setRoleFilter(e.target.value); setCurrentPage(1); }}
+            onChange={(e) => {
+              setRoleFilter(e.target.value);
+              setCurrentPage(1);
+            }}
             className="border rounded-lg px-3 py-2 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="">All Roles</option>
@@ -108,7 +126,10 @@ const ManageUsers = () => {
           </select>
           <select
             value={verifiedFilter}
-            onChange={(e) => { setVerifiedFilter(e.target.value); setCurrentPage(1); }}
+            onChange={(e) => {
+              setVerifiedFilter(e.target.value);
+              setCurrentPage(1);
+            }}
             className="border rounded-lg px-3 py-2 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="">All Statuses</option>

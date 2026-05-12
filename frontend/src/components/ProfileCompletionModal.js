@@ -10,6 +10,7 @@ const ProgressBar = ({ value }) => (
 const ProfileCompletionModal = () => {
     const { user, updateUserProfile, hideProfileCompletionModal } = useContext(AuthContext);
     const [step, setStep] = useState(1);
+    const [isVisible, setIsVisible] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         tagline: '',
@@ -18,6 +19,16 @@ const ProfileCompletionModal = () => {
     });
 
     useEffect(() => {
+        const lastSkipped = localStorage.getItem('profile_modal_skip');
+        const now = new Date().getTime();
+        const twentyFourHours = 24 * 60 * 60 * 1000;
+
+        if (lastSkipped && (now - parseInt(lastSkipped)) < twentyFourHours) {
+            setIsVisible(false);
+        } else if (user && user.profileCompleteness < 100) {
+            setIsVisible(true);
+        }
+
         if (user) {
             setFormData({
                 name: user.name || '',
@@ -28,6 +39,13 @@ const ProfileCompletionModal = () => {
             });
         }
     }, [user]);
+
+    const handleSkip = () => {
+        localStorage.setItem('profile_modal_skip', new Date().getTime().toString());
+        setIsVisible(false);
+    };
+
+    if (!isVisible) return null;
 
     const nextStep = () => setStep(prev => prev + 1);
     const prevStep = () => setStep(prev => prev - 1);
@@ -86,7 +104,8 @@ const ProfileCompletionModal = () => {
 
                     <div className="mt-6 flex justify-between">
                         {step > 1 && <button type="button" onClick={prevStep} className="px-4 py-2 bg-gray-300 rounded-md">Back</button>}
-                        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md ml-auto">
+                        <button type="button" onClick={handleSkip} className="px-4 py-2 text-gray-500 hover:text-gray-700">Skip for now</button>
+                        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md">
                             {step === 4 ? 'Done' : 'Next'}
                         </button>
                     </div>

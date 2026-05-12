@@ -51,6 +51,16 @@ exports.getUsers = async (req, res, next) => {
       if (req.query.isVerified === "false") queryFilter.isVerified = false;
     }
 
+    // Search filter
+    if (req.query.search) {
+      const searchRegex = new RegExp(req.query.search, 'i');
+      queryFilter.$or = [
+        { name: searchRegex },
+        { email: searchRegex },
+        { internId: searchRegex }
+      ];
+    }
+
     // Get total count for pagination
     const totalUsers = await User.countDocuments(queryFilter);
     const totalPages = Math.ceil(totalUsers / limit);

@@ -5,18 +5,18 @@
 ### 1. Update backend/middleware/auth.js
 
 - Add validation after User.findById to return 401 if req.user is null.
-  **Status: Pending**
+  **Status: Completed**
 
 ### 2. Update backend/controllers/meetings.js
 
 - Add early validation for user and user.id.
 - Wrap user-role Application.find in try-catch.
-  **Status: Pending**
+  **Status: Completed**
 
 ### 3. Test the fix
 
 - Backend: no 500 on /api/meetings for user role.
 - Frontend: no "Could not fetch meetings."
-  **Status: Pending**
+  **Status: Completed**
 
-Progress: 0/3 completed
+Progress: 3/3 completed

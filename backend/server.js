@@ -18,6 +18,7 @@ const announcements = require("./routes/announcements");
 const testimonials = require("./routes/testimonials");
 const tasks = require("./routes/tasks");
 const assignedTasks = require("./routes/assignedTasks");
+const errorHandler = require("./middleware/error");
 const path = require("path");
 const mongoose = require("mongoose");
 const PaymentOption = require("./models/PaymentOption");
@@ -59,9 +60,9 @@ app.use(compression());
 
 // Enable CORS with configured frontend origin(s)
 const allowedOrigins = [
-  process.env.FRONTEND_URL || "https://studentera.live",
+  process.env.FRONTEND_URL || "https://studentera.online",
   "http://localhost:3000",
-  "https://studentera.live",
+  "https://studentera.online",
   "http://localhost:3001", // Add additional localhost port if needed
 ];
 app.use(
@@ -193,8 +194,8 @@ app.get("/api/test-smtp", async (req, res) => {
     const transporter = nodemailer.createTransport(transporterConfig);
 
     await transporter.verify();
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       message: "SMTP connection successful ✅",
       config: {
         host,
@@ -300,7 +301,7 @@ if (process.env.NODE_ENV === "production") {
   if (!frontendPath) {
     console.warn(
       "Frontend build not found in expected paths. Checked:\n" +
-        possiblePaths.join("\n")
+      possiblePaths.join("\n")
     );
   } else {
     console.log("Serving frontend from:", frontendPath);
@@ -356,22 +357,14 @@ app.use("*", (req, res) => {
   });
 });
 
-// Global error handler (should be last)
-app.use((err, req, res, next) => {
-  console.error("Global error handler:", err);
-  res.status(err.status || 500).json({
-    success: false,
-    message: err.message || "Server Error",
-    error: process.env.NODE_ENV === "production" ? undefined : err.stack,
-  });
-});
+// Use centralized error handler
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, () => {
   console.log(
-    `Server running in ${
-      process.env.NODE_ENV || "development"
+    `Server running in ${process.env.NODE_ENV || "development"
     } mode on port ${PORT}`
   );
   console.log(`NODE_ENV: ${process.env.NODE_ENV}`);

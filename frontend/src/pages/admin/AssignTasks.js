@@ -157,7 +157,7 @@ const AssignTasks = () => {
         >
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Select User
+              Search Intern
             </label>
             <select
               name="userId"
@@ -166,7 +166,7 @@ const AssignTasks = () => {
               required
               className="w-full p-2 border border-gray-300 rounded-md"
             >
-              <option value="">-- Select User --</option>
+              <option value="">-- Search Intern --</option>
               {users.map((user) => (
                 <option key={user._id} value={user._id}>
                   {user.name} ({user.internId})

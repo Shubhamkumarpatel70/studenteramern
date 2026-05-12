@@ -108,7 +108,7 @@ function generateOfferLetterPDF(offerLetter, outputPath) {
     if (offerLetter.stipend && offerLetter.stipend > 0) {
       const stipendY = doc.y;
       doc.rect(margin, stipendY, usableWidth, 35).fill("#F0FDF4");
-      doc.fontSize(11).font("Helvetica-Bold").fillColor("#15803D").text(`Stipend: \u20B9${offerLetter.stipend} / month`, margin + 15, stipendY + 12);
+      doc.fontSize(11).font("Helvetica-Bold").fillColor("#15803D").text(`Stipend: Rs. ${offerLetter.stipend} / month`, margin + 15, stipendY + 12);
       doc.y = stipendY + 45;
     }
 

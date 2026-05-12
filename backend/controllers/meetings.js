@@ -1,68 +1,70 @@
+const ErrorResponse = require("../utils/errorResponse");
+const asyncHandler = require("../middleware/async");
 const Meeting = require("../models/Meeting");
 const Application = require("../models/Application");
 
 // @desc    Get meetings relevant to the user
 // @route   GET /api/meetings
 // @access  Private
-exports.getMeetings = async (req, res, next) => {
-  try {
-    const user = req.user;
-    if (!user || !user.id) {
-      return res.status(401).json({ success: false, message: "Invalid user" });
-    }
-    let meetings = [];
-
-    if (user.role === "admin") {
-      // Admin gets all meetings
-      meetings = await Meeting.find()
-        .populate("user", "name email")
-        .sort({ date: "asc" });
-    } else {
-      // Build query to find meetings relevant to this user
-      const userId = user.id;
-      const orConditions = [{ targetType: "all" }];
-
-      // If meeting explicitly lists users
-      orConditions.push({ targetType: "users", selectedUsers: userId });
-
-      // Role specific meetings
-      if (user.role === "co-admin") {
-        orConditions.push({ targetType: "co-admins" });
-      }
-      if (user.role === "accountant") {
-        orConditions.push({ targetType: "accountants" });
-      }
-
-      // If regular user, also include internship-specific meetings where user's internships match
-      if (user.role === "user") {
-        const userApplications = await Application.find({
-          user: userId,
-          status: "Approved",
-        }).select("internship");
-        const userInternshipIds = userApplications
-          .map((app) => app.internship)
-          .filter(Boolean);
-        if (userInternshipIds.length > 0) {
-          orConditions.push({
-            targetType: "internship",
-            selectedInternship: { $in: userInternshipIds },
-          });
-        }
-      }
-
-      meetings = await Meeting.find({ $or: orConditions })
-        .populate("user", "name email")
-        .sort({ date: "asc" });
-    }
-
-    res
-      .status(200)
-      .json({ success: true, count: meetings.length, data: meetings });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Server Error" });
+exports.getMeetings = asyncHandler(async (req, res, next) => {
+  const user = req.user;
+  if (!user || !user.id) {
+    return next(new ErrorResponse("Invalid user session", 401));
   }
-};
+  
+  let meetings = [];
+
+  if (user.role === "admin") {
+    // Admin gets all meetings
+    meetings = await Meeting.find()
+      .populate("user", "name email")
+      .sort({ date: "asc" });
+  } else {
+    // Build query to find meetings relevant to this user
+    const userId = user.id;
+    const orConditions = [{ targetType: "all" }];
+
+    // If meeting explicitly lists users
+    orConditions.push({ targetType: "users", selectedUsers: userId });
+
+    // Role specific meetings
+    if (user.role === "co-admin") {
+      orConditions.push({ targetType: "co-admins" });
+    }
+    if (user.role === "accountant") {
+      orConditions.push({ targetType: "accountants" });
+    }
+
+    // If regular user, also include internship-specific meetings where user's internships match
+    if (user.role === "user") {
+      const userApplications = await Application.find({
+        user: userId,
+        status: "Approved",
+      }).select("internship");
+      
+      const userInternshipIds = userApplications
+        .map((app) => app.internship)
+        .filter(Boolean);
+        
+      if (userInternshipIds.length > 0) {
+        orConditions.push({
+          targetType: "internship",
+          selectedInternship: { $in: userInternshipIds },
+        });
+      }
+    }
+
+    meetings = await Meeting.find({ $or: orConditions })
+      .populate("user", "name email")
+      .sort({ date: "asc" });
+  }
+
+  res.status(200).json({
+    success: true,
+    count: meetings.length,
+    data: meetings,
+  });
+});
 
 // @desc    Create new meeting
 // @route   POST /api/meetings
