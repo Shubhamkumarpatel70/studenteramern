@@ -435,7 +435,7 @@ const GenerateOfferLetter = () => {
                 background: #FFFFFF; 
                 width: 100%; 
                 max-width: 850px; 
-                padding: 70px 60px; 
+                padding: 40px 50px; 
                 box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); 
                 position: relative; 
                 border-top: 10px solid var(--primary-color); 
@@ -446,7 +446,7 @@ const GenerateOfferLetter = () => {
                 display: flex; 
                 justify-content: space-between; 
                 align-items: center; 
-                margin-bottom: 50px; 
+                margin-bottom: 30px; 
                 padding-bottom: 20px;
                 border-bottom: 2px solid var(--border-color);
             }
@@ -458,12 +458,12 @@ const GenerateOfferLetter = () => {
             .company-name { font-size: 20px; font-weight: 800; color: var(--primary-color); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
             .address-block { font-size: 11px; color: var(--text-muted); line-height: 1.5; font-weight: 500; }
             
-            .meta-info { display: flex; justify-content: space-between; margin-bottom: 45px; font-size: 13px; color: var(--secondary-color); font-weight: 600; }
+            .meta-info { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 13px; color: var(--secondary-color); font-weight: 600; }
             .ref-no { color: var(--primary-color); }
             
             .subject-line { 
                 text-align: center; 
-                margin-bottom: 40px; 
+                margin-bottom: 20px; 
             }
             .subject-line h1 { 
                 font-size: 22px; 
@@ -486,7 +486,7 @@ const GenerateOfferLetter = () => {
                 border-radius: 9999px;
                 font-size: 12px;
                 font-weight: 700;
-                margin-bottom: 30px;
+                margin-bottom: 15px;
                 border: 1px solid #DBEAFE;
             }
             
@@ -494,7 +494,7 @@ const GenerateOfferLetter = () => {
                 font-size: 16px; 
                 font-weight: 700; 
                 color: var(--primary-color); 
-                margin-bottom: 25px; 
+                margin-bottom: 15px; 
             }
             
             .confidential-tag { 
@@ -506,35 +506,35 @@ const GenerateOfferLetter = () => {
                 padding: 6px;
                 border-radius: 4px;
                 letter-spacing: 2px;
-                margin-bottom: 35px;
+                margin-bottom: 15px;
                 border: 1px solid #FEE2E2;
             }
             
-            .letter-content { font-size: 14px; line-height: 1.8; color: #374151; margin-bottom: 30px; }
+            .letter-content { font-size: 14px; line-height: 1.6; color: #374151; margin-bottom: 15px; }
             
             .stipend-highlight { 
                 background: #F0FDF4;
                 border: 1px solid #DCFCE7;
                 padding: 15px 20px;
                 border-radius: 8px;
-                margin: 25px 0;
+                margin: 10px 0;
                 display: flex;
                 align-items: center;
                 gap: 10px;
             }
             .stipend-amount { font-weight: 800; color: #15803D; font-size: 16px; }
             
-            .terms-list { margin-left: 20px; margin-bottom: 40px; }
-            .terms-list li { margin-bottom: 12px; padding-left: 10px; }
+            .terms-list { margin-left: 20px; margin-bottom: 20px; }
+            .terms-list li { margin-bottom: 6px; padding-left: 10px; }
             .bold-text { font-weight: 700; color: #111827; }
             
-            .closing-section { margin-bottom: 50px; font-size: 14px; }
+            .closing-section { margin-bottom: 20px; font-size: 14px; }
             
             .signature-grid { 
                 display: flex; 
                 justify-content: space-between; 
                 align-items: flex-end; 
-                margin-top: 60px;
+                margin-top: 30px;
                 position: relative;
             }
             
@@ -554,7 +554,7 @@ const GenerateOfferLetter = () => {
             .official-stamp img { width: 90px; }
             
             .acceptance-section { 
-                margin-top: 80px; 
+                margin-top: 40px; 
                 display: grid; 
                 grid-template-columns: repeat(3, 1fr); 
                 gap: 30px;
