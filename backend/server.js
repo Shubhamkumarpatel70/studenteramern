@@ -43,8 +43,30 @@ if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
 }
 
-// Set secure HTTP headers
-app.use(helmet());
+// Set secure HTTP headers with custom CSP
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: [
+          "'self'",
+          "data:",
+          "blob:",
+          "https://res.cloudinary.com",
+          "https://*.cloudinary.com",
+          "https://ui-avatars.com",
+          "https://i.pravatar.cc",
+          "https://images.unsplash.com",
+        ],
+        connectSrc: ["'self'", "https://studentera.online", "https://*.onrender.com", "http://localhost:5000"],
+      },
+    },
+    crossOriginEmbedderPolicy: false,
+  })
+);
 
 // Prevent HTTP parameter pollution
 app.use(hpp());

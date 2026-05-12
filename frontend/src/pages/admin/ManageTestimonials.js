@@ -40,7 +40,6 @@ const TestimonialModal = ({ testimonial, onClose, onSave, isLoading }) => {
       const token = localStorage.getItem("token");
       const response = await api.post("/testimonials/upload", formDataUpload, {
         headers: {
-          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       });
